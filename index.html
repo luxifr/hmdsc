@@ -149,6 +149,19 @@
     fields.density.value = String(state.density);
     fields.uncertainty.value = String(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
   }
+  function updateInputConstraints() {
+    const volumeFactor = unit === 'imperial' ? OZ_PER_L : 1;
+    const massFactor = unit === 'imperial' ? LB_PER_KG : 1;
+    fields.volume.min = unit === 'imperial' ? (0.1 * volumeFactor).toFixed(9) : 0.1;
+    fields.volume.max = unit === 'imperial' ? (2 * volumeFactor).toFixed(9) : 2;
+    fields.volume.step = unit === 'imperial' ? (0.05 * volumeFactor).toFixed(9) : 0.05;
+    fields.mugMass.min = 0.1 * massFactor;
+    fields.mugMass.max = 5 * massFactor;
+    fields.mugMass.step = 0.05 * massFactor;
+    fields.uncertainty.min = 0;
+    fields.uncertainty.max = 1 * massFactor;
+    fields.uncertainty.step = 0.05 * massFactor;
+  }
   function stateFromSearch() {
     const params = new URLSearchParams(location.search);
     if (![...params.keys()].length) return null;
@@ -224,6 +237,7 @@
     const state = readState();
     unit = button.dataset.unit;
     document.querySelectorAll('[data-unit]').forEach((toggle) => toggle.setAttribute('aria-pressed', String(toggle === button)));
+    updateInputConstraints();
     setInputValues(state);
     render();
   }));
