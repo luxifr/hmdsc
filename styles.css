@@ -441,6 +441,32 @@ h1 em,h2 em {
 .advanced-fields input {
   font-size: 11px;
 }
+.remember-control {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 17px;
+  color: #c9beaa;
+  cursor: pointer;
+}
+.remember-control input {
+  width: 14px;
+  height: 14px;
+  margin: 1px 0 0;
+  accent-color: var(--gold);
+}
+.remember-control span {
+  display: grid;
+  gap: 3px;
+}
+.remember-control strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.remember-control small {
+  color: #827b6f;
+  font-size: 10px;
+}
 .form-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;

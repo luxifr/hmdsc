@@ -22,7 +22,7 @@ development-only tooling; there is no build step or CI.
 4. [x] Keep the inputs' internal layout and dimensions stable when switching units.
 5. [x] Align input widths, labels, and buttons consistently, independent of the
    selected unit system.
-6. Revise the implicit save/restore experience so users understand and control
+6. [x] Revise the implicit save/restore experience so users understand and control
    whether modified inputs are stored.
 7. Research tray-carrying as an optional load component. Source a credible range
    and representative tray weight with the same rigor as the beer and glass

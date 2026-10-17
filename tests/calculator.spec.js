@@ -162,6 +162,13 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
   await expect(page.locator('#stein-count')).toHaveValue('12');
   await expect(page.locator('#total')).toHaveText('28.0');
   await expect(page).toHaveURL(/\/$/);
+  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
+
+  await page.locator('#remember-inputs').check();
+  await page.locator('#stein-count').fill('8');
+  await page.getByRole('button', { name: /reset defaults/i }).click();
+  await page.reload();
+  await expect(page.locator('#stein-count')).toHaveValue('12');
 });
 
 test('share updates the URL and the shared scenario loads', async ({ page }) => {
@@ -202,17 +209,37 @@ test('scenario URLs restore all inputs and clamp out-of-range values', async ({ 
   await expect(page.locator('#fill')).toHaveValue('80');
 });
 
-test('saved scenario survives reload and URL values take precedence', async ({ page }) => {
+test('scenario saving is opt-in, restores when enabled, and clears when disabled', async ({ page }) => {
   await page.goto('/');
+  const remember = page.locator('#remember-inputs');
+  await expect(remember).not.toBeChecked();
+  await page.locator('#stein-count').fill('9');
+  await page.locator('#fill').fill('82');
+  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
+  await page.reload();
+  await expect(page.locator('#stein-count')).toHaveValue('12');
+  await expect(page.locator('#fill')).toHaveValue('100');
+
+  await remember.check();
   await page.locator('#stein-count').fill('9');
   await page.locator('#fill').fill('82');
   await page.reload();
+  await expect(remember).toBeChecked();
   await expect(page.locator('#stein-count')).toHaveValue('9');
   await expect(page.locator('#fill')).toHaveValue('82');
 
   await page.goto('/?count=5');
   await expect(page.locator('#stein-count')).toHaveValue('5');
   await expect(page.locator('#fill')).toHaveValue('100');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(5);
+
+  await remember.uncheck();
+  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
+  expect(await page.evaluate(() => localStorage.getItem('carry-calc-remember'))).toBeNull();
+  await page.goto('/');
+  await page.reload();
+  await expect(remember).not.toBeChecked();
+  await expect(page.locator('#stein-count')).toHaveValue('12');
 });
 
 test('volume and mass inputs convert when switching units', async ({ page }) => {
@@ -259,6 +286,7 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
 
 test('unit toggles keep the original scenario without cumulative rounding drift', async ({ page }) => {
   await page.goto('/?volume=1.23456789&mugMass=1.23456789&density=1.01234567&uncertainty=0.12345678&densityUncertainty=0.00234567');
+  await page.locator('#remember-inputs').check();
   const initialTotal = await page.locator('#total').textContent();
   const initialEquation = await page.locator('#total-equation').textContent();
 
@@ -294,6 +322,7 @@ test('share links preserve full calculation precision', async ({ page }) => {
 
 test('input displays cap decimals while retaining scenario precision', async ({ page }) => {
   await page.goto('/?density=1.01234567');
+  await page.locator('#remember-inputs').check();
   await page.getByText('Fine-tune the assumptions').click();
   const density = page.locator('#density');
 
