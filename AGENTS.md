@@ -74,3 +74,5 @@ them in separate branches.
 Afterwards check if all your current feature branches can be merged safely back
 into their base branch. If yes, do so, else make me aware of it and propose a
 solution.
+
+For merging, always use merge commits, never fast-forward or rebase merging
