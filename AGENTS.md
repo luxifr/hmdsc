@@ -80,3 +80,5 @@ If the worktree is clean and all tests pass, you're allowed to merge back into
 `main` without my explicit consent. Exception: if I asked you to make changes
 that affect the visual presentation of the resulting artifact, in which case ask
 me to confirm that the result matches my intent.
+
+Make sure to also switch to the branch you last merged to.
