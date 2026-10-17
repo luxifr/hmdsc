@@ -14,12 +14,7 @@ development-only tooling; there is no build step or CI.
 
 ### Quick wins
 
-1. **README claims persistent preferences that are only partly true.** The
-   README says "persistent local preferences". `localStorage` in `app.js` saves
-   only the scenario. The unit choice in `let unit` is not saved or put in the
-   share URL.
-
-2. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
+1. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
    the default (12) when the field is empty, so clearing the field makes the
    result jump to 12. A typed `0` is clamped to 1 in the math while the input
    still shows 0. Both behaviors are in `app.js`'s `readState` path.
@@ -72,6 +67,8 @@ rule applies.
 
 ## Completed
 
+- Clarified that only the calculator scenario is saved locally; the display-unit
+  selection is not persisted.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.
