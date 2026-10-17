@@ -9,6 +9,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   const OZ_PER_L = 33.8140227;
   const DENSITY_LB_PER_US_GAL_PER_KG_PER_L = LB_PER_KG * 3.785411784;
   let unit = 'metric';
+  let scenario;
   let toastTimer;
 
   function readNumber(field, fallback) {
@@ -32,12 +33,13 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
   function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
   function setInputValues(state) {
+    const inputValue = (value) => String(unit === 'imperial' ? Number(value.toFixed(9)) : value);
     fields.count.value = state.count;
     fields.fill.value = state.fill;
-    fields.volume.value = String(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
-    fields.mugMass.value = String(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
-    fields.density.value = String(state.density * (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1));
-    fields.uncertainty.value = String(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
+    fields.volume.value = inputValue(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
+    fields.mugMass.value = inputValue(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
+    fields.density.value = inputValue(state.density * (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1));
+    fields.uncertainty.value = inputValue(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
   }
   function updateInputConstraints() {
     const volumeFactor = unit === 'imperial' ? OZ_PER_L : 1;
@@ -59,19 +61,22 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   function steinSvg() {
     return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
   }
-  function render() {
-    const s = readState();
+  function render(state = readState()) {
+    const s = state;
+    scenario = s;
     if (Number.isFinite(fields.count.valueAsNumber)) fields.count.value = String(s.count);
     const load = computeLoad(s, unit);
     const { beerKg: beer, glassKg: glass, totalKg: total } = load;
     $('#fill-output').textContent = `${s.fill}%`;
     $('#total').textContent = pretty(load.total, 1);
     $('#total-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
-    $('#secondary-total').textContent = `That’s ${pretty(unit === 'imperial' ? total : total * LB_PER_KG, 1)} ${unit === 'imperial' ? 'kg' : 'lb'} on the other side of the pond`;
+    const uncertainty = load.high - load.total;
+    $('#total-uncertainty').textContent = `±${pretty(uncertainty, 1)}`;
+    $('#total-uncertainty').setAttribute('aria-label', `Total-load uncertainty: ±${pretty(uncertainty, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`);
+    $('#secondary-total').textContent = `That's ${pretty(unit === 'imperial' ? total : total * LB_PER_KG, 1)} ${unit === 'imperial' ? 'kg' : 'lb'} on the other side of the pond`;
     $('#beer-total').textContent = displayMass(beer);
     $('#glass-total').textContent = displayMass(glass);
     $('#per-stein').textContent = `${displayMass(total / s.count)} per stein`;
-    $('#range').textContent = `Total load range: ${pretty(load.low, 1)}–${pretty(load.high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
     $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
     $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
     $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;
@@ -100,28 +105,32 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   setInputValues({ ...defaults, ...(initialState || {}) });
   render();
 
-  Object.values(fields).forEach((field) => field.addEventListener('input', render));
+  Object.entries(fields).forEach(([key, field]) => field.addEventListener('input', () => {
+    const edited = readState();
+    render({ ...scenario, [key]: edited[key] });
+  }));
   document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
-    fields.count.value = clamp(readState().count + Number(button.dataset.step), 1, 40);
-    render();
+    const state = { ...scenario, count: clamp(scenario.count + Number(button.dataset.step), 1, 40) };
+    fields.count.value = state.count;
+    render(state);
   }));
   document.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => {
     if (unit === button.dataset.unit) return;
-    const state = readState();
+    const state = scenario;
     unit = button.dataset.unit;
     document.querySelectorAll('[data-unit]').forEach((toggle) => toggle.setAttribute('aria-pressed', String(toggle === button)));
     updateInputConstraints();
     setInputValues(state);
-    render();
+    render(state);
   }));
   $('#reset').addEventListener('click', () => {
     setInputValues(defaults);
     history.replaceState(null, '', location.pathname);
-    render();
+    render(defaults);
     toast('Back to the standard scenario. Prost!');
   });
   $('#share').addEventListener('click', async () => {
-    const state = readState();
+    const state = scenario;
     const params = new URLSearchParams(Object.entries(state).map(([key, value]) => [key, String(Number(value.toFixed(3)))]));
     const url = `${location.origin}${location.pathname}?${params}`;
     try {

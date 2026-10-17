@@ -6,20 +6,21 @@ A static, dependency-free production page (`index.html`, `styles.css`, and
 `app.js`) that estimates the load of beer steins carried by an Oktoberfest
 waitress. Inputs are stein count, fill %, beer per stein, glass weight, beer
 density, and glass-weight uncertainty. Outputs are total load, beer and glass
-breakdown, a range, metric/imperial display, a visualizer, and a shareable URL.
+breakdown, total-load uncertainty, metric/imperial display, a visualizer, and a
+shareable URL.
 Nothing is stored server-side. Playwright browser smoke tests run as
 development-only tooling; there is no build step or CI.
 
 ## Prioritized improvements
 
-1. Show the total-load uncertainty as a concise ± value beside the total, and
+1. [x] Show the total-load uncertainty as a concise ± value beside the total, and
    remove the small total-load range text below it.
 2. Redesign the stein illustration to represent a plausible way the steins are
    actually carried.
-3. Eliminate visible rounding drift when switching between metric and imperial
+3. [x] Eliminate visible rounding drift when switching between metric and imperial
    units.
-4. Keep the inputs' internal layout and dimensions stable when switching units.
-5. Align input widths, labels, and buttons consistently, independent of the
+4. [x] Keep the inputs' internal layout and dimensions stable when switching units.
+5. [x] Align input widths, labels, and buttons consistently, independent of the
    selected unit system.
 6. Revise the implicit save/restore experience so users understand and control
    whether modified inputs are stored.

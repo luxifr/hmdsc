@@ -14,6 +14,9 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
   await expect(page.locator('#density')).toHaveValue('1.01');
   await expect(page.locator('#total')).toHaveText('28.0');
+  await expect(page.locator('#total-uncertainty')).toHaveText('±1.2');
+  await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.2 kg');
+  await expect(page.locator('#range')).toHaveCount(0);
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
 });
 
@@ -116,15 +119,21 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await page.getByText('Fine-tune the assumptions').click();
   const volume = page.locator('#beer-volume');
   const mugMass = page.locator('#mug-mass');
+  const density = page.locator('#density');
   const uncertainty = page.locator('#uncertainty');
 
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
   await expect(page.locator('#volume-unit')).toHaveText('fl oz');
   await expect(page.locator('#mass-unit')).toHaveText('lb');
   await expect(page.locator('#uncertainty-unit')).toHaveText('± lb');
+  await expect(page.locator('#total-uncertainty')).toHaveText('±2.6');
+  await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±2.6 lb');
   expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
   expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32 * 2.2046226218, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1 * 2.2046226218, 6);
+  for (const input of [volume, mugMass, density, uncertainty]) {
+    expect(await input.evaluate((element) => element.checkValidity())).toBe(true);
+  }
 
   await page.getByRole('button', { name: 'METRIC' }).click();
   await expect(page.locator('#volume-unit')).toHaveText('L');
@@ -133,6 +142,38 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   expect(Number(await volume.inputValue())).toBeCloseTo(1, 6);
   expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1, 6);
+});
+
+test('unit toggles keep the original scenario without cumulative rounding drift', async ({ page }) => {
+  await page.goto('/?volume=1.23456789&mugMass=1.23456789&density=1.01234567&uncertainty=0.12345678');
+  const initialTotal = await page.locator('#total').textContent();
+  const initialEquation = await page.locator('#total-equation').textContent();
+
+  for (let i = 0; i < 8; i += 1) {
+    await page.getByRole('button', { name: 'IMPERIAL' }).click();
+    for (const selector of ['#beer-volume', '#mug-mass', '#density', '#uncertainty']) {
+      expect((await page.locator(selector).inputValue()).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(9);
+    }
+    await page.getByRole('button', { name: 'METRIC' }).click();
+  }
+
+  await expect(page.locator('#total')).toHaveText(initialTotal);
+  await expect(page.locator('#total-equation')).toHaveText(initialEquation);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).volume)).toBe(1.23456789);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).mugMass)).toBe(1.23456789);
+});
+
+test('input columns and unit suffixes stay aligned across display systems', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('Fine-tune the assumptions').click();
+  const dimensions = async () => page.locator('.control-row > :last-child, .advanced-fields > label, .advanced-fields > .input-with-unit, .input-with-unit span').evaluateAll((elements) => elements.map((element) => {
+    const { width, height } = element.getBoundingClientRect();
+    return [width, height].map((value) => Math.round(value * 100) / 100);
+  }));
+  const metricDimensions = await dimensions();
+
+  await page.getByRole('button', { name: 'IMPERIAL' }).click();
+  expect(await dimensions()).toEqual(metricDimensions);
 });
 
 test('empty count uses the minimum without jumping to defaults and zero is normalized', async ({ page }) => {

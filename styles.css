@@ -274,7 +274,7 @@ h1 em,h2 em {
 }
 .control-row {
   display: grid;
-  grid-template-columns: 1fr 190px;
+  grid-template-columns: minmax(0,1fr) 190px;
   gap: 20px;
   align-items: center;
   padding: 19px 0;
@@ -355,10 +355,13 @@ h1 em,h2 em {
   min-width: 0;
 }
 .input-with-unit span {
+  flex: 0 0 64px;
+  width: 64px;
   font-family: var(--mono);
   font-size: 11px;
   color: #a69b86;
   padding-left: 7px;
+  white-space: nowrap;
 }
 .advanced {
   border-bottom: 1px solid var(--line);
@@ -385,8 +388,8 @@ h1 em,h2 em {
 }
 .advanced-fields {
   display: grid;
-  grid-template-columns: 1fr 140px;
-  gap: 9px 17px;
+  grid-template-columns: minmax(0,1fr) 190px;
+  gap: 9px 20px;
   padding: 2px 0 19px;
   align-items: center;
 }
@@ -400,8 +403,9 @@ h1 em,h2 em {
   font-size: 11px;
 }
 .form-actions {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   margin-top: 18px;
 }
 .text-button {
@@ -412,6 +416,12 @@ h1 em,h2 em {
   font-size: 9px;
   letter-spacing: .08em;
   cursor: pointer;
+}
+.text-button:first-child {
+  text-align: left;
+}
+.text-button:last-child {
+  text-align: right;
 }
 .text-button:hover {
   color: var(--gold);
@@ -472,6 +482,11 @@ h1 em,h2 em {
   font-family: var(--mono);
   color: #c2b59a;
   font-size: 14px;
+}
+.total-line .total-uncertainty {
+  color: #a59c8a;
+  font-size: 11px;
+  white-space: nowrap;
 }
 .pounds-note {
   font-family: var(--mono);
@@ -679,8 +694,12 @@ footer {
     padding-right: 12px;
   }
   .control-row {
-    grid-template-columns: 1fr 160px;
+    grid-template-columns: minmax(0,1fr) 160px;
     gap: 12px;
+  }
+  .advanced-fields {
+    grid-template-columns: minmax(0,1fr) 160px;
+    column-gap: 12px;
   }
   .result-card {
     padding: 24px 22px 18px;
@@ -771,8 +790,11 @@ footer {
     padding: 0;
   }
   .control-row {
-    grid-template-columns: 1fr 155px;
+    grid-template-columns: minmax(0,1fr) 155px;
     padding: 16px 0;
+  }
+  .advanced-fields {
+    grid-template-columns: minmax(0,1fr) 155px;
   }
   .control-row label {
     font-size: 12px;
@@ -812,7 +834,10 @@ footer {
 }
 @media (max-width:380px) {
   .control-row {
-    grid-template-columns: 1fr 130px;
+    grid-template-columns: minmax(0,1fr) 130px;
+  }
+  .advanced-fields {
+    grid-template-columns: minmax(0,1fr) 130px;
   }
   .hero h1 {
     font-size: 58px;
