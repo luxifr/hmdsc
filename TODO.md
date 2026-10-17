@@ -14,32 +14,26 @@ There is no `package.json`, no tests, no CI, no LICENSE, and no git remote.
 
 ### Quick wins
 
-1. **Mislabeled range.** `index.html:189` labels the output "Glass-weight
-   range", but it is `total ± count × uncertainty`, so it is the total-load
-   range. The README (`README.md`, "Model and assumptions") describes it as
-   glass-weight variation. Change the label to "Total load range" (and the
-   README wording to match).
-
-2. **README claims persistent preferences that are only partly true.** The
+1. **README claims persistent preferences that are only partly true.** The
    README says "persistent local preferences". `localStorage` saves only the
    scenario (`index.html:199`). The unit choice in `let unit` (~line 119) is not
    saved or put in the share URL.
 
-3. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
+2. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
    the default (12) when the field is empty (~`:128-135`), so clearing the field
    makes the result jump to 12. A typed `0` is clamped to 1 in the math (`:129`)
    while the input still shows 0.
 
-4. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
+3. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
    whole result card (`index.html:84`), so every keystroke re-announces the
    entire card. Put it on `#total` or `#range` instead. `aria-label` on the
    plain `div#visualizer` (`:93`) is ignored by assistive tech without a role.
 
-5. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
+4. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
    browsers will request `/favicon.ico` and get a 404. An inline SVG data-URI
    icon fixes it with no new files.
 
-6. **Redundant write.** `render()` sets both `.value` and `.textContent` on
+5. **Redundant write.** `render()` sets both `.value` and `.textContent` on
    `#fill-output` (~`:180-181`). Keep only one.
 
 ### Medium-effort
