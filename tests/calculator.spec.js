@@ -105,16 +105,16 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   const glass = page.locator('.fill-stein > path').nth(1);
 
   await expect(fill).toHaveAttribute('aria-describedby', 'fill-output');
-  await expect(page.locator('#fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
-  await expect(page.locator('#fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
-  await expect(page.locator('#fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
+  await expect(page.locator('.fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
+  await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
+  await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
   await expect(fill).toHaveCSS('opacity', '0');
   await expect(page.locator('.fill-handle')).toHaveCount(0);
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(34.6);
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(6.6);
   await expect(capBubbles).toHaveCount(9);
   await expect(beerBubbles).toHaveCount(18);
-  await expect(page.locator('#fill-foam-cap')).toHaveAttribute('fill', '#f3ead6');
+  await expect(page.locator('#fill-foam-cap')).toHaveAttribute('fill', '#F0E9D9');
   const capAndRim = await page.evaluate(() => {
     const box = (selector) => {
       const { y, height } = document.querySelector(selector).getBBox();
