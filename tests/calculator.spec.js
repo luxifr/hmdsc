@@ -77,10 +77,39 @@ test('uses a valid inline SVG favicon', async ({ page }) => {
   }, href)).toBeGreaterThan(0);
 });
 
-test('fill slider updates its displayed value', async ({ page }) => {
+test('stein fill slider updates beer, foam, and its accessible value', async ({ page }) => {
   await page.goto('/');
-  await page.locator('#fill').fill('85');
+  const fill = page.locator('#fill');
+  const beer = page.locator('#fill-beer');
+  const foam = page.locator('#fill-foam');
+  const foamOverflow = page.locator('.fill-stein > path').nth(2);
+
+  await expect(fill).toHaveAttribute('aria-describedby', 'fill-output');
+  await expect(beer).toHaveAttribute('y', '28');
+  await expect(foam).toHaveAttribute('height', '1');
+  const overflowBounds = await foamOverflow.boundingBox();
+  const glassBounds = await page.locator('.fill-stein > path').nth(1).boundingBox();
+  expect(overflowBounds.y).toBeLessThan(glassBounds.y);
+
+  await fill.fill('85');
   await expect(page.locator('#fill-output')).toHaveText('85%');
+  expect(Number(await beer.getAttribute('y'))).toBeCloseTo(37.9);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(10.9);
+
+  await fill.scrollIntoViewIfNeeded();
+  const bounds = await fill.boundingBox();
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + 4);
+  await page.mouse.down();
+  await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height - 4, { steps: 10 });
+  await page.mouse.up();
+  await expect(fill).toHaveValue('70');
+  await expect(page.locator('#fill-output')).toHaveText('70%');
+  expect(Number(await beer.getAttribute('y'))).toBeCloseTo(47.8);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(20.8);
+
+  await fill.focus();
+  await fill.press('ArrowUp');
+  await expect(fill).toHaveValue('71');
 });
 
 test('beer density switches units and preserves its value', async ({ page }) => {
