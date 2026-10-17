@@ -1,17 +1,16 @@
+import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } from './calculation.js';
+
 (() => {
   const $ = (selector) => document.querySelector(selector);
   const fields = {
     count: $('#stein-count'), fill: $('#fill'), volume: $('#beer-volume'),
     mugMass: $('#mug-mass'), density: $('#density'), uncertainty: $('#uncertainty'),
   };
-  const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.3, density: 0.998, uncertainty: 0.1 };
-  const LB_PER_KG = 2.2046226218;
   const OZ_PER_L = 33.8140227;
   const DENSITY_LB_PER_US_GAL_PER_KG_PER_L = LB_PER_KG * 3.785411784;
   let unit = 'metric';
   let toastTimer;
 
-  function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
   function readNumber(field, fallback) {
     const value = field.valueAsNumber;
     return Number.isFinite(value) ? value : fallback;
@@ -21,14 +20,14 @@
     const mugMass = readNumber(fields.mugMass, defaults.mugMass * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
     const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
     const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
-    return {
-      count: clamp(Math.round(readNumber(fields.count, 1)), 1, 40),
-      fill: clamp(readNumber(fields.fill, defaults.fill), 70, 100),
-      volume: clamp(volume, 0.1, 2),
-      mugMass: clamp(mugMass, 0.1, 5),
-      density: clamp(readNumber(fields.density, defaults.density * densityFactor) / densityFactor, 0.8, 1.2),
-      uncertainty: clamp(uncertainty, 0, 1),
-    };
+    return normalizeState({
+      count: readNumber(fields.count, 1),
+      fill: readNumber(fields.fill, defaults.fill),
+      volume,
+      mugMass,
+      density: readNumber(fields.density, defaults.density * densityFactor) / densityFactor,
+      uncertainty,
+    });
   }
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
   function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
@@ -57,44 +56,22 @@
     fields.density.max = 1.2 * densityFactor;
     fields.density.step = 0.001 * densityFactor;
   }
-  function stateFromSearch() {
-    const params = new URLSearchParams(location.search);
-    if (![...params.keys()].length) return null;
-    const state = { ...defaults };
-    for (const key of Object.keys(defaults)) {
-      if (params.has(key)) {
-        const value = Number(params.get(key));
-        if (Number.isFinite(value)) state[key] = value;
-      }
-    }
-    state.count = clamp(Math.round(state.count), 1, 40);
-    state.fill = clamp(state.fill, 70, 100);
-    state.volume = clamp(state.volume, 0.1, 2);
-    state.mugMass = clamp(state.mugMass, 0.1, 5);
-    state.density = clamp(state.density, 0.8, 1.2);
-    state.uncertainty = clamp(state.uncertainty, 0, 1);
-    return state;
-  }
   function steinSvg() {
     return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
   }
   function render() {
     const s = readState();
     if (Number.isFinite(fields.count.valueAsNumber)) fields.count.value = String(s.count);
-    const beer = s.count * s.volume * (s.fill / 100) * s.density;
-    const glass = s.count * s.mugMass;
-    const total = beer + glass;
-    const margin = s.count * s.uncertainty;
-    const low = Math.max(0, total - margin);
-    const high = total + margin;
+    const load = computeLoad(s, unit);
+    const { beerKg: beer, glassKg: glass, totalKg: total } = load;
     $('#fill-output').textContent = `${s.fill}%`;
-    $('#total').textContent = pretty(unit === 'imperial' ? total * LB_PER_KG : total, 1);
+    $('#total').textContent = pretty(load.total, 1);
     $('#total-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
     $('#secondary-total').textContent = `That’s ${pretty(unit === 'imperial' ? total : total * LB_PER_KG, 1)} ${unit === 'imperial' ? 'kg' : 'lb'} on the other side of the pond`;
     $('#beer-total').textContent = displayMass(beer);
     $('#glass-total').textContent = displayMass(glass);
     $('#per-stein').textContent = `${displayMass(total / s.count)} per stein`;
-    $('#range').textContent = `Total load range: ${pretty(unit === 'imperial' ? low * LB_PER_KG : low, 1)}–${pretty(unit === 'imperial' ? high * LB_PER_KG : high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
+    $('#range').textContent = `Total load range: ${pretty(load.low, 1)}–${pretty(load.high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
     $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
     $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
     $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;
@@ -115,7 +92,7 @@
     toastTimer = setTimeout(() => element.classList.remove('show'), 2300);
   }
 
-  const fromUrl = stateFromSearch();
+  const fromUrl = stateFromSearch(location.search);
   let initialState = fromUrl;
   if (!initialState) {
     try { initialState = JSON.parse(localStorage.getItem('carry-calc')); } catch { /* Use defaults for unavailable or invalid local storage. */ }

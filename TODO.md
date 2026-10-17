@@ -30,13 +30,6 @@ development-only tooling; there is no build step or CI.
    - **Empty glass weight 1.3 kg** (`app.js` defaults and `index.html` input): no
      source in the repo or the README. It was not verified.
 
-2. **Pure calculation function and tests.** The math is inside `render()` in
-   `app.js` and tied to the DOM. Extract `computeLoad(state, unit)` and test it
-   with `node:test`, with no dependency. Useful checks:
-    - defaults give 27.58 kg total (matches the static equations in `index.html`);
-    - unit round-trip stays stable;
-    - `stateFromSearch` clamps bad URL values.
-
 ### Larger ideas
 
 1. **Documented assumptions table.** A cited table of defaults with their ranges
@@ -48,6 +41,9 @@ rule applies.
 
 ## Completed
 
+- Extracted DOM-independent state normalization, URL parsing, and load
+  calculations into `calculation.js`; added `node:test` coverage for defaults,
+  unit conversion, and URL/input clamping.
 - Clarified that only the calculator scenario is saved locally; the display-unit
   selection is not persisted.
 - Empty count now uses the minimum count for calculations without replacing the
