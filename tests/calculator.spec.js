@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+test('fill slider updates its displayed value', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#fill').fill('85');
+  await expect(page.locator('#fill-output')).toHaveText('85%');
+});
+
 test('beer density switches units and preserves its value', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();

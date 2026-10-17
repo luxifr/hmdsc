@@ -33,9 +33,6 @@ development-only tooling; there is no build step or CI.
    browsers will request `/favicon.ico` and get a 404. An inline SVG data-URI
    icon fixes it with no new files.
 
-5. **Redundant write.** `render()` sets both `.value` and `.textContent` on
-   `#fill-output` in `app.js`. Keep only one.
-
 ### Medium-effort
 
 1. **Model inputs need sources.** The model is presented as "show your work",
@@ -72,6 +69,8 @@ rule applies.
 
 ## Completed
 
+- Removed the redundant write to the fill-percentage output; its visible text
+  remains covered by a browser test.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.
