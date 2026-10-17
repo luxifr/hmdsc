@@ -305,6 +305,7 @@ h1 em,h2 em {
   background: #ffffff0a;
 }
 .stepper input,.input-with-unit input {
+  appearance: textfield;
   color: var(--paper);
   background: none;
   border: 0;
@@ -383,8 +384,8 @@ h1 em,h2 em {
   white-space: nowrap;
 }
 .advanced-fields .input-with-unit span {
-  flex: 0 0 76px;
-  width: 76px;
+  flex: 0 0 82px;
+  width: 82px;
   padding-left: 7px;
 }
 .advanced {
@@ -422,6 +423,18 @@ h1 em,h2 em {
 }
 .advanced-fields .input-with-unit {
   height: 33px;
+  padding: 0;
+}
+.advanced-fields .input-with-unit>.step-button {
+  flex: 0 0 22px;
+  width: 22px;
+  font-size: 15px;
+}
+.advanced-fields .input-with-unit input {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  text-align: center;
 }
 .advanced-fields input {
   font-size: 11px;
@@ -859,7 +872,7 @@ footer {
     padding: 16px 0;
   }
   .advanced-fields {
-    grid-template-columns: minmax(0,1fr) 145px;
+    grid-template-columns: minmax(0,1fr) 156px;
   }
   .control-row label {
     font-size: 12px;
@@ -922,7 +935,8 @@ footer {
     grid-template-columns: minmax(0,1fr) 130px;
   }
   .advanced-fields {
-    grid-template-columns: minmax(0,1fr) 140px;
+    grid-template-columns: minmax(0,1fr);
+    row-gap: 4px;
   }
   .hero h1 {
     font-size: 58px;
