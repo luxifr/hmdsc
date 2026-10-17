@@ -99,6 +99,19 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1, 6);
 });
 
+test('empty count uses the minimum without jumping to defaults and zero is normalized', async ({ page }) => {
+  await page.goto('/');
+  const count = page.locator('#stein-count');
+
+  await count.fill('');
+  await expect(count).toHaveValue('');
+  await expect(page.locator('#total')).toHaveText('2.3');
+
+  await count.fill('0');
+  await expect(count).toHaveValue('1');
+  await expect(page.locator('#total')).toHaveText('2.3');
+});
+
 test('stein stepper recalculates and respects count limits', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Add one stein' }).click();

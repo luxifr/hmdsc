@@ -19,12 +19,7 @@ development-only tooling; there is no build step or CI.
    only the scenario. The unit choice in `let unit` is not saved or put in the
    share URL.
 
-2. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
-   the default (12) when the field is empty, so clearing the field makes the
-   result jump to 12. A typed `0` is clamped to 1 in the math while the input
-   still shows 0. Both behaviors are in `app.js`'s `readState` path.
-
-3. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
+2. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
    whole result card in `index.html`, so every keystroke re-announces the entire
    card. Put it on `#total` or `#range` instead. `aria-label` on the plain
    `div#visualizer` is ignored by assistive tech without a role.
@@ -72,6 +67,8 @@ rule applies.
 
 ## Completed
 
+- Empty count now uses the minimum count for calculations without replacing the
+  blank field; entering zero is normalized to one. Covered by Playwright tests.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.
