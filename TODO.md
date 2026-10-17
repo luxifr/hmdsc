@@ -9,7 +9,7 @@ glass-weight uncertainty; metric and imperial displays; a stein visualizer; and
 shareable scenario URLs. Saving scenarios locally is opt-in. Playwright browser
 smoke tests are development-only; there is no build step or CI.
 
-## Prioritized improvements
+## Afterburner Tasks
 
 1. Redesign the stein illustration to represent a plausible way the steins are
    actually carried.
@@ -19,13 +19,14 @@ smoke tests are development-only; there is no build step or CI.
 
 ## Deferred
 
-- Replacing the per-keystroke `innerHTML` rebuild of up to 18 SVGs in `app.js` is
-  not prioritized; it is currently inexpensive, so avoid premature optimization.
+- Replacing the per-keystroke `innerHTML` rebuild of up to 18 SVGs in `app.js`
+  is not prioritized; it is currently inexpensive, so avoid premature
+  optimization.
 
 ## Sources
 
-- BJCP, [4B. Festbier](https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier)
-  and [6A. Märzen](https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen): final
+- BJCP, [4B. Festbier](https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier) and
+  [6A. Märzen](https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen): final
   gravity ranges and style context for current Oktoberfest beer and Märzen.
 - BYO, [Calculating Alcohol Content, Attenuation, Extract, and Calories]
   (https://byo.com/articles/calculating-alcohol/): specific gravity is density
