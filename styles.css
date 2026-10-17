@@ -443,29 +443,22 @@ h1 em,h2 em {
 }
 .remember-control {
   display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  margin-top: 17px;
-  color: #c9beaa;
+  align-items: center;
+  gap: 6px;
+  color: #a69d8d;
+  font-family: var(--mono);
+  font-size: 9px;
   cursor: pointer;
 }
 .remember-control input {
-  width: 14px;
-  height: 14px;
-  margin: 1px 0 0;
+  width: 12px;
+  height: 12px;
+  margin: 0;
   accent-color: var(--gold);
-}
-.remember-control span {
-  display: grid;
-  gap: 3px;
-}
-.remember-control strong {
-  font-size: 11px;
-  font-weight: 500;
 }
 .remember-control small {
   color: #827b6f;
-  font-size: 10px;
+  font-size: inherit;
 }
 .form-actions {
   display: grid;
