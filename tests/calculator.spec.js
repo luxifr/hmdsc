@@ -12,11 +12,12 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await page.goto('/');
   await expect(page.locator('#mug-mass')).toHaveValue('1.32');
   expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
-  await expect(page.locator('#density')).toHaveValue('1.01');
   await expect(page.locator('#uncertainty')).toHaveValue('50');
-  await expect(page.locator('#density-uncertainty')).toHaveValue('2000');
+  await expect(page.locator('#density')).toHaveValue('1010');
+  await expect(page.locator('#density-unit')).toHaveText('g/L');
+  await expect(page.locator('#density-uncertainty')).toHaveValue('2');
   await expect(page.locator('#uncertainty-unit')).toHaveText('± g');
-  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± mg/L');
+  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± g/L');
   await expect(page.locator('#beer-uncertainty')).toHaveCount(0);
   await expect(page.locator('#total')).toHaveText('28.0');
   await expect(page.locator('#total-uncertainty')).toHaveText('±0.6');
@@ -139,16 +140,17 @@ test('beer density switches units and preserves its value', async ({ page }) => 
   await page.getByText('Fine-tune the assumptions').click();
 
   const density = page.getByLabel('Beer density', { exact: true });
-  await expect(page.locator('#density-unit')).toHaveText('kg/L');
+  await expect(page.locator('#density-unit')).toHaveText('g/L');
+  await expect(density).toHaveValue('1010');
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
-  await expect(page.locator('#density-unit')).toHaveText('lb/US gal');
-  expect(Number(await density.inputValue())).toBeCloseTo(1.01 * 2.2046226218 * 3.785411784, 3);
+  await expect(page.locator('#density-unit')).toHaveText('lb/gal');
+  await expect(density).toHaveValue('8.429');
 
   const imperialDensity = 0.95 * 2.2046226218 * 3.785411784;
   await density.fill(String(imperialDensity));
   await page.getByRole('button', { name: 'METRIC' }).click();
-  await expect.poll(async () => Number(await density.inputValue())).toBeCloseTo(0.95, 6);
-  await expect(page.locator('#density-unit')).toHaveText('kg/L');
+  await expect.poll(async () => Number(await density.inputValue())).toBe(950);
+  await expect(page.locator('#density-unit')).toHaveText('g/L');
   await expect(page.locator('#beer-equation')).toContainText('0.950 kg/L');
 });
 
@@ -180,9 +182,9 @@ test('scenario URLs restore all inputs and clamp out-of-range values', async ({ 
   await expect(page.locator('#fill')).toHaveValue('85');
   await expect(page.locator('#beer-volume')).toHaveValue('1.5');
   await expect(page.locator('#mug-mass')).toHaveValue('2');
-  await expect(page.locator('#density')).toHaveValue('1.05');
+  await expect(page.locator('#density')).toHaveValue('1050');
   await expect(page.locator('#uncertainty')).toHaveValue('200');
-  await expect(page.locator('#density-uncertainty')).toHaveValue('4000');
+  await expect(page.locator('#density-uncertainty')).toHaveValue('4');
   await expect(page.locator('#beer-uncertainty')).toHaveCount(0);
 
   await page.goto('/?count=0&fill=110&volume=99&mugMass=-2&density=2&uncertainty=-1&densityUncertainty=1');
@@ -190,9 +192,9 @@ test('scenario URLs restore all inputs and clamp out-of-range values', async ({ 
   await expect(page.locator('#fill')).toHaveValue('100');
   await expect(page.locator('#beer-volume')).toHaveValue('2');
   await expect(page.locator('#mug-mass')).toHaveValue('0.1');
-  await expect(page.locator('#density')).toHaveValue('1.2');
+  await expect(page.locator('#density')).toHaveValue('1200');
   await expect(page.locator('#uncertainty')).toHaveValue('0');
-  await expect(page.locator('#density-uncertainty')).toHaveValue('100000');
+  await expect(page.locator('#density-uncertainty')).toHaveValue('100');
   await expect(page.locator('#beer-uncertainty')).toHaveCount(0);
 
   await page.goto('/?count=invalid&fill=80');
@@ -225,17 +227,19 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
   await expect(page.locator('#volume-unit')).toHaveText('fl oz');
   await expect(page.locator('#mass-unit')).toHaveText('lb');
-  await expect(page.locator('#uncertainty-unit')).toHaveText('± g');
-  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± mg/L');
+  await expect(page.locator('#uncertainty-unit')).toHaveText('± lb');
+  await expect(page.locator('#density-unit')).toHaveText('lb/gal');
+  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± lb/gal');
   await expect(page.locator('#total-uncertainty')).toHaveText('±1.4');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.4 lb');
   await expect(page.locator('#per-stein')).toHaveText('5.14 lb');
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.11 lb');
   await expect(page.locator('#secondary-total')).toHaveText("That's 28.0 ±0.6 kg on the other side of the pond");
-  expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
-  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32 * 2.2046226218, 6);
-  expect(Number(await uncertainty.inputValue())).toBe(50);
-  expect(Number(await densityUncertainty.inputValue())).toBe(2000);
+  expect(Number(await volume.inputValue())).toBe(33.814);
+  expect(Number(await mugMass.inputValue())).toBe(2.91);
+  expect(Number(await uncertainty.inputValue())).toBe(0.11);
+  expect(Number(await density.inputValue())).toBe(8.429);
+  expect(Number(await densityUncertainty.inputValue())).toBe(0.017);
   for (const input of [volume, mugMass, density, uncertainty, densityUncertainty]) {
     expect(await input.evaluate((element) => element.checkValidity())).toBe(true);
   }
@@ -244,30 +248,63 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#volume-unit')).toHaveText('L');
   await expect(page.locator('#mass-unit')).toHaveText('kg');
   await expect(page.locator('#uncertainty-unit')).toHaveText('± g');
-  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± mg/L');
-  expect(Number(await volume.inputValue())).toBeCloseTo(1, 6);
-  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32, 6);
+  await expect(page.locator('#density-unit')).toHaveText('g/L');
+  await expect(page.locator('#density-uncertainty-unit')).toHaveText('± g/L');
+  expect(Number(await volume.inputValue())).toBe(1);
+  expect(Number(await mugMass.inputValue())).toBe(1.32);
   expect(Number(await uncertainty.inputValue())).toBe(50);
-  expect(Number(await densityUncertainty.inputValue())).toBe(2000);
+  expect(Number(await density.inputValue())).toBe(1010);
+  expect(Number(await densityUncertainty.inputValue())).toBe(2);
 });
 
 test('unit toggles keep the original scenario without cumulative rounding drift', async ({ page }) => {
-  await page.goto('/?volume=1.23456789&mugMass=1.23456789&density=1.01234567&uncertainty=0.12345678');
+  await page.goto('/?volume=1.23456789&mugMass=1.23456789&density=1.01234567&uncertainty=0.12345678&densityUncertainty=0.00234567');
   const initialTotal = await page.locator('#total').textContent();
   const initialEquation = await page.locator('#total-equation').textContent();
 
+  const inputs = ['#beer-volume', '#mug-mass', '#density', '#uncertainty', '#density-uncertainty'];
+  const expectThreeDecimalsAtMost = async () => {
+    for (const selector of inputs) {
+      expect((await page.locator(selector).inputValue()).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(3);
+    }
+  };
+  await expectThreeDecimalsAtMost();
   for (let i = 0; i < 8; i += 1) {
     await page.getByRole('button', { name: 'IMPERIAL' }).click();
-    for (const selector of ['#beer-volume', '#mug-mass', '#density', '#uncertainty', '#density-uncertainty']) {
-      expect((await page.locator(selector).inputValue()).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(9);
-    }
+    await expectThreeDecimalsAtMost();
     await page.getByRole('button', { name: 'METRIC' }).click();
+    await expectThreeDecimalsAtMost();
   }
 
   await expect(page.locator('#total')).toHaveText(initialTotal);
   await expect(page.locator('#total-equation')).toHaveText(initialEquation);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).volume)).toBe(1.23456789);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).mugMass)).toBe(1.23456789);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.01234567);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).densityUncertainty)).toBe(0.00234567);
+});
+
+test('share links preserve full calculation precision', async ({ page }) => {
+  await page.goto('/?volume=1.23456789&density=1.01234567');
+  await page.getByRole('button', { name: /copy link/i }).click();
+
+  await expect.poll(() => new URL(page.url()).searchParams.get('volume')).toBe('1.23456789');
+  await expect.poll(() => new URL(page.url()).searchParams.get('density')).toBe('1.01234567');
+});
+
+test('input displays cap decimals while retaining scenario precision', async ({ page }) => {
+  await page.goto('/?density=1.01234567');
+  await page.getByText('Fine-tune the assumptions').click();
+  const density = page.locator('#density');
+
+  await density.fill('1000.123456');
+  await density.press('Tab');
+  await expect(density).toHaveValue('1000.123');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
+
+  await page.locator('#mug-mass').fill('1.111119');
+  await page.locator('#mug-mass').press('Tab');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
 });
 
 test('main and fine-tune values, units, and buttons align independently', async ({ page }) => {
@@ -320,7 +357,10 @@ test('main and fine-tune values, units, and buttons align independently', async 
     expect(layout.fineTuneUnits[3]).toEqual(layout.fineTuneUnits[0]);
     expect(layout.fineTuneUnits[4]).toEqual(layout.fineTuneUnits[0]);
     expect(layout.fineTunePlusButtons).toHaveLength(5);
-    layout.fineTuneControls.forEach((control, index) => expect(Math.abs(layout.fineTunePlusButtons[index][1] - control[1])).toBeLessThanOrEqual(1));
+    layout.fineTuneControls.forEach((control, index) => {
+      expect(Math.abs(layout.fineTunePlusButtons[index][1] - control[1])).toBeLessThanOrEqual(1);
+      expect(Math.abs(layout.fineTuneUnits[index][0] - (control[0] + control[1]) / 2)).toBeLessThanOrEqual(1);
+    });
     expect(layout.mainValues[0][0]).not.toBe(layout.fineTuneValues[0][0]);
     expect(layout.suffixesFit).toBe(true);
   };
@@ -358,8 +398,8 @@ test('fine-tune stepper buttons update each value and respect input bounds', asy
     ['Increase beer per stein', 'Decrease beer per stein', '#beer-volume', '1.05', '1'],
     ['Increase empty glass weight', 'Decrease empty glass weight', '#mug-mass', '1.33', '1.32'],
     ['Increase glass weight uncertainty', 'Decrease glass weight uncertainty', '#uncertainty', '51', '50'],
-    ['Increase beer density', 'Decrease beer density', '#density', '1.011', '1.01'],
-    ['Increase beer density uncertainty', 'Decrease beer density uncertainty', '#density-uncertainty', '2001', '2000'],
+    ['Increase beer density', 'Decrease beer density', '#density', '1011', '1010'],
+    ['Increase beer density uncertainty', 'Decrease beer density uncertainty', '#density-uncertainty', '2.1', '2'],
   ];
   for (const [increase, decrease, selector, nextValue, originalValue] of cases) {
     await page.getByRole('button', { name: increase, exact: true }).click();
@@ -369,6 +409,11 @@ test('fine-tune stepper buttons update each value and respect input bounds', asy
   }
   await page.getByRole('button', { name: 'Decrease glass weight uncertainty' }).click();
   await expect(page.locator('#uncertainty')).toHaveValue('49');
+
+  await page.getByRole('button', { name: 'IMPERIAL' }).click();
+  await page.getByRole('button', { name: 'Increase beer per stein', exact: true }).click();
+  await expect(page.locator('#beer-volume')).toHaveValue('35.505');
+  expect((await page.locator('#beer-volume').inputValue()).split('.')[1]?.length ?? 0).toBeLessThanOrEqual(3);
 });
 
 test('stein stepper recalculates and respects count limits', async ({ page }) => {
