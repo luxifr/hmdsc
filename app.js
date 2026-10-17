@@ -87,7 +87,6 @@
     const margin = s.count * s.uncertainty;
     const low = Math.max(0, total - margin);
     const high = total + margin;
-    $('#fill-output').value = `${s.fill}%`;
     $('#fill-output').textContent = `${s.fill}%`;
     $('#total').textContent = pretty(unit === 'imperial' ? total * LB_PER_KG : total, 1);
     $('#total-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
