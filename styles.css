@@ -347,28 +347,15 @@ h1 em,h2 em {
   width: 100%;
   height: 100%;
   margin: 0;
-  opacity: .01;
+  opacity: 0;
   outline: none;
   writing-mode: vertical-lr;
   direction: rtl;
   cursor: ns-resize;
   touch-action: none;
 }
-.fill-handle {
-  position: absolute;
-  top: var(--fill-handle-y);
-  left: 20px;
-  width: 36px;
-  height: 8px;
-  transform: translateY(-50%);
-  background: var(--gold-pale);
-  border: 1px solid #5e4827;
-  border-radius: 5px;
-  box-shadow: 0 1px 4px #0009;
-  pointer-events: none;
-}
-.fill-slider:focus-within .fill-handle {
-  box-shadow: 0 0 0 3px #e1bd6b80, 0 1px 4px #0009;
+.fill-slider:focus-within .fill-stein {
+  filter: drop-shadow(0 0 3px #e1bd6b80);
 }
 .range-labels {
   grid-column: 1/-1;
