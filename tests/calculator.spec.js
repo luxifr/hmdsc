@@ -29,6 +29,22 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
 });
 
+test('keeps the per-stein result clear of the total on desktop screens', async ({ page }) => {
+  await page.goto('/');
+
+  const bounds = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, right } = document.querySelector(selector).getBoundingClientRect();
+      return { left, right };
+    };
+    return {
+      total: rect('.total-primary'),
+      perStein: rect('.per-stein'),
+    };
+  });
+  expect(bounds.total.right).toBeLessThanOrEqual(bounds.perStein.left);
+});
+
 test('keeps the per-stein result below the total on narrow screens', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto('/');
