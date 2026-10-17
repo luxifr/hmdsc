@@ -213,14 +213,35 @@ test('unit toggles keep the original scenario without cumulative rounding drift'
 test('input columns and unit suffixes stay aligned across display systems', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
-  const dimensions = async () => page.locator('.control-row > :last-child, .advanced-fields > label, .advanced-fields > .input-with-unit, .input-with-unit span').evaluateAll((elements) => elements.map((element) => {
-    const { width, height } = element.getBoundingClientRect();
-    return [width, height].map((value) => Math.round(value * 100) / 100);
-  }));
-  const metricDimensions = await dimensions();
+  const measure = () => page.evaluate(() => {
+    const bounds = (elements) => elements.map((element) => {
+      const { left, right, width, height } = element.getBoundingClientRect();
+      return [left, right, width, height].map((value) => Math.round(value * 100) / 100);
+    });
+    return {
+      labels: bounds([...document.querySelectorAll('.control-row > :first-child, .advanced-fields > label')]),
+      controls: bounds([...document.querySelectorAll('.control-row > :last-child, .advanced-fields > .input-with-unit')]),
+      suffixesFit: [...document.querySelectorAll('.input-with-unit span')].every((element) => element.scrollWidth <= element.clientWidth),
+    };
+  });
+  const expectAligned = (layout) => {
+    expect(new Set(layout.labels.map(([left]) => left)).size).toBe(1);
+    expect(new Set(layout.controls.map(([, right]) => right)).size).toBe(1);
+    expect(new Set(layout.controls.map(([, , width]) => width)).size).toBe(1);
+    expect(layout.suffixesFit).toBe(true);
+  };
 
-  await page.getByRole('button', { name: 'IMPERIAL' }).click();
-  expect(await dimensions()).toEqual(metricDimensions);
+  for (const width of [1280, 900, 650, 380, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    const metricLayout = await measure();
+    expectAligned(metricLayout);
+
+    await page.getByRole('button', { name: 'IMPERIAL' }).click();
+    const imperialLayout = await measure();
+    expectAligned(imperialLayout);
+    expect(imperialLayout).toEqual(metricLayout);
+    await page.getByRole('button', { name: 'METRIC' }).click();
+  }
 });
 
 test('empty count uses the minimum without jumping to defaults and zero is normalized', async ({ page }) => {

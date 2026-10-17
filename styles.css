@@ -355,8 +355,8 @@ h1 em,h2 em {
   min-width: 0;
 }
 .input-with-unit span {
-  flex: 0 0 64px;
-  width: 64px;
+  flex: 0 0 76px;
+  width: 76px;
   font-family: var(--mono);
   font-size: 11px;
   color: #a69b86;
