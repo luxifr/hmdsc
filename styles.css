@@ -518,7 +518,7 @@ h1 em,h2 em {
 }
 .per-stein-icon .mini-stein {
   display: block;
-  width: 100%;
+  width: 32px;
   height: 100%;
 }
 .per-stein-display>div {
