@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171512" />
+    <meta name="description" content="A tiny, transparent calculator for the load behind the legendary Oktoberfest beer carry." />
+    <title>How Much Did She Carry?</title>
+    <style>
+@charset "UTF-8";
+:root{color-scheme:dark;--ink:#171512;--panel:#211e19;--panel-soft:#26221c;--paper:#f1e9d8;--muted:#a29a89;--dim:#777064;--gold:#e3b85f;--gold-pale:#f2d995;--rust:#9e4432;--line:#39342b;--sans:system-ui,-apple-system,"Segoe UI",sans-serif;--serif:Georgia,"Times New Roman",serif;--mono:ui-monospace,"SFMono-Regular",Consolas,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;background:var(--ink);color:var(--paper);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{color:inherit}.topbar{height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 max(calc((100vw - 1180px)/2),6.3vw);border-bottom:1px solid #ffffff12}.brand{display:flex;align-items:center;gap:12px;color:var(--paper);font-size:10px;font-weight:700;letter-spacing:.16em;text-decoration:none}.brand-mark{display:grid;place-items:center;width:27px;height:27px;border:1px solid var(--gold);color:var(--gold);font-family:var(--serif);font-size:17px}.top-note,.eyebrow,.scroll-link,.unit-switch,.result-label,.confidence-tag,.break-label,.range-labels,.form-actions,.art-footnote,footer{font-family:var(--mono);font-size:9px;letter-spacing:.11em}.top-note{display:flex;align-items:center;gap:9px;color:#b0a999}.live-dot,.confidence-tag span{width:6px;height:6px;border-radius:50%;background:#9dc18a;box-shadow:0 0 10px #9dc18a77}.hero{min-height:510px;max-width:1180px;margin:auto;padding:74px 30px 78px;display:grid;grid-template-columns:1fr .9fr;align-items:center;gap:50px}.eyebrow{color:#a9a190;margin:0 0 25px}.eyebrow span{color:var(--gold)}h1,h2{font-family:var(--serif);font-weight:600;letter-spacing:-.045em}h1{font-size:clamp(58px,7.1vw,88px);line-height:.98;margin:0;color:#f3ecde}h1 em,h2 em{font-weight:600;color:var(--gold);font-style:italic}.hero-description{max-width:420px;font-size:15px;line-height:1.8;color:#b6ad9c;margin:25px 0 29px}.scroll-link{display:inline-flex;gap:12px;align-items:center;text-decoration:none;color:var(--gold-pale);font-weight:600}.scroll-icon{display:grid;place-items:center;width:24px;height:24px;border:1px solid #e3b85f66;border-radius:50%;font-size:15px}.hero-art{height:375px;position:relative;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 56%,#5441274a 0,transparent 56%)}.art-ring{position:absolute;border:1px solid #d7b87520;border-radius:50%;width:310px;height:310px}.ring-two{width:390px;height:390px;border-color:#d7b87512}.hero-stein{z-index:1;width:230px;height:288px;filter:drop-shadow(0 18px 22px #0008);transform:rotate(-7deg);animation:float 5s ease-in-out infinite}.art-caption{position:absolute;top:48px;left:18px;color:#d5bb80;font-family:var(--mono);font-size:10px;line-height:1.8;letter-spacing:.13em}.art-caption span{color:#938b7c;font-size:8px}.art-stamp{position:absolute;right:35px;top:74px;width:67px;height:67px;border:1px solid #ddb65d80;border-radius:50%;display:grid;align-content:center;justify-items:center;color:var(--gold-pale);font-family:var(--serif);font-size:19px;line-height:.9;transform:rotate(9deg)}.art-stamp span{font-family:var(--mono);font-size:8px;letter-spacing:.12em;margin-top:6px}.art-footnote{position:absolute;bottom:33px;right:17px;text-align:right;color:#938b7c;line-height:1.8;font-size:8px}@keyframes float{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-8px) rotate(-5deg)}}.calculator-section{padding:78px max(calc((100vw - 1120px)/2),6.3vw) 86px;background:#1c1915;border-top:1px solid #ffffff0b;border-bottom:1px solid #ffffff0b}.section-heading{max-width:1120px;margin:0 auto 35px;display:flex;justify-content:space-between;align-items:end}.section-heading .eyebrow{margin-bottom:15px}.section-heading h2,.method-intro h2{font-size:43px;line-height:1.08;margin:0}.unit-switch{display:flex;padding:4px;border:1px solid var(--line);gap:3px}.unit-switch button{background:none;border:0;color:#9e9686;padding:9px 12px;font-size:9px;letter-spacing:.1em;cursor:pointer}.unit-switch button[aria-pressed=true]{background:#393126;color:var(--gold-pale)}.workspace{max-width:1120px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}.controls{padding:5px 28px 0 0}.control-row{display:grid;grid-template-columns:1fr 190px;gap:20px;align-items:center;padding:19px 0;border-bottom:1px solid var(--line)}.control-row label,.advanced-fields>label{font-size:13px;font-weight:600;color:#ece4d4}.stepper{display:flex;height:38px;border:1px solid #4a4438;align-items:center}.step-button{height:100%;width:38px;background:transparent;border:0;color:var(--gold);font-size:19px;cursor:pointer}.step-button:hover{background:#ffffff0a}.stepper input,.input-with-unit input{color:var(--paper);background:none;border:0;outline:0;text-align:center;width:100%;font-family:var(--mono);font-size:13px}.stepper input::-webkit-inner-spin-button,.input-with-unit input::-webkit-inner-spin-button{-webkit-appearance:none}.range-wrap{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px 10px}.range-wrap output{grid-column:2;color:var(--gold);font-family:var(--mono);font-size:12px}.range-wrap input{grid-column:1/-1;width:100%;accent-color:var(--gold);height:3px;cursor:pointer}.range-labels{grid-column:1/-1;display:flex;justify-content:space-between;color:#827b6f;font-size:8px;letter-spacing:0}.input-with-unit{display:flex;align-items:center;height:38px;border:1px solid #4a4438;padding:0 10px}.input-with-unit input{text-align:right;min-width:0}.input-with-unit span{font-family:var(--mono);font-size:11px;color:#a69b86;padding-left:7px}.advanced{border-bottom:1px solid var(--line)}.advanced summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;padding:19px 0;color:#c6bdad;font-size:12px}.advanced summary::-webkit-details-marker{display:none}.plus{font-size:16px;color:var(--gold);transition:transform .2s}.advanced[open] .plus{transform:rotate(45deg)}.advanced-fields{display:grid;grid-template-columns:1fr 140px;gap:9px 17px;padding:2px 0 19px;align-items:center}.advanced-fields>label{font-size:11px}.advanced-fields .input-with-unit{height:33px}.advanced-fields input{font-size:11px}.form-actions{display:flex;justify-content:space-between;margin-top:18px}.text-button{padding:8px 0;background:none;border:0;color:#a69d8d;font-size:9px;letter-spacing:.08em;cursor:pointer}.text-button:hover{color:var(--gold)}.result-card{position:relative;padding:28px 30px 21px;background:linear-gradient(145deg,#29251e,#211e19);border:1px solid #4a402e;box-shadow:0 14px 35px #0002;overflow:hidden}.result-card:before{position:absolute;content:"";right:-42px;top:-75px;width:190px;height:190px;border:1px solid #dfb86412;border-radius:50%;box-shadow:0 0 0 18px #dfb86408,0 0 0 38px #dfb86405}.result-top{display:flex;justify-content:space-between;align-items:center}.result-label{color:#a9a190}.confidence-tag{color:#a9a190;font-size:8px;display:flex;align-items:center;gap:7px}.confidence-tag span{width:5px;height:5px}.total-line{display:flex;align-items:baseline;gap:10px;margin-top:24px}.total-line strong{font-family:var(--serif);font-size:clamp(62px,6.4vw,78px);font-weight:600;letter-spacing:-.055em;line-height:1;color:var(--gold-pale)}.total-line>span{font-family:var(--mono);color:#c2b59a;font-size:14px}.pounds-note{font-family:var(--mono);font-size:11px;color:#a59c8a;margin:8px 0 21px}.result-divider{height:1px;background:#ffffff17}.breakdown{display:grid;grid-template-columns:1fr 1fr;padding:18px 0 14px}.breakdown-item{display:flex;align-items:center;gap:10px}.breakdown-item+ .breakdown-item{border-left:1px solid #ffffff17;padding-left:20px}.break-icon{font-size:18px;color:#d9ad57}.glass-icon{color:#b8c7c4}.breakdown-item div{display:grid;gap:5px}.break-label{font-size:8px;color:#9c9484}.breakdown-item strong{font-family:var(--mono);font-size:13px;font-weight:400;color:#e9dfcc}.visualizer{min-height:93px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px;padding:11px 5px;background:#181612;border:1px solid #ffffff0b;overflow:hidden}.mini-stein{width:25px;height:31px;flex:0 0 auto}.extra-count{font-family:var(--mono);font-size:11px;color:var(--gold);padding:7px}.result-foot{display:flex;justify-content:space-between;gap:10px;padding-top:14px;color:#aaa08d;font-family:var(--mono);font-size:9px}.result-foot span:last-child{color:#d2bd8c}.method-section{max-width:1120px;margin:auto;padding:88px 0 95px;display:grid;grid-template-columns:.8fr 1.2fr;gap:100px}.method-intro .eyebrow{margin-bottom:20px}.method-intro h2{font-size:47px}.method-intro>p:last-child{max-width:300px;color:#a9a190;font-size:13px;line-height:1.8;margin-top:24px}.method-content{padding-top:4px}.equation{display:grid;grid-template-columns:42px 1fr;gap:10px;padding:19px 0;border-bottom:1px solid var(--line)}.eq-number{font-family:var(--mono);font-size:10px;color:var(--gold);padding-top:3px}.eq-title{font-size:13px;color:#e8dfcf;font-weight:600}.equation p{margin:8px 0;font-size:11px;color:#a9a190;line-height:1.6}.equation p i{font-style:normal;color:#d3c5a5}.equation strong{font-family:var(--mono);font-size:11px;font-weight:400;color:#d9bd7e}.total-equation{border-color:#554a37}.total-equation strong{font-size:13px;color:var(--gold-pale)}.caveat{display:flex;gap:11px;margin:19px 0 0;color:#968e7e;font-size:11px;line-height:1.7}.caveat span{color:var(--gold)}footer{display:flex;justify-content:space-between;padding:22px max(calc((100vw - 1120px)/2),6.3vw);border-top:1px solid #ffffff12;color:#7c7569;font-size:8px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,15px);padding:12px 17px;background:#f1e9d8;color:#211e19;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 7px 30px #0006}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:900px){.hero{padding-inline:7vw;gap:15px}.calculator-section{padding-inline:5vw}.workspace{gap:18px}.controls{padding-right:12px}.control-row{grid-template-columns:1fr 160px;gap:12px}.result-card{padding:24px 22px 18px}.method-section{padding:75px 6vw;gap:45px}.method-section{grid-template-columns:.8fr 1.2fr}}
+@media(max-width:650px){.topbar{height:60px;padding:0 20px}.top-note{font-size:8px}.hero{min-height:0;padding:58px 24px 43px;grid-template-columns:1fr;gap:0}.hero-copy{position:relative;z-index:2}.hero h1{font-size:66px}.hero-description{max-width:400px;font-size:14px;margin:20px 0}.hero-art{height:290px;margin-top:-13px}.hero-stein{width:195px;height:250px}.art-ring{width:260px;height:260px}.ring-two{width:320px;height:320px}.art-caption{top:26px;left:12px}.art-stamp{right:25px;top:38px}.art-footnote{bottom:20px}.calculator-section{padding:57px 22px 62px}.section-heading{align-items:center;margin-bottom:22px}.section-heading h2{font-size:35px}.section-heading .eyebrow{font-size:8px}.unit-switch button{padding:8px 9px;font-size:8px}.workspace{grid-template-columns:1fr;gap:20px}.controls{padding:0}.control-row{grid-template-columns:1fr 155px;padding:16px 0}.control-row label{font-size:12px}.result-card{padding:24px 20px 18px}.total-line strong{font-size:72px}.visualizer{min-height:80px}.method-section{grid-template-columns:1fr;gap:27px;padding:64px 23px 68px}.method-intro h2{font-size:40px}.method-intro>p:last-child{max-width:430px;margin-top:17px}.method-content{padding:0}footer{padding:19px 22px;font-size:7px;gap:15px}footer span:last-child{text-align:right}}
+@media(max-width:380px){.control-row{grid-template-columns:1fr 130px}.hero h1{font-size:58px}.section-heading h2{font-size:31px}.result-foot{font-size:8px}.confidence-tag{font-size:7px}.top-note{letter-spacing:.04em}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+    </style>
+
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="How Much Did She Carry? home"><span class="brand-mark">H</span><span>THE CARRY CALCULATOR</span></a>
+      <div class="top-note"><span class="live-dot"></span> ALL MATH. NO GUESSWORK.</div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> &nbsp; THE GREAT BEER-STEIN QUESTION</p>
+          <h1 id="page-title">How much<br />did she <em>carry?</em></h1>
+          <p class="hero-description">A dozen Maß in one trip is a great video. It’s also a surprisingly interesting bit of physics. Let’s do the math properly.</p>
+          <a class="scroll-link" href="#calculator"><span class="scroll-icon">↓</span> BUILD YOUR ESTIMATE</a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-ring ring-one"></div><div class="art-ring ring-two"></div>
+          <div class="art-caption">MÜNCHEN<br /><span>48° 08′ N &nbsp; 11° 34′ E</span></div>
+          <svg class="hero-stein" viewBox="0 0 240 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M170 85h24c24 0 37 16 37 39v53c0 23-13 39-37 39h-24" stroke="#D8C69F" stroke-width="13"/>
+            <path d="M45 76h131l-12 173H58L45 76Z" fill="#B77932" stroke="#E4C781" stroke-width="5"/>
+            <path d="M50 111h121l-9 127H59L50 111Z" fill="#E0A743"/>
+            <path d="M42 82c0-19 13-32 33-32h72c20 0 33 13 33 32v17H42V82Z" fill="#F0E9D9"/>
+            <path d="M48 82c2-9 10-15 21-15h83c11 0 19 6 21 15" stroke="#FFF9ED" stroke-width="7" stroke-linecap="round"/>
+            <path d="M71 128v67m24-67v67m24-67v67m24-67v67" stroke="#8F592A" stroke-opacity=".45" stroke-width="3"/>
+            <path d="M60 216h103" stroke="#F6D77F" stroke-opacity=".7" stroke-width="3"/>
+            <circle cx="110" cy="221" r="18" fill="#8B332B"/><path d="M100 221h20m-10-10v20" stroke="#F2D8A6" stroke-width="2"/>
+          </svg>
+          <div class="art-stamp">1 L<br /><span>MAẞ</span></div>
+          <p class="art-footnote">THE ORIGINAL UNIT OF<br />SERIOUS BEER BUSINESS</p>
+        </div>
+      </section>
+
+      <section class="calculator-section" id="calculator" aria-labelledby="calculator-title">
+        <div class="section-heading">
+          <div><p class="eyebrow"><span>02</span> &nbsp; SET THE SCENE</p><h2 id="calculator-title">Every Maß <em>counts.</em></h2></div>
+          <div class="unit-switch" role="group" aria-label="Display units"><button type="button" data-unit="metric" aria-pressed="true">METRIC</button><button type="button" data-unit="imperial" aria-pressed="false">IMPERIAL</button></div>
+        </div>
+
+        <div class="workspace">
+          <div class="controls" id="controls">
+            <div class="control-row count-row">
+              <div><label for="stein-count">Number of Maßkrüge</label></div>
+              <div class="stepper"><button type="button" class="step-button" data-step="-1" aria-label="Remove one stein">−</button><input id="stein-count" name="count" type="number" min="1" max="40" step="1" value="12" inputmode="numeric"/><button type="button" class="step-button" data-step="1" aria-label="Add one stein">+</button></div>
+            </div>
+            <div class="control-row">
+              <div><label for="fill">How full are they?</label></div>
+              <div class="range-wrap"><output id="fill-output" for="fill">100%</output><input id="fill" name="fill" type="range" min="70" max="100" value="100" step="1"/><div class="range-labels"><span>70% · generous foam</span><span>100% · brimful</span></div></div>
+            </div>
+            <div class="control-row">
+              <div><label for="beer-volume">Beer per stein</label></div>
+              <div class="input-with-unit"><input id="beer-volume" name="volume" type="number" min="0.1" max="2" step="0.05" value="1"/><span id="volume-unit">L</span></div>
+            </div>
+            <details class="advanced">
+              <summary><span>Fine-tune the assumptions</span><span class="plus">＋</span></summary>
+              <div class="advanced-fields">
+                <label for="mug-mass">Empty glass weight</label><div class="input-with-unit"><input id="mug-mass" name="mugMass" type="number" min="0.1" max="5" step="0.05" value="1.3"/><span id="mass-unit">kg</span></div>
+                <label for="density">Beer density</label><div class="input-with-unit"><input id="density" name="density" type="number" min="0.8" max="1.2" step="0.001" value="0.998"/><span>kg/L</span></div>
+                <label for="uncertainty">Glass weight uncertainty</label><div class="input-with-unit"><input id="uncertainty" name="uncertainty" type="number" min="0" max="1" step="0.05" value="0.1"/><span id="uncertainty-unit">± kg</span></div>
+              </div>
+            </details>
+            <div class="form-actions"><button type="button" class="text-button" id="reset">↺ &nbsp; RESET DEFAULTS</button><button type="button" class="text-button" id="share">↗ &nbsp; COPY LINK</button></div>
+          </div>
+
+          <section class="result-card" aria-live="polite" aria-label="Estimated carrying load">
+            <div class="result-top"><span class="result-label">ESTIMATED TOTAL LOAD</span><span class="confidence-tag"><span></span> YOUR SCENARIO</span></div>
+            <div class="total-line"><strong id="total">—</strong><span id="total-unit">kg</span></div>
+            <p class="pounds-note" id="secondary-total">—</p>
+            <div class="result-divider"></div>
+            <div class="breakdown">
+              <div class="breakdown-item"><span class="break-icon beer-icon">◒</span><div><span class="break-label">THE BEER</span><strong id="beer-total">—</strong></div></div>
+              <div class="breakdown-item"><span class="break-icon glass-icon">▤</span><div><span class="break-label">THE GLASSWARE</span><strong id="glass-total">—</strong></div></div>
+            </div>
+            <div class="visualizer" id="visualizer" aria-label="Illustration of the steins being carried"></div>
+            <div class="result-foot"><span id="per-stein">— per stein</span><span id="range">Likely range: —</span></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="method-section" aria-labelledby="method-title">
+        <div class="method-intro"><p class="eyebrow"><span>03</span> &nbsp; SHOW YOUR WORK</p><h2 id="method-title">Not just a<br /><em>back-of-napkin</em><br />calculation.</h2><p>We separate the beer from the glass, make our assumptions visible, and give you a plausible range—not a fake precision.</p></div>
+        <div class="method-content">
+          <div class="equation"><span class="eq-number">01</span><div><span class="eq-title">Beer mass</span><p><i>number of steins</i> × <i>volume per stein</i> × <i>fill fraction</i> × <i>beer density</i></p><strong id="beer-equation">12 × 1.00 L × 100% × 0.998 kg/L = 11.98 kg</strong></div></div>
+          <div class="equation"><span class="eq-number">02</span><div><span class="eq-title">Glass mass</span><p><i>number of steins</i> × <i>empty glass weight</i></p><strong id="glass-equation">12 × 1.30 kg = 15.60 kg</strong></div></div>
+          <div class="equation total-equation"><span class="eq-number">03</span><div><span class="eq-title">Total carried</span><p>beer mass + glass mass</p><strong id="total-equation">11.98 kg + 15.60 kg = 27.58 kg</strong></div></div>
+          <p class="caveat"><span>✳</span> This is the load in the glasses only. It excludes tray weight, movement, grip forces, and the very real challenge of keeping everything upright.</p>
+        </div>
+      </section>
+      <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span></footer>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+(() => {
+  const $ = (selector) => document.querySelector(selector);
+  const fields = {
+    count: $('#stein-count'), fill: $('#fill'), volume: $('#beer-volume'),
+    mugMass: $('#mug-mass'), density: $('#density'), uncertainty: $('#uncertainty'),
+  };
+  const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.3, density: 0.998, uncertainty: 0.1 };
+  const LB_PER_KG = 2.2046226218;
+  const OZ_PER_L = 33.8140227;
+  let unit = 'metric';
+  let toastTimer;
+
+  function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+  function readNumber(field, fallback) {
+    const value = field.valueAsNumber;
+    return Number.isFinite(value) ? value : fallback;
+  }
+  function readState() {
+    const volume = readNumber(fields.volume, defaults.volume * (unit === 'imperial' ? OZ_PER_L : 1)) / (unit === 'imperial' ? OZ_PER_L : 1);
+    const mugMass = readNumber(fields.mugMass, defaults.mugMass * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
+    const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
+    return {
+      count: clamp(Math.round(readNumber(fields.count, defaults.count)), 1, 40),
+      fill: clamp(readNumber(fields.fill, defaults.fill), 70, 100),
+      volume: clamp(volume, 0.1, 2),
+      mugMass: clamp(mugMass, 0.1, 5),
+      density: clamp(readNumber(fields.density, defaults.density), 0.8, 1.2),
+      uncertainty: clamp(uncertainty, 0, 1),
+    };
+  }
+  function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
+  function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
+  function setInputValues(state) {
+    fields.count.value = state.count;
+    fields.fill.value = state.fill;
+    fields.volume.value = String(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
+    fields.mugMass.value = String(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
+    fields.density.value = String(state.density);
+    fields.uncertainty.value = String(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
+  }
+  function stateFromSearch() {
+    const params = new URLSearchParams(location.search);
+    if (![...params.keys()].length) return null;
+    const state = { ...defaults };
+    for (const key of Object.keys(defaults)) {
+      if (params.has(key)) {
+        const value = Number(params.get(key));
+        if (Number.isFinite(value)) state[key] = value;
+      }
+    }
+    state.count = clamp(Math.round(state.count), 1, 40);
+    state.fill = clamp(state.fill, 70, 100);
+    state.volume = clamp(state.volume, 0.1, 2);
+    state.mugMass = clamp(state.mugMass, 0.1, 5);
+    state.density = clamp(state.density, 0.8, 1.2);
+    state.uncertainty = clamp(state.uncertainty, 0, 1);
+    return state;
+  }
+  function steinSvg() {
+    return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
+  }
+  function render() {
+    const s = readState();
+    const beer = s.count * s.volume * (s.fill / 100) * s.density;
+    const glass = s.count * s.mugMass;
+    const total = beer + glass;
+    const margin = s.count * s.uncertainty;
+    const low = Math.max(0, total - margin);
+    const high = total + margin;
+    $('#fill-output').value = `${s.fill}%`;
+    $('#fill-output').textContent = `${s.fill}%`;
+    $('#total').textContent = pretty(unit === 'imperial' ? total * LB_PER_KG : total, 1);
+    $('#total-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
+    $('#secondary-total').textContent = `That’s ${pretty(unit === 'imperial' ? total : total * LB_PER_KG, 1)} ${unit === 'imperial' ? 'kg' : 'lb'} on the other side of the pond`;
+    $('#beer-total').textContent = displayMass(beer);
+    $('#glass-total').textContent = displayMass(glass);
+    $('#per-stein').textContent = `${displayMass(total / s.count)} per stein`;
+    $('#range').textContent = `Glass-weight range: ${pretty(unit === 'imperial' ? low * LB_PER_KG : low, 1)}–${pretty(unit === 'imperial' ? high * LB_PER_KG : high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
+    $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
+    $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
+    $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;
+    const visible = Math.min(s.count, 18);
+    $('#visualizer').innerHTML = `${steinSvg().repeat(visible)}${s.count > visible ? `<span class="extra-count">+${s.count - visible}</span>` : ''}`;
+    $('#visualizer').setAttribute('aria-label', `${s.count} beer steins`);
+    $('#volume-unit').textContent = unit === 'imperial' ? 'fl oz' : 'L';
+    $('#mass-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
+    $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± kg';
+    try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
+  }
+  function toast(message) {
+    const element = $('#toast');
+    element.textContent = message;
+    element.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => element.classList.remove('show'), 2300);
+  }
+
+  const fromUrl = stateFromSearch();
+  let initialState = fromUrl;
+  if (!initialState) {
+    try { initialState = JSON.parse(localStorage.getItem('carry-calc')); } catch { /* Use defaults for unavailable or invalid local storage. */ }
+  }
+  setInputValues({ ...defaults, ...(initialState || {}) });
+  render();
+
+  Object.values(fields).forEach((field) => field.addEventListener('input', render));
+  document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
+    fields.count.value = clamp(readState().count + Number(button.dataset.step), 1, 40);
+    render();
+  }));
+  document.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => {
+    if (unit === button.dataset.unit) return;
+    const state = readState();
+    unit = button.dataset.unit;
+    document.querySelectorAll('[data-unit]').forEach((toggle) => toggle.setAttribute('aria-pressed', String(toggle === button)));
+    setInputValues(state);
+    render();
+  }));
+  $('#reset').addEventListener('click', () => {
+    setInputValues(defaults);
+    history.replaceState(null, '', location.pathname);
+    render();
+    toast('Back to the standard scenario. Prost!');
+  });
+  $('#share').addEventListener('click', async () => {
+    const state = readState();
+    const params = new URLSearchParams(Object.entries(state).map(([key, value]) => [key, String(Number(value.toFixed(3)))]));
+    const url = `${location.origin}${location.pathname}?${params}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      history.replaceState(null, '', `?${params}`);
+      toast('Scenario link copied to clipboard.');
+    } catch {
+      history.replaceState(null, '', `?${params}`);
+      toast('Scenario link ready in your address bar.');
+    }
+  });
+})();
+
+  </script>
+  </body>
+</html>
