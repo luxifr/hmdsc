@@ -10,6 +10,8 @@ test('announces the total without making the entire result card live', async ({ 
 
 test('shows sourced median assumptions as the initial defaults', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('#fill')).toHaveValue('90');
+  await expect(page.locator('#fill-output')).toHaveText('90%');
   await expect(page.locator('#mug-mass')).toHaveValue('1.32');
   expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
   await expect(page.locator('#uncertainty')).toHaveValue('50');
@@ -19,10 +21,10 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#uncertainty-unit')).toHaveText('± g');
   await expect(page.locator('#density-uncertainty-unit')).toHaveText('± g/L');
   await expect(page.locator('#beer-uncertainty')).toHaveCount(0);
-  await expect(page.locator('#total')).toHaveText('28.0');
+  await expect(page.locator('#total')).toHaveText('26.7');
   await expect(page.locator('#total-uncertainty')).toHaveText('±0.6');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±0.6 kg');
-  await expect(page.locator('#per-stein')).toHaveText('2.33 kg');
+  await expect(page.locator('#per-stein')).toHaveText('2.23 kg');
   await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
   const heights = await page.evaluate(() => ({
     stein: document.querySelector('#per-stein-icon svg').getBoundingClientRect().height,
@@ -30,7 +32,7 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   }));
   expect(Math.abs(heights.stein - heights.text)).toBeLessThanOrEqual(1);
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.05 kg');
-  await expect(page.locator('#secondary-total')).toHaveText("That's 61.6 ±1.4 lb on the other side of the pond");
+  await expect(page.locator('#secondary-total')).toHaveText("That's 59.0 ±1.4 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
 });
@@ -97,8 +99,8 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(fill).toHaveAttribute('aria-describedby', 'fill-output');
   await expect(fill).toHaveCSS('opacity', '0');
   await expect(page.locator('.fill-handle')).toHaveCount(0);
-  await expect(beer).toHaveAttribute('y', '28');
-  await expect(foam).toHaveAttribute('height', '0');
+  expect(Number(await beer.getAttribute('y'))).toBeCloseTo(34.6);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(6.6);
   await expect(capBubbles).toHaveCount(9);
   await expect(beerBubbles).toHaveCount(18);
   await expect(page.locator('#fill-foam-cap')).toHaveAttribute('fill', '#f3ead6');
@@ -160,7 +162,7 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
 
   await page.getByRole('button', { name: /reset defaults/i }).click();
   await expect(page.locator('#stein-count')).toHaveValue('12');
-  await expect(page.locator('#total')).toHaveText('28.0');
+  await expect(page.locator('#total')).toHaveText('26.7');
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
 
@@ -218,7 +220,7 @@ test('scenario saving is opt-in, restores when enabled, and clears when disabled
   expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
   await page.reload();
   await expect(page.locator('#stein-count')).toHaveValue('12');
-  await expect(page.locator('#fill')).toHaveValue('100');
+  await expect(page.locator('#fill')).toHaveValue('90');
 
   await remember.check();
   await page.locator('#stein-count').fill('9');
@@ -230,7 +232,7 @@ test('scenario saving is opt-in, restores when enabled, and clears when disabled
 
   await page.goto('/?count=5');
   await expect(page.locator('#stein-count')).toHaveValue('5');
-  await expect(page.locator('#fill')).toHaveValue('100');
+  await expect(page.locator('#fill')).toHaveValue('90');
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(5);
 
   await remember.uncheck();
@@ -259,9 +261,9 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#density-uncertainty-unit')).toHaveText('± lb/gal');
   await expect(page.locator('#total-uncertainty')).toHaveText('±1.4');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.4 lb');
-  await expect(page.locator('#per-stein')).toHaveText('5.14 lb');
+  await expect(page.locator('#per-stein')).toHaveText('4.91 lb');
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.11 lb');
-  await expect(page.locator('#secondary-total')).toHaveText("That's 28.0 ±0.6 kg on the other side of the pond");
+  await expect(page.locator('#secondary-total')).toHaveText("That's 26.7 ±0.6 kg on the other side of the pond");
   expect(Number(await volume.inputValue())).toBe(33.814);
   expect(Number(await mugMass.inputValue())).toBe(2.91);
   expect(Number(await uncertainty.inputValue())).toBe(0.11);
@@ -413,11 +415,11 @@ test('empty count uses the minimum without jumping to defaults and zero is norma
 
   await count.fill('');
   await expect(count).toHaveValue('');
-  await expect(page.locator('#total')).toHaveText('2.3');
+  await expect(page.locator('#total')).toHaveText('2.2');
 
   await count.fill('0');
   await expect(count).toHaveValue('1');
-  await expect(page.locator('#total')).toHaveText('2.3');
+  await expect(page.locator('#total')).toHaveText('2.2');
 });
 
 test('fine-tune stepper buttons update each value and respect input bounds', async ({ page }) => {
@@ -449,7 +451,7 @@ test('stein stepper recalculates and respects count limits', async ({ page }) =>
   await page.goto('/');
   await page.getByRole('button', { name: 'Add one stein' }).click();
   await expect(page.locator('#stein-count')).toHaveValue('13');
-  await expect(page.locator('#total')).toHaveText('30.3');
+  await expect(page.locator('#total')).toHaveText('29.0');
 
   await page.goto('/?count=40');
   await page.getByRole('button', { name: 'Add one stein' }).click();
