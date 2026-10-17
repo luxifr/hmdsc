@@ -75,7 +75,10 @@
 
           <section class="result-card" aria-label="Estimated carrying load">
             <div class="result-top"><span class="result-label">ESTIMATED TOTAL LOAD</span><span class="confidence-tag"><span></span> YOUR SCENARIO</span></div>
-            <div class="total-line"><strong id="total" aria-live="polite">—</strong><span id="total-unit">kg</span><span id="total-uncertainty" class="total-uncertainty">±—</span></div>
+            <div class="total-line">
+              <div class="total-primary"><strong id="total" aria-live="polite">—</strong><span id="total-unit">kg</span><span id="total-uncertainty" class="total-uncertainty">±—</span></div>
+              <div class="per-stein"><span class="per-stein-label">PER STEIN</span><div><strong id="per-stein">—</strong><span id="per-stein-uncertainty" class="per-stein-uncertainty">±—</span></div></div>
+            </div>
             <p class="pounds-note" id="secondary-total">—</p>
             <div class="result-divider"></div>
             <div class="breakdown">
@@ -83,7 +86,6 @@
               <div class="breakdown-item"><span class="break-icon glass-icon">▤</span><div><span class="break-label">THE GLASSWARE</span><strong id="glass-total">—</strong></div></div>
             </div>
             <div class="visualizer" id="visualizer" role="img" aria-label="Illustration of the steins being carried"></div>
-            <div class="result-foot"><span id="per-stein">— per stein</span></div>
           </section>
         </div>
       </section>

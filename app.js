@@ -76,7 +76,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     $('#secondary-total').textContent = `That's ${pretty(unit === 'imperial' ? total : total * LB_PER_KG, 1)} ${unit === 'imperial' ? 'kg' : 'lb'} on the other side of the pond`;
     $('#beer-total').textContent = displayMass(beer);
     $('#glass-total').textContent = displayMass(glass);
-    $('#per-stein').textContent = `${displayMass(total / s.count)} per stein`;
+    $('#per-stein').textContent = displayMass(total / s.count);
+    $('#per-stein-uncertainty').textContent = `±${displayMass(s.uncertainty)}`;
+    $('#per-stein-uncertainty').setAttribute('aria-label', `Per-stein uncertainty: ±${displayMass(s.uncertainty)}`);
     $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
     $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
     $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;

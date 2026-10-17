@@ -466,11 +466,18 @@ h1 em,h2 em {
 }
 .total-line {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
   margin-top: 24px;
 }
-.total-line strong {
+.total-primary {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+.total-primary>strong {
   font-family: var(--serif);
   font-size: clamp(62px,6.4vw,78px);
   font-weight: 600;
@@ -478,15 +485,46 @@ h1 em,h2 em {
   line-height: 1;
   color: var(--gold-pale);
 }
-.total-line>span {
+.total-primary>span {
   font-family: var(--mono);
   color: #c2b59a;
   font-size: 14px;
 }
-.total-line .total-uncertainty {
+.total-primary .total-uncertainty {
   color: #a59c8a;
   font-size: 11px;
   white-space: nowrap;
+}
+.per-stein {
+  display: grid;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding-bottom: 5px;
+  text-align: right;
+}
+.per-stein-label {
+  color: #a9a190;
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+.per-stein>div {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+.per-stein strong,
+.per-stein-uncertainty {
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.per-stein strong {
+  color: #e9dfcc;
+  font-size: 13px;
+  font-weight: 400;
+}
+.per-stein-uncertainty {
+  color: #a59c8a;
+  font-size: 10px;
 }
 .pounds-note {
   font-family: var(--mono);
@@ -555,18 +593,6 @@ h1 em,h2 em {
   font-size: 11px;
   color: var(--gold);
   padding: 7px;
-}
-.result-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 14px;
-  color: #aaa08d;
-  font-family: var(--mono);
-  font-size: 9px;
-}
-.result-foot span:last-child {
-  color: #d2bd8c;
 }
 .method-section {
   max-width: 1120px;
@@ -802,7 +828,7 @@ footer {
   .result-card {
     padding: 24px 20px 18px;
   }
-  .total-line strong {
+  .total-primary>strong {
     font-size: 72px;
   }
   .visualizer {
@@ -833,6 +859,21 @@ footer {
   }
 }
 @media (max-width:380px) {
+  .total-line {
+    gap: 8px;
+  }
+  .total-primary {
+    gap: 6px;
+  }
+  .total-primary>strong {
+    font-size: clamp(48px,15vw,56px);
+  }
+  .total-primary>span {
+    font-size: 12px;
+  }
+  .total-primary .total-uncertainty {
+    font-size: 9px;
+  }
   .control-row {
     grid-template-columns: minmax(0,1fr) 130px;
   }
@@ -844,9 +885,6 @@ footer {
   }
   .section-heading h2 {
     font-size: 31px;
-  }
-  .result-foot {
-    font-size: 8px;
   }
   .confidence-tag {
     font-size: 7px;
