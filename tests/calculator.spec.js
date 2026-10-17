@@ -8,6 +8,15 @@ test('announces the total without making the entire result card live', async ({ 
   await expect(page.locator('#visualizer')).toHaveAttribute('aria-label', '12 beer steins');
 });
 
+test('shows sourced median assumptions as the initial defaults', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#mug-mass')).toHaveValue('1.32');
+  expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
+  await expect(page.locator('#density')).toHaveValue('1.01');
+  await expect(page.locator('#total')).toHaveText('28.0');
+  await expect(page.locator('.assumption-note a')).toHaveCount(8);
+});
+
 test('uses a valid inline SVG favicon', async ({ page }) => {
   await page.goto('/');
   const favicon = page.locator('link[rel="icon"]');
@@ -35,7 +44,7 @@ test('beer density switches units and preserves its value', async ({ page }) => 
   await expect(page.locator('#density-unit')).toHaveText('kg/L');
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
   await expect(page.locator('#density-unit')).toHaveText('lb/US gal');
-  expect(Number(await density.inputValue())).toBeCloseTo(0.998 * 2.2046226218 * 3.785411784, 3);
+  expect(Number(await density.inputValue())).toBeCloseTo(1.01 * 2.2046226218 * 3.785411784, 3);
 
   const imperialDensity = 0.95 * 2.2046226218 * 3.785411784;
   await density.fill(String(imperialDensity));
@@ -51,7 +60,7 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
 
   await page.getByRole('button', { name: /reset defaults/i }).click();
   await expect(page.locator('#stein-count')).toHaveValue('12');
-  await expect(page.locator('#total')).toHaveText('27.6');
+  await expect(page.locator('#total')).toHaveText('28.0');
   await expect(page).toHaveURL(/\/$/);
 });
 
@@ -114,7 +123,7 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#mass-unit')).toHaveText('lb');
   await expect(page.locator('#uncertainty-unit')).toHaveText('± lb');
   expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
-  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.3 * 2.2046226218, 6);
+  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32 * 2.2046226218, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1 * 2.2046226218, 6);
 
   await page.getByRole('button', { name: 'METRIC' }).click();
@@ -122,7 +131,7 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#mass-unit')).toHaveText('kg');
   await expect(page.locator('#uncertainty-unit')).toHaveText('± kg');
   expect(Number(await volume.inputValue())).toBeCloseTo(1, 6);
-  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.3, 6);
+  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1, 6);
 });
 
@@ -143,7 +152,7 @@ test('stein stepper recalculates and respects count limits', async ({ page }) =>
   await page.goto('/');
   await page.getByRole('button', { name: 'Add one stein' }).click();
   await expect(page.locator('#stein-count')).toHaveValue('13');
-  await expect(page.locator('#total')).toHaveText('29.9');
+  await expect(page.locator('#total')).toHaveText('30.3');
 
   await page.goto('/?count=40');
   await page.getByRole('button', { name: 'Add one stein' }).click();

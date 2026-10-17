@@ -629,6 +629,15 @@ h1 em,h2 em {
 .caveat span {
   color: var(--gold);
 }
+.assumption-note {
+  margin: 14px 0 0;
+  color: #7c7569;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.assumption-note a {
+  color: #b9a77d;
+}
 footer {
   display: flex;
   justify-content: space-between;

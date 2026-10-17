@@ -1,4 +1,4 @@
-export const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.3, density: 0.998, uncertainty: 0.1 };
+export const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.32, density: 1.01, uncertainty: 0.1 };
 export const LB_PER_KG = 2.2046226218;
 
 export function clamp(value, min, max) {

@@ -47,7 +47,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     fields.volume.step = unit === 'imperial' ? (0.05 * volumeFactor).toFixed(9) : 0.05;
     fields.mugMass.min = 0.1 * massFactor;
     fields.mugMass.max = 5 * massFactor;
-    fields.mugMass.step = 0.05 * massFactor;
+    fields.mugMass.step = 0.01 * massFactor;
     fields.uncertainty.min = 0;
     fields.uncertainty.max = 1 * massFactor;
     fields.uncertainty.step = 0.05 * massFactor;

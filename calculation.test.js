@@ -4,9 +4,9 @@ import { computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } fro
 
 test('default scenario computes the expected metric load', () => {
   const load = computeLoad(defaults);
-  assert.equal(Number(load.totalKg.toFixed(2)), 27.58);
-  assert.equal(Number(load.beerKg.toFixed(2)), 11.98);
-  assert.equal(Number(load.glassKg.toFixed(2)), 15.6);
+  assert.equal(Number(load.totalKg.toFixed(2)), 27.96);
+  assert.equal(Number(load.beerKg.toFixed(2)), 12.12);
+  assert.equal(Number(load.glassKg.toFixed(2)), 15.84);
 });
 
 test('imperial display converts the total and converts back without loss', () => {

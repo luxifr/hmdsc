@@ -35,7 +35,7 @@ development-only; the published calculator remains static and dependency-free.
 - Beer mass = count × volume × fill fraction × beer density.
 - Glass mass = count × empty glass mass.
 - Total load = beer mass + glass mass.
-- Defaults use 0.998 kg/L beer density and 1.3 kg per empty glass. The displayed total-load range applies the configurable per-glass uncertainty (±0.1 kg by default) across all steins; it is a scenario range, not a statistical confidence interval.
+- Beer density defaults to 1.010 kg/L, the midpoint of an estimated 1.008–1.012 kg/L range derived from BJCP Festbier/Märzen final-gravity ranges and water density at 20 °C. Empty glass weight defaults to 1.32 kg, the midpoint of comparable 1 L glass Maßkrüge weighing 1.27–1.37 kg. The page footnote links to the source ranges and product examples. The displayed total-load range applies the configurable per-glass uncertainty (±0.1 kg by default) across all steins; it is a scenario range, not a statistical confidence interval.
 - Tray weight, motion, grip forces, and balance are not included.
 
 Metric/imperial display, adjustable assumptions, the calculator scenario saved locally, and shareable scenario links are provided without a framework or runtime dependency. The selected display unit is not saved. The beer-density input follows the selected system: kg/L in metric and lb/US gal in imperial; switching units preserves the underlying density.
