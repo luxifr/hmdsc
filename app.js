@@ -5,6 +5,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   const fields = {
     count: $('#stein-count'), fill: $('#fill'), volume: $('#beer-volume'),
     mugMass: $('#mug-mass'), density: $('#density'), uncertainty: $('#uncertainty'),
+    densityUncertainty: $('#density-uncertainty'),
   };
   const OZ_PER_L = 33.8140227;
   const DENSITY_LB_PER_US_GAL_PER_KG_PER_L = LB_PER_KG * 3.785411784;
@@ -20,7 +21,8 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     const volume = readNumber(fields.volume, defaults.volume * (unit === 'imperial' ? OZ_PER_L : 1)) / (unit === 'imperial' ? OZ_PER_L : 1);
     const mugMass = readNumber(fields.mugMass, defaults.mugMass * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
     const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
-    const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
+    const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * 1000) / 1000;
+    const densityUncertainty = readNumber(fields.densityUncertainty, defaults.densityUncertainty * 1000000) / 1000000;
     return normalizeState({
       count: readNumber(fields.count, 1),
       fill: readNumber(fields.fill, defaults.fill),
@@ -28,6 +30,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
       mugMass,
       density: readNumber(fields.density, defaults.density * densityFactor) / densityFactor,
       uncertainty,
+      densityUncertainty,
     });
   }
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
@@ -39,7 +42,8 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     fields.volume.value = inputValue(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
     fields.mugMass.value = inputValue(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
     fields.density.value = inputValue(state.density * (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1));
-    fields.uncertainty.value = inputValue(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
+    fields.uncertainty.value = inputValue(state.uncertainty * 1000);
+    fields.densityUncertainty.value = inputValue(state.densityUncertainty * 1000000);
   }
   function updateInputConstraints() {
     const volumeFactor = unit === 'imperial' ? OZ_PER_L : 1;
@@ -51,12 +55,15 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     fields.mugMass.max = 5 * massFactor;
     fields.mugMass.step = 0.01 * massFactor;
     fields.uncertainty.min = 0;
-    fields.uncertainty.max = 1 * massFactor;
-    fields.uncertainty.step = 0.05 * massFactor;
+    fields.uncertainty.max = 1000;
+    fields.uncertainty.step = 1;
     const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
     fields.density.min = 0.8 * densityFactor;
     fields.density.max = 1.2 * densityFactor;
     fields.density.step = 0.001 * densityFactor;
+    fields.densityUncertainty.min = 0;
+    fields.densityUncertainty.max = 100000;
+    fields.densityUncertainty.step = 1;
   }
   function steinSvg() {
     return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
@@ -83,8 +90,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     $('#glass-total').textContent = displayMass(glass);
     $('#per-stein').textContent = displayMass(total / s.count);
     $('#per-stein-icon').innerHTML = steinSvg();
-    $('#per-stein-uncertainty').textContent = `±${displayMass(s.uncertainty)}`;
-    $('#per-stein-uncertainty').setAttribute('aria-label', `Per-stein uncertainty: ±${displayMass(s.uncertainty)}`);
+    const perSteinUncertainty = s.uncertainty + s.volume * (s.fill / 100) * s.densityUncertainty;
+    $('#per-stein-uncertainty').textContent = `±${displayMass(perSteinUncertainty)}`;
+    $('#per-stein-uncertainty').setAttribute('aria-label', `Per-stein uncertainty: ±${displayMass(perSteinUncertainty)}`);
     $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
     $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
     $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;
@@ -93,8 +101,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     $('#visualizer').setAttribute('aria-label', `${s.count} beer steins`);
     $('#volume-unit').textContent = unit === 'imperial' ? 'fl oz' : 'L';
     $('#mass-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
-    $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± kg';
+    $('#uncertainty-unit').textContent = '± g';
     $('#density-unit').textContent = unit === 'imperial' ? 'lb/US gal' : 'kg/L';
+    $('#density-uncertainty-unit').textContent = '± mg/L';
     try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
   }
   function toast(message) {
@@ -118,9 +127,12 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     render({ ...scenario, [key]: edited[key] });
   }));
   document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
-    const state = { ...scenario, count: clamp(scenario.count + Number(button.dataset.step), 1, 40) };
-    fields.count.value = state.count;
-    render(state);
+    const field = button.dataset.stepInput ? $(`#${button.dataset.stepInput}`) : fields.count;
+    const min = Number(field.min);
+    const max = Number(field.max);
+    const step = Number(field.step);
+    field.value = String(Number(clamp(readNumber(field, min) + Number(button.dataset.step) * step, min, max).toFixed(9)));
+    field.dispatchEvent(new Event('input', { bubbles: true }));
   }));
   document.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => {
     if (unit === button.dataset.unit) return;

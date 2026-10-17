@@ -1,4 +1,4 @@
-export const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.32, density: 1.01, uncertainty: 0.1 };
+export const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.32, density: 1.01, uncertainty: 0.05, densityUncertainty: 0.002 };
 export const LB_PER_KG = 2.2046226218;
 
 export function clamp(value, min, max) {
@@ -7,6 +7,7 @@ export function clamp(value, min, max) {
 
 export function normalizeState(values = {}) {
   const state = { ...defaults, ...values };
+  delete state.beerUncertainty;
   for (const key of Object.keys(defaults)) {
     if (!Number.isFinite(state[key])) state[key] = defaults[key];
   }
@@ -16,6 +17,7 @@ export function normalizeState(values = {}) {
   state.mugMass = clamp(state.mugMass, 0.1, 5);
   state.density = clamp(state.density, 0.8, 1.2);
   state.uncertainty = clamp(state.uncertainty, 0, 1);
+  state.densityUncertainty = clamp(state.densityUncertainty, 0, 0.1);
   return state;
 }
 
@@ -23,7 +25,7 @@ export function computeLoad(state, unit = 'metric') {
   const beerKg = state.count * state.volume * (state.fill / 100) * state.density;
   const glassKg = state.count * state.mugMass;
   const totalKg = beerKg + glassKg;
-  const marginKg = state.count * state.uncertainty;
+  const marginKg = state.count * (state.uncertainty + state.volume * (state.fill / 100) * state.densityUncertainty);
   const lowKg = Math.max(0, totalKg - marginKg);
   const highKg = totalKg + marginKg;
   const factor = unit === 'imperial' ? LB_PER_KG : 1;
