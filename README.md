@@ -12,6 +12,21 @@ python3 -m http.server 8000
 
 Then visit `http://localhost:8000`.
 
+## Browser smoke tests
+
+Install the development dependencies and Chromium once, then run the browser
+tests:
+
+```sh
+npm ci
+npx playwright install chromium
+npm test
+```
+
+The Playwright setup serves the static page locally and checks the unit toggle,
+reset, and share-link flow. These test dependencies are development-only; the
+published calculator remains static and dependency-free.
+
 ## Model and assumptions
 
 - Default scenario: 12 one-litre Maßkrüge, filled to 100%.
