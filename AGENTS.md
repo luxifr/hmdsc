@@ -66,6 +66,7 @@ When I'm asking you to implement something, I want you to:
 - automatically commit your changes to this branch
 - iterate on this branch only for the same task
 - update all applicable documentation, too
+- switch back to the original branch afterwards
 
 Whem I'm asking you to implement multiple, independent things, then implement
 them in separate branches.
