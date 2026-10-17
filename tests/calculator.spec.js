@@ -18,6 +18,11 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.2 kg');
   await expect(page.locator('#per-stein')).toHaveText('2.33 kg');
   await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
+  const heights = await page.evaluate(() => ({
+    stein: document.querySelector('#per-stein-icon svg').getBoundingClientRect().height,
+    text: document.querySelector('.per-stein-display>div').getBoundingClientRect().height,
+  }));
+  expect(Math.abs(heights.stein - heights.text)).toBeLessThanOrEqual(1);
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.10 kg');
   await expect(page.locator('#secondary-total')).toHaveText("That's 61.6 ±2.6 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);

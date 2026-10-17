@@ -509,16 +509,17 @@ h1 em,h2 em {
 }
 .per-stein-display {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
 }
 .per-stein-icon {
   display: flex;
-  flex: 0 0 auto;
+  flex: 0 0 32px;
 }
 .per-stein-icon .mini-stein {
-  width: 16px;
-  height: 19px;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 .per-stein-display>div {
   display: grid;
