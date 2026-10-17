@@ -22,7 +22,7 @@
     const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
     const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
     return {
-      count: clamp(Math.round(readNumber(fields.count, defaults.count)), 1, 40),
+      count: clamp(Math.round(readNumber(fields.count, 1)), 1, 40),
       fill: clamp(readNumber(fields.fill, defaults.fill), 70, 100),
       volume: clamp(volume, 0.1, 2),
       mugMass: clamp(mugMass, 0.1, 5),
@@ -80,6 +80,7 @@
   }
   function render() {
     const s = readState();
+    if (Number.isFinite(fields.count.valueAsNumber)) fields.count.value = String(s.count);
     const beer = s.count * s.volume * (s.fill / 100) * s.density;
     const glass = s.count * s.mugMass;
     const total = beer + glass;

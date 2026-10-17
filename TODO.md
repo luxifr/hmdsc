@@ -14,21 +14,16 @@ development-only tooling; there is no build step or CI.
 
 ### Quick wins
 
-1. **Empty or zero count behaves inconsistently.** `readNumber` falls back to
-   the default (12) when the field is empty, so clearing the field makes the
-   result jump to 12. A typed `0` is clamped to 1 in the math while the input
-   still shows 0. Both behaviors are in `app.js`'s `readState` path.
-
-3. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
+1. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
    whole result card in `index.html`, so every keystroke re-announces the entire
    card. Put it on `#total` or `#range` instead. `aria-label` on the plain
    `div#visualizer` is ignored by assistive tech without a role.
 
-4. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
+2. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
    browsers will request `/favicon.ico` and get a 404. An inline SVG data-URI
    icon fixes it with no new files.
 
-5. **Redundant write.** `render()` sets both `.value` and `.textContent` on
+3. **Redundant write.** `render()` sets both `.value` and `.textContent` on
    `#fill-output` in `app.js`. Keep only one.
 
 ### Medium-effort
@@ -69,6 +64,8 @@ rule applies.
 
 - Clarified that only the calculator scenario is saved locally; the display-unit
   selection is not persisted.
+- Empty count now uses the minimum count for calculations without replacing the
+  blank field; entering zero is normalized to one. Covered by Playwright tests.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.
