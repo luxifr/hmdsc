@@ -199,7 +199,7 @@
     $('#beer-total').textContent = displayMass(beer);
     $('#glass-total').textContent = displayMass(glass);
     $('#per-stein').textContent = `${displayMass(total / s.count)} per stein`;
-    $('#range').textContent = `Glass-weight range: ${pretty(unit === 'imperial' ? low * LB_PER_KG : low, 1)}–${pretty(unit === 'imperial' ? high * LB_PER_KG : high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
+    $('#range').textContent = `Total load range: ${pretty(unit === 'imperial' ? low * LB_PER_KG : low, 1)}–${pretty(unit === 'imperial' ? high * LB_PER_KG : high, 1)} ${unit === 'imperial' ? 'lb' : 'kg'}`;
     $('#beer-equation').textContent = `${s.count} × ${pretty(s.volume)} L × ${s.fill}% × ${pretty(s.density, 3)} kg/L = ${pretty(beer)} kg`;
     $('#glass-equation').textContent = `${s.count} × ${pretty(s.mugMass)} kg = ${pretty(glass)} kg`;
     $('#total-equation').textContent = `${pretty(beer)} kg + ${pretty(glass)} kg = ${pretty(total)} kg`;
