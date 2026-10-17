@@ -70,3 +70,7 @@ When I'm asking you to implement something, I want you to:
 
 Whem I'm asking you to implement multiple, independent things, then implement
 them in separate branches.
+
+Afterwards check if all your current feature branches can be merged safely back
+into their base branch. If yes, do so, else make me aware of it and propose a
+solution.
