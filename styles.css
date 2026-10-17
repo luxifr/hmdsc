@@ -445,6 +445,7 @@ h1 em,h2 em {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-top: 10px;
   color: #a69d8d;
   font-family: var(--mono);
   font-size: 9px;
@@ -464,14 +465,14 @@ h1 em,h2 em {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  margin-top: 18px;
+  margin-top: 8px;
 }
 .text-button {
   padding: 8px 0;
   background: none;
   border: 0;
   color: #a69d8d;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: .08em;
   cursor: pointer;
 }
