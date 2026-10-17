@@ -65,3 +65,4 @@ When I'm asking you to implement something in a branch, I want you to:
 - branch off the current commit with a meaningful branch name
 - automatically commit your changes to this branch
 - iterate on this branch only for the same task
+- update all applicable documentation, too
