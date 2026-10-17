@@ -9,9 +9,11 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   };
   const OZ_PER_L = 33.8140227;
   const DENSITY_LB_PER_US_GAL_PER_KG_PER_L = LB_PER_KG * 3.785411784;
+  const rememberPreferenceKey = 'carry-calc-remember';
   let unit = 'metric';
   let scenario;
   let toastTimer;
+  let rememberInputs = false;
 
   function readNumber(field, fallback) {
     const value = field.valueAsNumber;
@@ -113,7 +115,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± g';
     $('#density-unit').textContent = unit === 'imperial' ? 'lb/gal' : 'g/L';
     $('#density-uncertainty-unit').textContent = unit === 'imperial' ? '± lb/gal' : '± g/L';
-    try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
+    if (rememberInputs) {
+      try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
+    }
   }
   function toast(message) {
     const element = $('#toast');
@@ -123,9 +127,15 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     toastTimer = setTimeout(() => element.classList.remove('show'), 2300);
   }
 
+  const rememberCheckbox = $('#remember-inputs');
+  try {
+    rememberInputs = localStorage.getItem(rememberPreferenceKey) === 'true';
+    rememberCheckbox.checked = rememberInputs;
+    if (!rememberInputs) localStorage.removeItem('carry-calc');
+  } catch { /* The calculator still works when storage is unavailable. */ }
   const fromUrl = stateFromSearch(location.search);
   let initialState = fromUrl;
-  if (!initialState) {
+  if (!initialState && rememberInputs) {
     try { initialState = JSON.parse(localStorage.getItem('carry-calc')); } catch { /* Use defaults for unavailable or invalid local storage. */ }
   }
   const initialScenario = normalizeState({ ...defaults, ...(initialState || {}) });
@@ -133,6 +143,18 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   setInputValues(initialScenario);
   render(initialScenario);
 
+  rememberCheckbox.addEventListener('change', () => {
+    rememberInputs = rememberCheckbox.checked;
+    try {
+      if (rememberInputs) {
+        localStorage.setItem(rememberPreferenceKey, 'true');
+        localStorage.setItem('carry-calc', JSON.stringify(scenario));
+      } else {
+        localStorage.removeItem(rememberPreferenceKey);
+        localStorage.removeItem('carry-calc');
+      }
+    } catch { /* The calculator still works when storage is unavailable. */ }
+  });
   Object.entries(fields).forEach(([key, field]) => field.addEventListener('input', () => {
     const edited = readState();
     render({ ...scenario, [key]: edited[key] });
