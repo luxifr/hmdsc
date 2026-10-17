@@ -7,6 +7,7 @@
   const defaults = { count: 12, fill: 100, volume: 1, mugMass: 1.3, density: 0.998, uncertainty: 0.1 };
   const LB_PER_KG = 2.2046226218;
   const OZ_PER_L = 33.8140227;
+  const DENSITY_LB_PER_US_GAL_PER_KG_PER_L = LB_PER_KG * 3.785411784;
   let unit = 'metric';
   let toastTimer;
 
@@ -18,13 +19,14 @@
   function readState() {
     const volume = readNumber(fields.volume, defaults.volume * (unit === 'imperial' ? OZ_PER_L : 1)) / (unit === 'imperial' ? OZ_PER_L : 1);
     const mugMass = readNumber(fields.mugMass, defaults.mugMass * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
+    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
     const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
     return {
       count: clamp(Math.round(readNumber(fields.count, defaults.count)), 1, 40),
       fill: clamp(readNumber(fields.fill, defaults.fill), 70, 100),
       volume: clamp(volume, 0.1, 2),
       mugMass: clamp(mugMass, 0.1, 5),
-      density: clamp(readNumber(fields.density, defaults.density), 0.8, 1.2),
+      density: clamp(readNumber(fields.density, defaults.density * densityFactor) / densityFactor, 0.8, 1.2),
       uncertainty: clamp(uncertainty, 0, 1),
     };
   }
@@ -35,7 +37,7 @@
     fields.fill.value = state.fill;
     fields.volume.value = String(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
     fields.mugMass.value = String(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
-    fields.density.value = String(state.density);
+    fields.density.value = String(state.density * (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1));
     fields.uncertainty.value = String(state.uncertainty * (unit === 'imperial' ? LB_PER_KG : 1));
   }
   function updateInputConstraints() {
@@ -50,6 +52,10 @@
     fields.uncertainty.min = 0;
     fields.uncertainty.max = 1 * massFactor;
     fields.uncertainty.step = 0.05 * massFactor;
+    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
+    fields.density.min = 0.8 * densityFactor;
+    fields.density.max = 1.2 * densityFactor;
+    fields.density.step = 0.001 * densityFactor;
   }
   function stateFromSearch() {
     const params = new URLSearchParams(location.search);
@@ -98,6 +104,7 @@
     $('#volume-unit').textContent = unit === 'imperial' ? 'fl oz' : 'L';
     $('#mass-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
     $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± kg';
+    $('#density-unit').textContent = unit === 'imperial' ? 'lb/US gal' : 'kg/L';
     try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
   }
   function toast(message) {
