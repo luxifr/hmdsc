@@ -1,6 +1,6 @@
 # How Much Did She Carry?
 
-A dependency-free, static single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. The page structure is in `index.html`, styles are in `styles.css`, and browser behavior is in `app.js`. All calculations happen in the browser; it has no backend and needs no build step.
+A dependency-free, static single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. Its fill percentage is adjusted with an interactive stein-shaped slider that shows beer, foam, and overflow at the brim. The page structure is in `index.html`, styles are in `styles.css`, and browser behavior is in `app.js`. All calculations happen in the browser; it has no backend and needs no build step.
 
 ## Run locally
 
@@ -25,7 +25,8 @@ npm test
 
 `npm test` runs dependency-free calculation tests with Node's built-in test
 runner, then Playwright browser smoke tests for unit conversion, reset, share
-links, URL validation, saved scenarios, and stein stepper limits. Run only the
+links, URL validation, saved scenarios, stein stepper limits, and the draggable
+stein fill control. Run only the
 calculation tests with `npm run test:unit`. These test dependencies are
 development-only; the published calculator remains static and dependency-free.
 

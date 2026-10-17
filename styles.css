@@ -319,22 +319,43 @@ h1 em,h2 em {
 }
 .range-wrap {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 76px 1fr;
   align-items: center;
-  gap: 5px 10px;
+  gap: 4px 12px;
 }
 .range-wrap output {
   grid-column: 2;
   color: var(--gold);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 16px;
 }
-.range-wrap input {
-  grid-column: 1/-1;
+.fill-slider {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1;
+  width: 76px;
+  height: 104px;
+}
+.fill-stein {
+  display: block;
+  width: 76px;
+  height: 104px;
+}
+.fill-slider input {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  accent-color: var(--gold);
-  height: 3px;
-  cursor: pointer;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  outline: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  cursor: ns-resize;
+  touch-action: none;
+}
+.fill-slider:focus-within .fill-stein {
+  filter: drop-shadow(0 0 3px #e1bd6b80);
 }
 .range-labels {
   grid-column: 1/-1;
