@@ -388,7 +388,7 @@ h1 em,h2 em {
 }
 .advanced-fields {
   display: grid;
-  grid-template-columns: minmax(0,1fr) 190px;
+  grid-template-columns: minmax(0,1fr) 170px;
   gap: 9px 20px;
   padding: 2px 0 19px;
   align-items: center;
@@ -739,7 +739,7 @@ footer {
     gap: 12px;
   }
   .advanced-fields {
-    grid-template-columns: minmax(0,1fr) 160px;
+    grid-template-columns: minmax(0,1fr) 150px;
     column-gap: 12px;
   }
   .result-card {
@@ -835,7 +835,7 @@ footer {
     padding: 16px 0;
   }
   .advanced-fields {
-    grid-template-columns: minmax(0,1fr) 155px;
+    grid-template-columns: minmax(0,1fr) 145px;
   }
   .control-row label {
     font-size: 12px;
@@ -898,7 +898,7 @@ footer {
     grid-template-columns: minmax(0,1fr) 130px;
   }
   .advanced-fields {
-    grid-template-columns: minmax(0,1fr) 130px;
+    grid-template-columns: minmax(0,1fr) 140px;
   }
   .hero h1 {
     font-size: 58px;
