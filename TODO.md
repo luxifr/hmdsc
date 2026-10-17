@@ -14,16 +14,11 @@ development-only tooling; there is no build step or CI.
 
 ### Quick wins
 
-1. **Screen-reader noise and a no-op role.** `aria-live="polite"` is on the
-   whole result card in `index.html`, so every keystroke re-announces the entire
-   card. Put it on `#total` or `#range` instead. `aria-label` on the plain
-   `div#visualizer` is ignored by assistive tech without a role.
-
-2. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
+1. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
    browsers will request `/favicon.ico` and get a 404. An inline SVG data-URI
    icon fixes it with no new files.
 
-3. **Redundant write.** `render()` sets both `.value` and `.textContent` on
+2. **Redundant write.** `render()` sets both `.value` and `.textContent` on
    `#fill-output` in `app.js`. Keep only one.
 
 ### Medium-effort
@@ -66,6 +61,8 @@ rule applies.
   selection is not persisted.
 - Empty count now uses the minimum count for calculations without replacing the
   blank field; entering zero is normalized to one. Covered by Playwright tests.
+- Moved the live announcement from the entire result card to the total and gave
+  the stein visualizer an image role so its label is exposed to assistive tech.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.

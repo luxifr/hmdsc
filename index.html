@@ -72,16 +72,16 @@
             <div class="form-actions"><button type="button" class="text-button" id="reset">↺ &nbsp; RESET DEFAULTS</button><button type="button" class="text-button" id="share">↗ &nbsp; COPY LINK</button></div>
           </div>
 
-          <section class="result-card" aria-live="polite" aria-label="Estimated carrying load">
+          <section class="result-card" aria-label="Estimated carrying load">
             <div class="result-top"><span class="result-label">ESTIMATED TOTAL LOAD</span><span class="confidence-tag"><span></span> YOUR SCENARIO</span></div>
-            <div class="total-line"><strong id="total">—</strong><span id="total-unit">kg</span></div>
+            <div class="total-line"><strong id="total" aria-live="polite">—</strong><span id="total-unit">kg</span></div>
             <p class="pounds-note" id="secondary-total">—</p>
             <div class="result-divider"></div>
             <div class="breakdown">
               <div class="breakdown-item"><span class="break-icon beer-icon">◒</span><div><span class="break-label">THE BEER</span><strong id="beer-total">—</strong></div></div>
               <div class="breakdown-item"><span class="break-icon glass-icon">▤</span><div><span class="break-label">THE GLASSWARE</span><strong id="glass-total">—</strong></div></div>
             </div>
-            <div class="visualizer" id="visualizer" aria-label="Illustration of the steins being carried"></div>
+            <div class="visualizer" id="visualizer" role="img" aria-label="Illustration of the steins being carried"></div>
             <div class="result-foot"><span id="per-stein">— per stein</span><span id="range">Likely range: —</span></div>
           </section>
         </div>
