@@ -32,7 +32,7 @@ development-only; the published calculator remains static and dependency-free.
 
 ## Model and assumptions
 
-- Default scenario: 12 one-litre Maßkrüge, filled to 100%.
+- Default scenario: 12 one-litre Maßkrüge, filled to 90%.
 - Beer mass = count × volume × fill fraction × beer density.
 - Glass mass = count × empty glass mass.
 - Total load = beer mass + glass mass.

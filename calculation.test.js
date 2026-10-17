@@ -4,15 +4,15 @@ import { computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } fro
 
 test('default scenario computes the expected metric load', () => {
   const load = computeLoad(defaults);
-  assert.equal(Number(load.totalKg.toFixed(2)), 27.96);
-  assert.equal(Number(load.beerKg.toFixed(2)), 12.12);
+  assert.equal(Number(load.totalKg.toFixed(2)), 26.75);
+  assert.equal(Number(load.beerKg.toFixed(2)), 10.91);
   assert.equal(Number(load.glassKg.toFixed(2)), 15.84);
 });
 
 test('default uncertainty combines glass and beer-density ranges', () => {
   const load = computeLoad(defaults);
-  assert.ok(Math.abs(load.high - load.totalKg - 12 * (0.05 + 1 * 0.002)) < 1e-12);
-  assert.ok(Math.abs(load.totalKg - load.low - 12 * (0.05 + 1 * 0.002)) < 1e-12);
+  assert.ok(Math.abs(load.high - load.totalKg - 12 * (0.05 + defaults.fill / 100 * defaults.densityUncertainty)) < 1e-12);
+  assert.ok(Math.abs(load.totalKg - load.low - 12 * (0.05 + defaults.fill / 100 * defaults.densityUncertainty)) < 1e-12);
 });
 
 test('imperial display converts the total and converts back without loss', () => {
