@@ -12,9 +12,23 @@ development-only tooling; there is no build step or CI.
 
 ## Prioritized improvements
 
-No outstanding prioritized improvements. Input assumptions now use the
-midpoints of sourced beer-density and one-litre glass-weight ranges, with a
-source footnote on the page.
+1. Show the total-load uncertainty as a concise ± value beside the total, and
+   remove the small total-load range text below it.
+2. Redesign the stein illustration to represent a plausible way the steins are
+   actually carried.
+3. Eliminate visible rounding drift when switching between metric and imperial
+   units.
+4. Keep the inputs' internal layout and dimensions stable when switching units.
+5. Align input widths, labels, and buttons consistently, independent of the
+   selected unit system.
+6. Revise the implicit save/restore experience so users understand and control
+   whether modified inputs are stored.
+7. Research tray-carrying as an optional load component. Source a credible range
+   and representative tray weight with the same rigor as the beer and glass
+   assumptions, then incorporate the option into the estimate.
+
+Beer-density and one-litre glass-weight defaults use the midpoints of researched
+ranges, with linked sources on the page.
 
 Not prioritized: the per-keystroke `innerHTML` rebuild of up to 18 SVGs in
 `app.js`. It is cheap enough that `AGENTS.md`'s "avoid premature optimization"
