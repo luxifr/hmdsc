@@ -26,6 +26,10 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±0.6 kg');
   await expect(page.locator('#per-stein')).toHaveText('2.23 kg');
   await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
+  await expect(page.locator('#per-stein-icon svg path').nth(1)).toHaveAttribute('fill', '#B77932');
+  await expect(page.locator('#per-stein-icon svg path').nth(1)).toHaveAttribute('stroke', '#E4C781');
+  await expect(page.locator('#per-stein-icon svg path').nth(2)).toHaveAttribute('fill', '#E0A743');
+  await expect(page.locator('#per-stein-icon svg path').nth(3)).toHaveAttribute('fill', '#F0E9D9');
   const heights = await page.evaluate(() => ({
     stein: document.querySelector('#per-stein-icon svg').getBoundingClientRect().height,
     text: document.querySelector('.per-stein-display>div').getBoundingClientRect().height,
@@ -77,6 +81,10 @@ test('uses a valid inline SVG favicon', async ({ page }) => {
   const favicon = page.locator('link[rel="icon"]');
   const href = await favicon.getAttribute('href');
   expect(href.startsWith('data:image/svg+xml,')).toBe(true);
+  const faviconSvg = decodeURIComponent(href.slice('data:image/svg+xml,'.length));
+  expect(faviconSvg).toContain("fill='#B77932'");
+  expect(faviconSvg).toContain("stroke='#E4C781'");
+  expect(faviconSvg).toContain("stroke='#D8C69F'");
   await expect.poll(() => page.evaluate(async (src) => {
     const image = new Image();
     image.src = src;
@@ -97,6 +105,9 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   const glass = page.locator('.fill-stein > path').nth(1);
 
   await expect(fill).toHaveAttribute('aria-describedby', 'fill-output');
+  await expect(page.locator('#fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
+  await expect(page.locator('#fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
+  await expect(page.locator('#fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
   await expect(fill).toHaveCSS('opacity', '0');
   await expect(page.locator('.fill-handle')).toHaveCount(0);
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(34.6);
