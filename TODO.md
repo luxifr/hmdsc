@@ -14,21 +14,27 @@ development-only tooling; there is no build step or CI.
 
 ### Medium-effort
 
-1. **Model inputs need sources.** The model is presented as "show your work",
-   but the defaults are unsourced:
-   - **Beer density 0.998 kg/L** (`app.js` defaults and `index.html` input): this
-     is essentially the density of water at 20 °C. Engineering Toolbox gives
-     0.99821 kg/L for water at 20 °C
-     (https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html).
-     Märzen original gravity is about 1.053–1.055 SG
-     (https://en.wikipedia.org/wiki/M%C3%A4rzen, via search summary). Finished
-     beer is slightly above 1.000 kg/L (same summary). Estimate: real beer is
-     roughly 1% denser than the default, about +0.1 kg on 12 × 1 L. This is an
-     estimate, not a measured value, and it is small, but the label "beer
-     density" is inaccurate for this number. The pages were not opened directly;
-     these are search-summary facts.
-   - **Empty glass weight 1.3 kg** (`app.js` defaults and `index.html` input): no
-     source in the repo or the README. It was not verified.
+1. **Model input research.** The calculator defaults are approximate rather
+   than precise measurements:
+   - **Beer density 0.998 kg/L** (`app.js` defaults and `index.html` input) is
+     close to water's density at 20 °C (0.9982067 kg/L; Engineering ToolBox).
+     It is therefore a water-density proxy, not a verified beer-density value.
+     The BJCP gives Oktoberfest/Märzen a final-gravity range of 1.012–1.016,
+     but final gravity is an apparent brewing measurement and should not be
+     presented as a direct density measurement of finished beer. A secondary
+     material-property table lists lager at about 1.005 kg/L, derived from
+     specific gravity 1.005; it is not identified as a measured Oktoberfest
+     sample or accompanied by a temperature in the entry. Treat that as a
+     representative estimate, not a precise style-specific value. The
+     difference between 0.998 and 1.005 kg/L is about 84 g for 12 × 1 L.
+     Recommendation: label the current default as an approximation, or adopt
+     1.005 kg/L only if the UI makes clear it is a generic lager estimate.
+   - **Empty glass weight 1.3 kg** (`app.js` defaults and `index.html` input)
+     is supported as an approximate empty one-litre Maß weight by the Atrium
+     Hotel FAQ. This is a general estimate, not a manufacturer specification.
+     Libbey's 1 L Oktoberfest mug product page lists case weight for six mugs,
+     but not the individual mug's weight; it does not independently confirm
+     1.3 kg per mug.
 
 ### Larger ideas
 
@@ -62,7 +68,22 @@ rule applies.
 ## Sources
 
 - Repository: `AGENTS.md`, `README.md`, `index.html` (line references above).
-- https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html:
-  water density at 20 °C (search summary, not opened).
-- https://en.wikipedia.org/wiki/M%C3%A4rzen: Märzen gravity and style (search
-  summary, not opened).
+- Engineering ToolBox, [Water - Density and Specific Weight]
+  (https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html):
+  water density at 20 °C.
+- BJCP, [3B. Oktoberfest/Märzen]
+  (https://www.bjcp.org/beer-styles/3b-oktoberfestmarzen/): style gravity
+  ranges.
+- American Society of Brewing Chemists, [Beer Methods]
+  (https://www.asbcnet.org/Methods/BeerMethods/pages/default.aspx): apparent
+  extract methods; apparent gravity readings are not a direct physical-density
+  specification for finished beer because alcohol affects the reading.
+- kg-m3.com, [Beer, lager]
+  (https://kg-m3.com/material/beer-lager): secondary approximate lager value,
+  listed as 1.005 kg/L based on SG 1.005.
+- Atrium Hotel, [A Maß - FAQ and interesting facts]
+  (https://www.atrium-hotel.de/en/a-mass-faq-and-interesting-facts-about-the-popular-gift-mass/):
+  approximate 1.3 kg empty one-litre Maß weight.
+- Libbey Foodservice, [Oktoberfest Mug 1L]
+  (https://libbeyfoodservice.com/product/libbey/oktoberfest-mug-1l/1009290):
+  case weight is provided, but individual mug weight is not.
