@@ -376,27 +376,11 @@ h1 em,h2 em {
   text-align: right;
   min-width: 0;
 }
-.main-volume-control {
-  padding: 0;
-}
-.main-volume-control::before {
-  content: "";
-  flex: 0 0 38px;
-}
-.main-volume-control input {
-  flex: 1 1 0;
-  text-align: center;
-}
 .input-with-unit span {
   font-family: var(--mono);
   font-size: 11px;
   color: #a69b86;
   white-space: nowrap;
-}
-.main-volume-control span {
-  flex: 0 0 38px;
-  width: 38px;
-  text-align: center;
 }
 .advanced-fields .input-with-unit span {
   flex: 0 0 76px;

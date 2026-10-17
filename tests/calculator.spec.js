@@ -259,6 +259,13 @@ test('unit toggles keep the original scenario without cumulative rounding drift'
 test('main and fine-tune values, units, and buttons align independently', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
+  await expect(page.locator('.advanced-fields > label')).toHaveText([
+    'Beer per stein',
+    'Empty glass weight',
+    'Beer density',
+    'Glass weight uncertainty',
+  ]);
+  await expect(page.locator('#beer-volume')).toHaveValue('1');
   const measure = () => page.evaluate(() => {
     const bounds = (element) => {
       const { left, right, width } = element.getBoundingClientRect();
@@ -267,11 +274,10 @@ test('main and fine-tune values, units, and buttons align independently', async 
     const one = (selector) => bounds(document.querySelector(selector));
     const many = (selector) => [...document.querySelectorAll(selector)].map(bounds);
     return {
-      mainLabels: many('.count-row > :first-child, .beer-volume-row > :first-child'),
-      mainControls: many('.count-row > :last-child, .beer-volume-row > :last-child'),
-      mainValues: [one('#stein-count'), one('#beer-volume')],
+      mainLabels: many('.count-row > :first-child'),
+      mainControls: many('.count-row > :last-child'),
+      mainValues: [one('#stein-count')],
       stepButtons: many('.stepper .step-button'),
-      mainUnit: one('#volume-unit'),
       fineTuneLabels: many('.advanced-fields > label'),
       fineTuneControls: many('.advanced-fields > .input-with-unit'),
       fineTuneValues: many('.advanced-fields input'),
@@ -284,16 +290,16 @@ test('main and fine-tune values, units, and buttons align independently', async 
     expectSameColumn(layout.mainLabels, 0);
     expectSameColumn(layout.mainControls, 1);
     expectSameColumn(layout.mainControls, 2);
-    expect(layout.mainValues[0]).toEqual(layout.mainValues[1]);
     expect(layout.stepButtons[0][1]).toBe(layout.mainValues[0][0]);
-    expect(layout.stepButtons[1]).toEqual(layout.mainUnit);
     expectSameColumn(layout.fineTuneLabels, 0);
     expectSameColumn(layout.fineTuneControls, 1);
     expectSameColumn(layout.fineTuneControls, 2);
     expect(layout.fineTuneValues[1]).toEqual(layout.fineTuneValues[0]);
     expect(layout.fineTuneValues[2]).toEqual(layout.fineTuneValues[0]);
+    expect(layout.fineTuneValues[3]).toEqual(layout.fineTuneValues[0]);
     expect(layout.fineTuneUnits[1]).toEqual(layout.fineTuneUnits[0]);
     expect(layout.fineTuneUnits[2]).toEqual(layout.fineTuneUnits[0]);
+    expect(layout.fineTuneUnits[3]).toEqual(layout.fineTuneUnits[0]);
     expect(layout.mainValues[0]).not.toEqual(layout.fineTuneValues[0]);
     expect(layout.mainUnit).not.toEqual(layout.fineTuneUnits[0]);
     expect(layout.suffixesFit).toBe(true);
