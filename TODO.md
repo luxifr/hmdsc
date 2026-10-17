@@ -2,13 +2,13 @@
 
 ## What it is
 
-A static, dependency-free single page (`index.html`, `styles.css`, and `app.js`)
-that estimates the load of beer steins carried by an Oktoberfest waitress.
-Inputs are stein count, fill %, beer per stein, glass weight, beer density, and
-glass-weight uncertainty. Outputs are total load, beer and glass breakdown, a
-range, metric/imperial display, a visualizer, and a shareable URL. Nothing is
-stored server-side. There is no `package.json`, no tests, no CI, no LICENSE, and
-no git remote.
+A static, dependency-free production page (`index.html`, `styles.css`, and
+`app.js`) that estimates the load of beer steins carried by an Oktoberfest
+waitress. Inputs are stein count, fill %, beer per stein, glass weight, beer
+density, and glass-weight uncertainty. Outputs are total load, beer and glass
+breakdown, a range, metric/imperial display, a visualizer, and a shareable URL.
+Nothing is stored server-side. Playwright browser smoke tests run as
+development-only tooling; there is no build step or CI.
 
 ## Prioritized improvements
 
@@ -63,10 +63,7 @@ no git remote.
 
 ### Larger ideas
 
-1. **Browser smoke test.** With no build, a small Playwright test covering the
-   unit toggle, share link, and reset would catch the regressions in items 1-4.
-
-2. **Documented assumptions table.** A cited table of defaults with their ranges
+1. **Documented assumptions table.** A cited table of defaults with their ranges
    would turn item 8 into a maintained artifact.
 
 Not prioritized: the per-keystroke `innerHTML` rebuild of up to 18 SVGs in
@@ -75,6 +72,8 @@ rule applies.
 
 ## Completed
 
+- Added Playwright Chromium smoke tests for density-unit conversion, reset, and
+  share-link creation/reload. Setup and run commands are documented in `README.md`.
 - Split the embedded stylesheet and script out of `index.html` into
   `styles.css` and `app.js`, preserving the dependency-free, no-build setup.
 
