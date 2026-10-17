@@ -57,6 +57,7 @@ conventional commit message unless you've already done the commit yourself.
 - For reviews: consider correctness, security, privacy, performance,
   maintainability, readability, style, and consistency. Present findings
   categorically, with actionable defects and risks first.
+- For merging, always use merge commits, never fast-forward or rebase merging
 
 ### Autonomy
 
@@ -75,4 +76,5 @@ Afterwards check if all your current feature branches can be merged safely back
 into their base branch. If yes, do so, else make me aware of it and propose a
 solution.
 
-For merging, always use merge commits, never fast-forward or rebase merging
+If the worktree is clean and all tests pass, you're allowed to merge back into
+`main` without my explicit consent.
