@@ -239,11 +239,11 @@ h1 em,h2 em {
   }
 }
 @keyframes bubble-rise {
-  0%,100% {
+  0%,50%,100% {
     transform: translateY(0);
     opacity: .4;
   }
-  50% {
+  25%,75% {
     transform: translateY(-16px);
     opacity: 1;
   }

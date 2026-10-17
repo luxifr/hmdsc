@@ -91,6 +91,15 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-name', 'foam-bubble');
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1.8s');
 
+  const beerBubbleMotion = await page.locator('.hero-beer-bubbles circle').nth(1).evaluate(element => {
+    const animation = element.getAnimations()[0];
+    return [600, 1200, 1800].map(time => {
+      animation.currentTime = time;
+      return new DOMMatrixReadOnly(getComputedStyle(element).transform).m42;
+    });
+  });
+  expect(beerBubbleMotion).toEqual([-16, 0, -16]);
+
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1e-05s');
