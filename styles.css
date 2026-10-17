@@ -517,8 +517,8 @@ h1 em,h2 em {
   flex: 0 0 auto;
 }
 .per-stein-icon .mini-stein {
-  width: 30px;
-  height: 36px;
+  width: 16px;
+  height: 19px;
 }
 .per-stein-display>div {
   display: grid;
