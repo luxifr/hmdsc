@@ -1,5 +1,13 @@
 import { expect, test } from '@playwright/test';
 
+test('announces the total without making the entire result card live', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
+  await expect(page.locator('.result-card')).not.toHaveAttribute('aria-live');
+  await expect(page.locator('#visualizer')).toHaveAttribute('role', 'img');
+  await expect(page.locator('#visualizer')).toHaveAttribute('aria-label', '12 beer steins');
+});
+
 test('beer density switches units and preserves its value', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
