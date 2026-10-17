@@ -81,11 +81,15 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   await expect(page.locator('.hero-beer-bubbles circle')).toHaveCount(12);
   await expect(page.locator('.hero-foam-bubbles circle')).toHaveCount(9);
   await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('fill', '#F4C66C');
-  await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('opacity', '.65');
+  await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('opacity', '.85');
   await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('fill', '#FFF8E9');
-  await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('opacity', '.8');
+  await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('opacity', '.9');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveAttribute('r', '3.8');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveAttribute('r', '3.8');
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-name', 'bubble-rise');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-duration', '2.4s');
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-name', 'foam-bubble');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1.8s');
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
