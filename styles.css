@@ -168,7 +168,7 @@ h1 em,h2 em {
   animation: float 5s ease-in-out infinite;
 }
 .hero-beer-bubbles circle {
-  animation: bubble-rise 2.4s ease-in-out infinite;
+  animation: bubble-rise 2.4s linear infinite;
 }
 .hero-beer-bubbles circle:nth-child(3n) {
   animation-delay: -.8s;
@@ -239,13 +239,19 @@ h1 em,h2 em {
   }
 }
 @keyframes bubble-rise {
-  0%,50%,100% {
+  0% {
     transform: translateY(0);
-    opacity: .4;
+    opacity: 0;
   }
-  25%,75% {
-    transform: translateY(-16px);
-    opacity: 1;
+  15% {
+    opacity: .85;
+  }
+  85% {
+    opacity: .85;
+  }
+  100% {
+    transform: translateY(-30px);
+    opacity: 0;
   }
 }
 @keyframes foam-bubble {

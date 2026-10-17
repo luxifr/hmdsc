@@ -88,17 +88,22 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveAttribute('r', '3.8');
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-name', 'bubble-rise');
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-duration', '2.4s');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-timing-function', 'linear');
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-name', 'foam-bubble');
   await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1.8s');
 
   const beerBubbleMotion = await page.locator('.hero-beer-bubbles circle').nth(1).evaluate(element => {
     const animation = element.getAnimations()[0];
-    return [600, 1200, 1800].map(time => {
+    return [0, 600, 1200, 1800, 2399].map(time => {
       animation.currentTime = time;
       return new DOMMatrixReadOnly(getComputedStyle(element).transform).m42;
     });
   });
-  expect(beerBubbleMotion).toEqual([-16, 0, -16]);
+  expect(beerBubbleMotion[0]).toBe(0);
+  expect(beerBubbleMotion[1]).toBeLessThan(beerBubbleMotion[0]);
+  expect(beerBubbleMotion[2]).toBeLessThan(beerBubbleMotion[1]);
+  expect(beerBubbleMotion[3]).toBeLessThan(beerBubbleMotion[2]);
+  expect(beerBubbleMotion[4]).toBeLessThan(beerBubbleMotion[3]);
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
