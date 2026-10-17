@@ -38,3 +38,78 @@ test('share updates the URL and the shared scenario loads', async ({ page }) => 
   await page.reload();
   await expect(page.locator('#stein-count')).toHaveValue('7');
 });
+
+
+test('scenario URLs restore all inputs and clamp out-of-range values', async ({ page }) => {
+  await page.goto('/?count=8&fill=85&volume=1.5&mugMass=2&density=1.05&uncertainty=0.2');
+  await expect(page.locator('#stein-count')).toHaveValue('8');
+  await expect(page.locator('#fill')).toHaveValue('85');
+  await expect(page.locator('#beer-volume')).toHaveValue('1.5');
+  await expect(page.locator('#mug-mass')).toHaveValue('2');
+  await expect(page.locator('#density')).toHaveValue('1.05');
+  await expect(page.locator('#uncertainty')).toHaveValue('0.2');
+
+  await page.goto('/?count=0&fill=110&volume=99&mugMass=-2&density=2&uncertainty=-1');
+  await expect(page.locator('#stein-count')).toHaveValue('1');
+  await expect(page.locator('#fill')).toHaveValue('100');
+  await expect(page.locator('#beer-volume')).toHaveValue('2');
+  await expect(page.locator('#mug-mass')).toHaveValue('0.1');
+  await expect(page.locator('#density')).toHaveValue('1.2');
+  await expect(page.locator('#uncertainty')).toHaveValue('0');
+
+  await page.goto('/?count=invalid&fill=80');
+  await expect(page.locator('#stein-count')).toHaveValue('12');
+  await expect(page.locator('#fill')).toHaveValue('80');
+});
+
+test('saved scenario survives reload and URL values take precedence', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#stein-count').fill('9');
+  await page.locator('#fill').fill('82');
+  await page.reload();
+  await expect(page.locator('#stein-count')).toHaveValue('9');
+  await expect(page.locator('#fill')).toHaveValue('82');
+
+  await page.goto('/?count=5');
+  await expect(page.locator('#stein-count')).toHaveValue('5');
+  await expect(page.locator('#fill')).toHaveValue('100');
+});
+
+test('volume and mass inputs convert when switching units', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('Fine-tune the assumptions').click();
+  const volume = page.locator('#beer-volume');
+  const mugMass = page.locator('#mug-mass');
+  const uncertainty = page.locator('#uncertainty');
+
+  await page.getByRole('button', { name: 'IMPERIAL' }).click();
+  await expect(page.locator('#volume-unit')).toHaveText('fl oz');
+  await expect(page.locator('#mass-unit')).toHaveText('lb');
+  await expect(page.locator('#uncertainty-unit')).toHaveText('± lb');
+  expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
+  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.3 * 2.2046226218, 6);
+  expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1 * 2.2046226218, 6);
+
+  await page.getByRole('button', { name: 'METRIC' }).click();
+  await expect(page.locator('#volume-unit')).toHaveText('L');
+  await expect(page.locator('#mass-unit')).toHaveText('kg');
+  await expect(page.locator('#uncertainty-unit')).toHaveText('± kg');
+  expect(Number(await volume.inputValue())).toBeCloseTo(1, 6);
+  expect(Number(await mugMass.inputValue())).toBeCloseTo(1.3, 6);
+  expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1, 6);
+});
+
+test('stein stepper recalculates and respects count limits', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Add one stein' }).click();
+  await expect(page.locator('#stein-count')).toHaveValue('13');
+  await expect(page.locator('#total')).toHaveText('29.9');
+
+  await page.goto('/?count=40');
+  await page.getByRole('button', { name: 'Add one stein' }).click();
+  await expect(page.locator('#stein-count')).toHaveValue('40');
+
+  await page.goto('/?count=1');
+  await page.getByRole('button', { name: 'Remove one stein' }).click();
+  await expect(page.locator('#stein-count')).toHaveValue('1');
+});

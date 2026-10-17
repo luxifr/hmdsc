@@ -72,8 +72,9 @@ rule applies.
 
 ## Completed
 
-- Added Playwright Chromium smoke tests for density-unit conversion, reset, and
-  share-link creation/reload. Setup and run commands are documented in `README.md`.
+- Added Playwright Chromium smoke tests for unit conversions, reset, share-link
+  creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
+  run commands are documented in `README.md`.
 - Split the embedded stylesheet and script out of `index.html` into
   `styles.css` and `app.js`, preserving the dependency-free, no-build setup.
 
