@@ -23,9 +23,10 @@ npx playwright install chromium
 npm test
 ```
 
-The Playwright setup serves the static page locally and checks the unit toggle,
-reset, and share-link flow. These test dependencies are development-only; the
-published calculator remains static and dependency-free.
+The Playwright setup serves the static page locally and checks unit conversion,
+reset, share links, URL validation, saved scenarios, and stein stepper limits.
+These test dependencies are development-only; the published calculator remains
+static and dependency-free.
 
 ## Model and assumptions
 
