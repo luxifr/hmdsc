@@ -210,42 +210,58 @@ test('unit toggles keep the original scenario without cumulative rounding drift'
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).mugMass)).toBe(1.23456789);
 });
 
-test('main and fine-tune inputs align independently across display systems', async ({ page }) => {
+test('main and fine-tune values, units, and buttons align independently', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
   const measure = () => page.evaluate(() => {
-    const bounds = (elements) => elements.map((element) => {
+    const bounds = (element) => {
       const { left, right, width } = element.getBoundingClientRect();
       return [left, right, width].map((value) => Math.round(value * 100) / 100);
-    });
+    };
+    const one = (selector) => bounds(document.querySelector(selector));
+    const many = (selector) => [...document.querySelectorAll(selector)].map(bounds);
     return {
-      mainLabels: bounds([...document.querySelectorAll('.count-row > :first-child, .beer-volume-row > :first-child')]),
-      mainControls: bounds([...document.querySelectorAll('.count-row > :last-child, .beer-volume-row > :last-child')]),
-      fineTuneLabels: bounds([...document.querySelectorAll('.advanced-fields > label')]),
-      fineTuneControls: bounds([...document.querySelectorAll('.advanced-fields > .input-with-unit')]),
+      mainLabels: many('.count-row > :first-child, .beer-volume-row > :first-child'),
+      mainControls: many('.count-row > :last-child, .beer-volume-row > :last-child'),
+      mainValues: [one('#stein-count'), one('#beer-volume')],
+      stepButtons: many('.stepper .step-button'),
+      mainUnit: one('#volume-unit'),
+      fineTuneLabels: many('.advanced-fields > label'),
+      fineTuneControls: many('.advanced-fields > .input-with-unit'),
+      fineTuneValues: many('.advanced-fields input'),
+      fineTuneUnits: many('.advanced-fields .input-with-unit span'),
       suffixesFit: [...document.querySelectorAll('.input-with-unit span')].every((element) => element.scrollWidth <= element.clientWidth),
     };
   });
-  const expectAligned = (layout, labels, controls) => {
-    expect(new Set(layout[labels].map(([left]) => left)).size).toBe(1);
-    expect(new Set(layout[controls].map(([, right]) => right)).size).toBe(1);
-    expect(new Set(layout[controls].map(([, , width]) => width)).size).toBe(1);
+  const expectSameColumn = (items, index) => expect(new Set(items.map((item) => item[index])).size).toBe(1);
+  const expectLayoutAligned = (layout) => {
+    expectSameColumn(layout.mainLabels, 0);
+    expectSameColumn(layout.mainControls, 1);
+    expectSameColumn(layout.mainControls, 2);
+    expect(layout.mainValues[0]).toEqual(layout.mainValues[1]);
+    expect(layout.stepButtons[0][1]).toBe(layout.mainValues[0][0]);
+    expect(layout.stepButtons[1]).toEqual(layout.mainUnit);
+    expectSameColumn(layout.fineTuneLabels, 0);
+    expectSameColumn(layout.fineTuneControls, 1);
+    expectSameColumn(layout.fineTuneControls, 2);
+    expect(layout.fineTuneValues[1]).toEqual(layout.fineTuneValues[0]);
+    expect(layout.fineTuneValues[2]).toEqual(layout.fineTuneValues[0]);
+    expect(layout.fineTuneUnits[1]).toEqual(layout.fineTuneUnits[0]);
+    expect(layout.fineTuneUnits[2]).toEqual(layout.fineTuneUnits[0]);
+    expect(layout.mainValues[0]).not.toEqual(layout.fineTuneValues[0]);
+    expect(layout.mainUnit).not.toEqual(layout.fineTuneUnits[0]);
+    expect(layout.suffixesFit).toBe(true);
   };
 
   for (const width of [1280, 900, 650, 380, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const metricLayout = await measure();
-    expectAligned(metricLayout, 'mainLabels', 'mainControls');
-    expectAligned(metricLayout, 'fineTuneLabels', 'fineTuneControls');
-    expect(metricLayout.suffixesFit).toBe(true);
+    expectLayoutAligned(metricLayout);
 
     await page.getByRole('button', { name: 'IMPERIAL' }).click();
     const imperialLayout = await measure();
-    expectAligned(imperialLayout, 'mainLabels', 'mainControls');
-    expectAligned(imperialLayout, 'fineTuneLabels', 'fineTuneControls');
-    expect(imperialLayout.suffixesFit).toBe(true);
+    expectLayoutAligned(imperialLayout);
     expect(imperialLayout).toEqual(metricLayout);
-    expect(metricLayout.mainControls[0][2]).not.toBe(metricLayout.fineTuneControls[0][2]);
     await page.getByRole('button', { name: 'METRIC' }).click();
   }
 });
