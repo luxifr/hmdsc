@@ -37,4 +37,4 @@ static and dependency-free.
 - Defaults use 0.998 kg/L beer density and 1.3 kg per empty glass. The displayed total-load range applies the configurable per-glass uncertainty (±0.1 kg by default) across all steins; it is a scenario range, not a statistical confidence interval.
 - Tray weight, motion, grip forces, and balance are not included.
 
-Metric/imperial display, adjustable assumptions, persistent local preferences, and shareable scenario links are provided without a framework or runtime dependency. The beer-density input follows the selected system: kg/L in metric and lb/US gal in imperial; switching units preserves the underlying density.
+Metric/imperial display, adjustable assumptions, the calculator scenario saved locally, and shareable scenario links are provided without a framework or runtime dependency. The selected display unit is not saved. The beer-density input follows the selected system: kg/L in metric and lb/US gal in imperial; switching units preserves the underlying density.
