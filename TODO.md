@@ -2,60 +2,25 @@
 
 ## What it is
 
-A static, dependency-free production page (`index.html`, `styles.css`, and
-`app.js`) that estimates the load of beer steins carried by an Oktoberfest
-waitress. Inputs are stein count, fill %, beer per stein, glass weight, beer
-density, and glass-weight uncertainty. Outputs are total load, beer and glass
-breakdown, total-load uncertainty, metric/imperial display, a visualizer, and a
-shareable URL.
-Nothing is stored server-side. Playwright browser smoke tests run as
-development-only tooling; there is no build step or CI.
+A static, dependency-free calculator (`index.html`, `styles.css`, and `app.js`)
+that estimates the load of beer steins carried by an Oktoberfest waitress. It
+supports stein count, fill level, beer volume, glass weight, beer density and
+glass-weight uncertainty; metric and imperial displays; a stein visualizer; and
+shareable scenario URLs. Saving scenarios locally is opt-in. Playwright browser
+smoke tests are development-only; there is no build step or CI.
 
 ## Prioritized improvements
 
-1. [x] Show the total-load uncertainty as a concise ± value beside the total, and
-   remove the small total-load range text below it.
-2. Redesign the stein illustration to represent a plausible way the steins are
+1. Redesign the stein illustration to represent a plausible way the steins are
    actually carried.
-3. [x] Eliminate visible rounding drift when switching between metric and imperial
-   units.
-4. [x] Keep the inputs' internal layout and dimensions stable when switching units.
-5. [x] Align input widths, labels, and buttons consistently, independent of the
-   selected unit system.
-6. [x] Revise the implicit save/restore experience so users understand and control
-   whether modified inputs are stored.
-7. Research tray-carrying as an optional load component. Source a credible range
+2. Research tray-carrying as an optional load component. Source a credible range
    and representative tray weight with the same rigor as the beer and glass
    assumptions, then incorporate the option into the estimate.
 
-Beer-density and one-litre glass-weight defaults use the midpoints of researched
-ranges, with linked sources on the page.
+## Deferred
 
-Not prioritized: the per-keystroke `innerHTML` rebuild of up to 18 SVGs in
-`app.js`. It is cheap enough that `AGENTS.md`'s "avoid premature optimization"
-rule applies.
-
-## Completed
-
-- Extracted DOM-independent state normalization, URL parsing, and load
-  calculations into `calculation.js`; added `node:test` coverage for defaults,
-  unit conversion, and URL/input clamping.
-- Clarified that only the calculator scenario is saved locally; the display-unit
-  selection is not persisted.
-- Empty count now uses the minimum count for calculations without replacing the
-  blank field; entering zero is normalized to one. Covered by Playwright tests.
-- Moved the live announcement from the entire result card to the total and gave
-  the stein visualizer an image role so its label is exposed to assistive tech.
-- Added an inline SVG stein favicon with no extra asset file.
-- Removed the redundant write to the fill-percentage output; its visible text
-  remains covered by a browser test.
-- Added Playwright Chromium smoke tests for unit conversions, reset, share-link
-  creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
-  run commands are documented in `README.md`.
-- Researched beer-density and comparable glass-weight ranges, set defaults to
-  their midpoints, and added linked source notes to the page.
-- Split the embedded stylesheet and script out of `index.html` into
-  `styles.css` and `app.js`, preserving the dependency-free, no-build setup.
+- Replacing the per-keystroke `innerHTML` rebuild of up to 18 SVGs in `app.js` is
+  not prioritized; it is currently inexpensive, so avoid premature optimization.
 
 ## Sources
 
