@@ -16,8 +16,52 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#total')).toHaveText('28.0');
   await expect(page.locator('#total-uncertainty')).toHaveText('±1.2');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.2 kg');
+  await expect(page.locator('#per-stein')).toHaveText('2.33 kg');
+  await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
+  const heights = await page.evaluate(() => ({
+    stein: document.querySelector('#per-stein-icon svg').getBoundingClientRect().height,
+    text: document.querySelector('.per-stein-display>div').getBoundingClientRect().height,
+  }));
+  expect(Math.abs(heights.stein - heights.text)).toBeLessThanOrEqual(1);
+  await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.10 kg');
+  await expect(page.locator('#secondary-total')).toHaveText("That's 61.6 ±2.6 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
+});
+
+test('keeps the per-stein result clear of the total on desktop screens', async ({ page }) => {
+  await page.goto('/');
+
+  const bounds = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, right } = document.querySelector(selector).getBoundingClientRect();
+      return { left, right };
+    };
+    return {
+      total: rect('.total-primary'),
+      perStein: rect('.per-stein'),
+    };
+  });
+  expect(bounds.total.right).toBeLessThanOrEqual(bounds.perStein.left);
+});
+
+test('keeps the per-stein result below the total on narrow screens', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/');
+
+  const bounds = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, right, top, bottom } = document.querySelector(selector).getBoundingClientRect();
+      return { left, right, top, bottom };
+    };
+    return {
+      total: rect('.total-primary'),
+      perStein: rect('.per-stein'),
+      card: rect('.result-card'),
+    };
+  });
+  expect(bounds.total.bottom).toBeLessThan(bounds.perStein.top);
+  expect(bounds.perStein.right).toBeLessThanOrEqual(bounds.card.right);
 });
 
 test('uses a valid inline SVG favicon', async ({ page }) => {
@@ -128,6 +172,9 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#uncertainty-unit')).toHaveText('± lb');
   await expect(page.locator('#total-uncertainty')).toHaveText('±2.6');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±2.6 lb');
+  await expect(page.locator('#per-stein')).toHaveText('5.14 lb');
+  await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.22 lb');
+  await expect(page.locator('#secondary-total')).toHaveText("That's 28.0 ±1.2 kg on the other side of the pond");
   expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
   expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32 * 2.2046226218, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1 * 2.2046226218, 6);
