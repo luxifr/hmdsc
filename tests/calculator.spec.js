@@ -76,6 +76,16 @@ test('keeps the per-stein result below the total on narrow screens', async ({ pa
   expect(bounds.perStein.right).toBeLessThanOrEqual(bounds.card.right);
 });
 
+test('hero stein has beer and foam bubbles matching the fill control', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.hero-beer-bubbles circle')).toHaveCount(12);
+  await expect(page.locator('.hero-foam-bubbles circle')).toHaveCount(9);
+  await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('fill', '#F4C66C');
+  await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('opacity', '.65');
+  await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('fill', '#FFF8E9');
+  await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('opacity', '.8');
+});
+
 test('uses a valid inline SVG favicon', async ({ page }) => {
   await page.goto('/');
   const favicon = page.locator('link[rel="icon"]');
