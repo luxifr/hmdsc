@@ -57,3 +57,11 @@ conventional commit message.
 - For reviews: consider correctness, security, privacy, performance,
   maintainability, readability, style, and consistency. Present findings
   categorically, with actionable defects and risks first.
+
+### Autonomy
+
+When I'm asking you to implement something in a branch, I want you to:
+
+- branch off the current commit with a meaningful branch name
+- automatically commit your changes to this branch
+- iterate on this branch only for the same task
