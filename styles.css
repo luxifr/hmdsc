@@ -384,9 +384,9 @@ h1 em,h2 em {
   white-space: nowrap;
 }
 .advanced-fields .input-with-unit span {
-  flex: 0 0 82px;
-  width: 82px;
-  padding-left: 7px;
+  min-width: 0;
+  padding-left: 4px;
+  font-size: 10px;
 }
 .advanced {
   border-bottom: 1px solid var(--line);
@@ -422,8 +422,10 @@ h1 em,h2 em {
   font-size: 11px;
 }
 .advanced-fields .input-with-unit {
+  display: grid;
   height: 33px;
   padding: 0;
+  grid-template-columns: 22px minmax(0,1fr) minmax(0,1fr) 22px;
 }
 .advanced-fields .input-with-unit>.step-button {
   flex: 0 0 22px;

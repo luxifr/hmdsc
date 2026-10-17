@@ -20,9 +20,10 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   function readState() {
     const volume = readNumber(fields.volume, defaults.volume * (unit === 'imperial' ? OZ_PER_L : 1)) / (unit === 'imperial' ? OZ_PER_L : 1);
     const mugMass = readNumber(fields.mugMass, defaults.mugMass * (unit === 'imperial' ? LB_PER_KG : 1)) / (unit === 'imperial' ? LB_PER_KG : 1);
-    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
-    const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * 1000) / 1000;
-    const densityUncertainty = readNumber(fields.densityUncertainty, defaults.densityUncertainty * 1000000) / 1000000;
+    const massFactor = unit === 'imperial' ? LB_PER_KG : 1000;
+    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1000;
+    const uncertainty = readNumber(fields.uncertainty, defaults.uncertainty * massFactor) / massFactor;
+    const densityUncertainty = readNumber(fields.densityUncertainty, defaults.densityUncertainty * densityFactor) / densityFactor;
     return normalizeState({
       count: readNumber(fields.count, 1),
       fill: readNumber(fields.fill, defaults.fill),
@@ -36,34 +37,42 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
   function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
   function setInputValues(state) {
-    const inputValue = (value) => String(unit === 'imperial' ? Number(value.toFixed(9)) : value);
+    const inputValue = (value) => String(Number(value.toFixed(3)));
+    const massFactor = unit === 'imperial' ? LB_PER_KG : 1000;
+    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1000;
     fields.count.value = state.count;
     fields.fill.value = state.fill;
     fields.volume.value = inputValue(state.volume * (unit === 'imperial' ? OZ_PER_L : 1));
     fields.mugMass.value = inputValue(state.mugMass * (unit === 'imperial' ? LB_PER_KG : 1));
-    fields.density.value = inputValue(state.density * (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1));
-    fields.uncertainty.value = inputValue(state.uncertainty * 1000);
-    fields.densityUncertainty.value = inputValue(state.densityUncertainty * 1000000);
+    fields.density.value = inputValue(state.density * densityFactor);
+    fields.uncertainty.value = inputValue(state.uncertainty * massFactor);
+    fields.densityUncertainty.value = inputValue(state.densityUncertainty * densityFactor);
   }
   function updateInputConstraints() {
     const volumeFactor = unit === 'imperial' ? OZ_PER_L : 1;
-    const massFactor = unit === 'imperial' ? LB_PER_KG : 1;
-    fields.volume.min = unit === 'imperial' ? (0.1 * volumeFactor).toFixed(9) : 0.1;
-    fields.volume.max = unit === 'imperial' ? (2 * volumeFactor).toFixed(9) : 2;
-    fields.volume.step = unit === 'imperial' ? (0.05 * volumeFactor).toFixed(9) : 0.05;
-    fields.mugMass.min = 0.1 * massFactor;
-    fields.mugMass.max = 5 * massFactor;
-    fields.mugMass.step = 0.01 * massFactor;
+    const massFactor = unit === 'imperial' ? LB_PER_KG : 1000;
+    const mugFactor = unit === 'imperial' ? LB_PER_KG : 1;
+    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1000;
+    fields.volume.min = 0.1 * volumeFactor;
+    fields.volume.max = 2 * volumeFactor;
+    fields.volume.step = 'any';
+    fields.volume.dataset.stepSize = String(0.05 * volumeFactor);
+    fields.mugMass.min = 0.1 * mugFactor;
+    fields.mugMass.max = 5 * mugFactor;
+    fields.mugMass.step = 'any';
+    fields.mugMass.dataset.stepSize = String(0.01 * mugFactor);
     fields.uncertainty.min = 0;
-    fields.uncertainty.max = 1000;
-    fields.uncertainty.step = 1;
-    const densityFactor = unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1;
+    fields.uncertainty.max = 1 * massFactor;
+    fields.uncertainty.step = 'any';
+    fields.uncertainty.dataset.stepSize = unit === 'imperial' ? '0.001' : '1';
     fields.density.min = 0.8 * densityFactor;
     fields.density.max = 1.2 * densityFactor;
-    fields.density.step = 0.001 * densityFactor;
+    fields.density.step = 'any';
+    fields.density.dataset.stepSize = unit === 'imperial' ? '0.001' : '1';
     fields.densityUncertainty.min = 0;
-    fields.densityUncertainty.max = 100000;
-    fields.densityUncertainty.step = 1;
+    fields.densityUncertainty.max = 0.1 * densityFactor;
+    fields.densityUncertainty.step = 'any';
+    fields.densityUncertainty.dataset.stepSize = unit === 'imperial' ? '0.001' : '0.1';
   }
   function steinSvg() {
     return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
@@ -101,9 +110,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     $('#visualizer').setAttribute('aria-label', `${s.count} beer steins`);
     $('#volume-unit').textContent = unit === 'imperial' ? 'fl oz' : 'L';
     $('#mass-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
-    $('#uncertainty-unit').textContent = '± g';
-    $('#density-unit').textContent = unit === 'imperial' ? 'lb/US gal' : 'kg/L';
-    $('#density-uncertainty-unit').textContent = '± mg/L';
+    $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± g';
+    $('#density-unit').textContent = unit === 'imperial' ? 'lb/gal' : 'g/L';
+    $('#density-uncertainty-unit').textContent = unit === 'imperial' ? '± lb/gal' : '± g/L';
     try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
   }
   function toast(message) {
@@ -119,20 +128,29 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   if (!initialState) {
     try { initialState = JSON.parse(localStorage.getItem('carry-calc')); } catch { /* Use defaults for unavailable or invalid local storage. */ }
   }
-  setInputValues({ ...defaults, ...(initialState || {}) });
-  render();
+  const initialScenario = normalizeState({ ...defaults, ...(initialState || {}) });
+  updateInputConstraints();
+  setInputValues(initialScenario);
+  render(initialScenario);
 
   Object.entries(fields).forEach(([key, field]) => field.addEventListener('input', () => {
     const edited = readState();
     render({ ...scenario, [key]: edited[key] });
   }));
+  ['volume', 'mugMass', 'density', 'uncertainty', 'densityUncertainty'].forEach((key) => fields[key].addEventListener('blur', () => setInputValues(scenario)));
   document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
     const field = button.dataset.stepInput ? $(`#${button.dataset.stepInput}`) : fields.count;
-    const min = Number(field.min);
-    const max = Number(field.max);
-    const step = Number(field.step);
-    field.value = String(Number(clamp(readNumber(field, min) + Number(button.dataset.step) * step, min, max).toFixed(9)));
-    field.dispatchEvent(new Event('input', { bubbles: true }));
+    const key = Object.keys(fields).find((name) => fields[name] === field);
+    const factor = key === 'volume' ? (unit === 'imperial' ? OZ_PER_L : 1)
+      : key === 'mugMass' ? (unit === 'imperial' ? LB_PER_KG : 1)
+        : key === 'uncertainty' ? (unit === 'imperial' ? LB_PER_KG : 1000)
+          : key === 'density' || key === 'densityUncertainty' ? (unit === 'imperial' ? DENSITY_LB_PER_US_GAL_PER_KG_PER_L : 1000) : 1;
+    const min = Number(field.min) / factor;
+    const max = Number(field.max) / factor;
+    const step = Number(field.dataset.stepSize || field.step) / factor;
+    const nextState = { ...scenario, [key]: clamp(scenario[key] + Number(button.dataset.step) * step, min, max) };
+    setInputValues(nextState);
+    render(nextState);
   }));
   document.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => {
     if (unit === button.dataset.unit) return;
@@ -151,7 +169,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   });
   $('#share').addEventListener('click', async () => {
     const state = scenario;
-    const params = new URLSearchParams(Object.entries(state).map(([key, value]) => [key, String(Number(value.toFixed(3)))]));
+    const params = new URLSearchParams(Object.entries(state).map(([key, value]) => [key, String(value)]));
     const url = `${location.origin}${location.pathname}?${params}`;
     try {
       await navigator.clipboard.writeText(url);
