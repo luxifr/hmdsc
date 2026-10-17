@@ -84,6 +84,12 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('opacity', '.65');
   await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('fill', '#FFF8E9');
   await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('opacity', '.8');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-name', 'bubble-rise');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-name', 'foam-bubble');
+
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1e-05s');
 });
 
 test('uses a valid inline SVG favicon', async ({ page }) => {
