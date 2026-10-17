@@ -507,7 +507,20 @@ h1 em,h2 em {
   font-size: 8px;
   letter-spacing: .08em;
 }
-.per-stein>div {
+.per-stein-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.per-stein-icon {
+  display: flex;
+  flex: 0 0 auto;
+}
+.per-stein-icon .mini-stein {
+  width: 30px;
+  height: 36px;
+}
+.per-stein-display>div {
   display: grid;
   gap: 4px;
   justify-items: end;
@@ -518,9 +531,10 @@ h1 em,h2 em {
   white-space: nowrap;
 }
 .per-stein strong {
-  color: #e9dfcc;
-  font-size: 13px;
-  font-weight: 400;
+  color: var(--gold-pale);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.02em;
 }
 .per-stein-uncertainty {
   color: #a59c8a;
