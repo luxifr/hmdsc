@@ -17,7 +17,9 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#total-uncertainty')).toHaveText('±1.2');
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±1.2 kg');
   await expect(page.locator('#per-stein')).toHaveText('2.33 kg');
+  await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.10 kg');
+  await expect(page.locator('#secondary-total')).toHaveText("That's 61.6 ±2.6 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
 });
@@ -152,6 +154,7 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±2.6 lb');
   await expect(page.locator('#per-stein')).toHaveText('5.14 lb');
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.22 lb');
+  await expect(page.locator('#secondary-total')).toHaveText("That's 28.0 ±1.2 kg on the other side of the pond");
   expect(Number(await volume.inputValue())).toBeCloseTo(33.8140227, 6);
   expect(Number(await mugMass.inputValue())).toBeCloseTo(1.32 * 2.2046226218, 6);
   expect(Number(await uncertainty.inputValue())).toBeCloseTo(0.1 * 2.2046226218, 6);
