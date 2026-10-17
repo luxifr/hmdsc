@@ -77,7 +77,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     fields.densityUncertainty.dataset.stepSize = unit === 'imperial' ? '0.001' : '0.1';
   }
   function steinSvg() {
-    return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#c8b78e" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#b77932" stroke="#e1bd6b" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#e2a744"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#efe7d7"/></svg>';
+    return '<svg class="mini-stein" viewBox="0 0 30 36" role="img" aria-label="One beer stein"><path d="M21 9h3a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4h-3" fill="none" stroke="#D8C69F" stroke-width="2"/><path d="M5 9h17l-2 23H7L5 9Z" fill="#B77932" stroke="#E4C781" stroke-width="1.3"/><path d="M6 14h15l-1 16H7L6 14Z" fill="#E0A743"/><path d="M4 9a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v2H4V9Z" fill="#F0E9D9"/></svg>';
   }
   function render(state = readState()) {
     const s = state;
