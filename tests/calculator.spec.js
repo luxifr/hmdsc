@@ -29,7 +29,7 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('.assumption-note a')).toHaveCount(8);
 });
 
-test('keeps the per-stein result beside the total on narrow screens', async ({ page }) => {
+test('keeps the per-stein result below the total on narrow screens', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto('/');
 
@@ -44,8 +44,7 @@ test('keeps the per-stein result beside the total on narrow screens', async ({ p
       card: rect('.result-card'),
     };
   });
-  expect(bounds.total.right).toBeLessThanOrEqual(bounds.perStein.left);
-  expect(bounds.total.top).toBeLessThan(bounds.perStein.bottom);
+  expect(bounds.total.bottom).toBeLessThan(bounds.perStein.top);
   expect(bounds.perStein.right).toBeLessThanOrEqual(bounds.card.right);
 });
 

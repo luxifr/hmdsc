@@ -875,7 +875,12 @@ footer {
 }
 @media (max-width:380px) {
   .total-line {
-    gap: 8px;
+    display: grid;
+    gap: 12px;
+  }
+  .per-stein {
+    justify-self: end;
+    padding-bottom: 0;
   }
   .total-primary {
     gap: 6px;
