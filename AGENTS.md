@@ -39,7 +39,7 @@ final line of your response, except:
 ### During coding
 
 After `✅ Done` for an implementation task, provide a concise proposed
-conventional commit message.
+conventional commit message unless you've already done the commit yourself.
 
 ## Coding
 
