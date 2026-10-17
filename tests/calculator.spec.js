@@ -1,5 +1,18 @@
 import { expect, test } from '@playwright/test';
 
+test('uses a valid inline SVG favicon', async ({ page }) => {
+  await page.goto('/');
+  const favicon = page.locator('link[rel="icon"]');
+  const href = await favicon.getAttribute('href');
+  expect(href.startsWith('data:image/svg+xml,')).toBe(true);
+  await expect.poll(() => page.evaluate(async (src) => {
+    const image = new Image();
+    image.src = src;
+    await image.decode();
+    return image.naturalWidth;
+  }, href)).toBeGreaterThan(0);
+});
+
 test('beer density switches units and preserves its value', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();

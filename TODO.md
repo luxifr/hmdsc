@@ -29,11 +29,7 @@ development-only tooling; there is no build step or CI.
    card. Put it on `#total` or `#range` instead. `aria-label` on the plain
    `div#visualizer` is ignored by assistive tech without a role.
 
-4. **No favicon.** The `<head>` (lines 1-10) has no `<link rel="icon">`, so
-   browsers will request `/favicon.ico` and get a 404. An inline SVG data-URI
-   icon fixes it with no new files.
-
-5. **Redundant write.** `render()` sets both `.value` and `.textContent` on
+4. **Redundant write.** `render()` sets both `.value` and `.textContent` on
    `#fill-output` in `app.js`. Keep only one.
 
 ### Medium-effort
@@ -72,6 +68,7 @@ rule applies.
 
 ## Completed
 
+- Added an inline SVG stein favicon with no extra asset file.
 - Added Playwright Chromium smoke tests for unit conversions, reset, share-link
   creation/reload, URL validation, saved scenarios, and stepper limits. Setup and
   run commands are documented in `README.md`.
