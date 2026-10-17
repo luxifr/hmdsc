@@ -1,6 +1,6 @@
 # How Much Did She Carry?
 
-A dependency-free, static single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. All calculations happen in the browser; it has no backend and needs no build step.
+A dependency-free, static single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. The page structure is in `index.html`, styles are in `styles.css`, and browser behavior is in `app.js`. All calculations happen in the browser; it has no backend and needs no build step.
 
 ## Run locally
 
