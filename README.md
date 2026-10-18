@@ -41,3 +41,21 @@ and dependency-free.
 - Tray weight, motion, grip forces, and balance are not included.
 
 Metric/imperial display, adjustable assumptions, optional scenario saving, and shareable scenario links are provided without a framework or runtime dependency. Scenario saving is off by default and can be enabled with “Remember my inputs on this device”; saved scenarios remain only in this browser and are deleted when the option is turned off. URL values take precedence over remembered inputs. The selected display unit is not saved. Unit switches and share links keep exact scenario values for calculation while formatting input values to at most three decimal places, avoiding cumulative conversion drift. The beer-density input follows the selected system: g/L in metric and lb/gal in imperial; switching units preserves the underlying density.
+
+## Sources
+
+- BJCP, [4B. Festbier](https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier) and
+  [6A. Märzen](https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen): final
+  gravity ranges and style context for current Oktoberfest beer and Märzen.
+- BYO, [Calculating Alcohol Content, Attenuation, Extract, and Calories](https://byo.com/articles/calculating-alcohol/): specific gravity is density
+  relative to water; explains beer gravity readings.
+- Engineering ToolBox, [Water Density, Specific Weight and Thermal Expansion](https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html):
+  water density at 20 °C.
+- Atrium Hotel, [A Maß - FAQ and interesting facts](https://www.atrium-hotel.de/en/a-mass-faq-and-interesting-facts-about-the-popular-gift-mass/):
+  Oktoberfest beer mugs are glass and approximate empty Maß weight.
+- Trinklusiv, [Paulaner Maßkrug Glas 1L](https://trinklusiv.at/products/paulaner-masskrug-glas-1l): 1.27 kg product
+  weight.
+- Privatbrauerei Schweiger, [Isar Maßkrug 1 L](https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/): 1.35 kg
+  product weight.
+- Geschirr24, [Stölzle Oberglas Isar 1 L Maßkrug](https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html):
+  1.367 kg product weight; used as upper end rounded to 1.37 kg.
