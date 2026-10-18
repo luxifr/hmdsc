@@ -35,3 +35,4 @@ npm test
 
 - [Calculator model, assumptions, and sources](MODEL.md)
 - [Hand-carried biomechanics and energy estimates](BIOMECHANICS.md)
+- [Privacy-first analytics MVP concept](ANALYTICS-MVP.md)
