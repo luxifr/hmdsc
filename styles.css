@@ -309,11 +309,24 @@ h1 em,h2 em {
   margin: auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  grid-template-areas: "primary result" "secondary result";
   gap: 24px;
   align-items: stretch;
 }
 .controls {
-  padding: 5px 28px 0 0;
+  display: contents;
+}
+.primary-controls {
+  grid-area: primary;
+  margin-right: 28px;
+}
+.secondary-controls {
+  grid-area: secondary;
+  margin-right: 28px;
+}
+.result-card {
+  grid-area: result;
 }
 .primary-controls {
   display: grid;
@@ -901,8 +914,8 @@ footer {
   .workspace {
     gap: 18px;
   }
-  .controls {
-    padding-right: 12px;
+  .primary-controls,.secondary-controls {
+    margin-right: 12px;
   }
   .primary-controls {
     grid-template-columns: 64px minmax(0,1fr);
@@ -995,10 +1008,13 @@ footer {
   }
   .workspace {
     grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "primary" "result" "secondary";
     gap: 20px;
   }
-  .controls {
-    padding: 0;
+  .primary-controls,.secondary-controls {
+    margin: 0;
+    padding-right: 0;
   }
   .primary-controls {
     grid-template-columns: 64px minmax(0,1fr);
