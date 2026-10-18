@@ -352,6 +352,7 @@ h1 em,h2 em {
 }
 .vertical-stepper {
   display: grid;
+  grid-template-columns: 76px;
   grid-template-rows: 1fr 34px 1fr;
   width: 76px;
   height: 104px;
@@ -361,7 +362,7 @@ h1 em,h2 em {
 .vertical-stepper .step-button {
   display: grid;
   place-items: center;
-  justify-self: end;
+  justify-self: center;
   align-self: center;
   flex: 0 0 28px;
   width: 28px;

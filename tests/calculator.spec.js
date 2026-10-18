@@ -620,12 +620,18 @@ test('primary stein controls pair a vertical counter with a matching-height fill
       const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
       return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
     });
+    const counter = document.querySelector('.vertical-stepper').getBoundingClientRect();
+    const countButtonCenterOffset = Math.max(...[...document.querySelectorAll('.vertical-stepper .step-button')].map((button) => {
+      const rect = button.getBoundingClientRect();
+      return Math.abs(rect.left + rect.width / 2 - (counter.left + counter.width / 2));
+    }));
     return {
       counter: rect('.vertical-stepper'),
       count: rect('#stein-count'),
       countPlus: rect('.vertical-stepper .step-button:first-child'),
       countMinus: rect('.vertical-stepper .step-button:last-child'),
       fillStein: rect('.fill-slider'),
+      countButtonCenterOffset,
       fillControlsGap: parseFloat(getComputedStyle(document.querySelector('.fill-control')).columnGap),
       fillPlus: rect('.fill-control .fill-step-button:first-child'),
       fillValue: rect('#fill-output'),
@@ -655,17 +661,15 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.count[4]).toBe(layout.counter[4]);
     expect(layout.countPlus[4]).toBe(28);
     expect(layout.countMinus[4]).toBe(28);
-    expect(layout.fillStein[0] - layout.countMinus[1]).toBe(layout.fillControlsGap);
-    expect(layout.countPlus[1]).toBe(layout.counter[1]);
-    expect(layout.countMinus[1]).toBe(layout.counter[1]);
-    expect(layout.fillStein[0] - layout.countPlus[1]).toBe(layout.fillControlsGap);
+    expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
+    expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);
     expect(layout.count[0] + layout.count[4] / 2).toBe(layout.counter[0] + layout.counter[4] / 2);
-    expect(layout.count[2] + layout.count[5] / 2).toBe(layout.counter[2] + layout.counter[5] / 2);
-    expect(layout.count[2] + layout.count[5] / 2).toBe((layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2);
+    expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.counter[2] + layout.counter[5] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillMinus[0] + layout.fillMinus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
-    expect(layout.fillValue[2] + layout.fillValue[5] / 2).toBe((layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2);
+    expect(Math.abs(layout.fillValue[2] + layout.fillValue[5] / 2 - (layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
     expect(layout.stepButtons[0][5]).toBe(32);
     expect(layout.stepButtons[1][5]).toBe(32);
     expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(2);
@@ -683,7 +687,7 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.pageFits).toBe(true);
   };
 
-  for (const width of [1280, 900, 650, 380, 320]) {
+  for (const width of [1280, 900, 650, 430, 414, 390, 375, 360, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const metricLayout = await measure();
     expectLayout(metricLayout);
