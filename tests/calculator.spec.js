@@ -894,9 +894,8 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(section.getByRole('link', { name: /Read the full methods/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   await expect(page.locator('footer').getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
 
-  const jumpLink = page.getByRole('link', { name: /See sources & model rationale/ });
-  await jumpLink.click();
-  await expect(page).toHaveURL(/#sources$/);
+  await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
+  await expect(section.locator('.sources-heading')).not.toContainText('biomechanics');
 
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
