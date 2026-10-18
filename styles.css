@@ -545,9 +545,35 @@ h1 em,h2 em {
 }
 .form-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
   margin-top: 8px;
+}
+.result-share {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #ffffff16;
+}
+.result-share button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 2px 12px;
+  background: none;
+  border: 0;
+  color: var(--gold-pale);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.result-share button:hover {
+  color: #fff;
+}
+.result-share button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
 }
 .text-button {
   padding: 8px 0;
