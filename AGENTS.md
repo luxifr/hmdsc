@@ -58,6 +58,8 @@ conventional commit message unless you've already done the commit yourself.
   maintainability, readability, style, and consistency. Present findings
   categorically, with actionable defects and risks first.
 - For merging, always use merge commits, never fast-forward or rebase merging
+- run the build script when you're done and run your browser tests against the
+  build result...
 
 ### Autonomy
 
