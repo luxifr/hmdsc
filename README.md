@@ -2,6 +2,10 @@
 
 A static, single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. Adjust the fill level, stein count, and assumptions; compare metric and imperial units; or share a scenario. The page includes a sources and model-rationale section; the full calculator and biomechanics methods remain documented in [MODEL.md](MODEL.md) and [BIOMECHANICS.md](BIOMECHANICS.md).
 
+## License
+
+Copyright © 2026 Camina Keil. This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). You may use, modify, and redistribute it for permitted noncommercial purposes under those terms. Commercial use requires a separate license from the copyright holder. See `LICENSE` for the full terms.
+
 ## Run locally
 
 ```sh
