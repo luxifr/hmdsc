@@ -289,6 +289,39 @@ test('scenario saving is opt-in, restores when enabled, and clears when disabled
   await expect(page.locator('#stein-count')).toHaveValue('12');
 });
 
+test('URL scenario takes precedence over remembered data and updates the remembered scenario', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#remember-inputs').check();
+  await page.locator('#stein-count').fill('9');
+  await page.locator('#fill').fill('82');
+
+  await page.goto('/?count=5');
+  await expect(page.locator('#stein-count')).toHaveValue('5');
+  await expect(page.locator('#fill')).toHaveValue('90');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(5);
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).fill)).toBe(90);
+
+  await page.goto('/');
+  await expect(page.locator('#stein-count')).toHaveValue('5');
+  await expect(page.locator('#fill')).toHaveValue('90');
+});
+
+test('invalid remembered JSON falls back to defaults without breaking the calculator', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    localStorage.setItem('carry-calc-remember', 'true');
+    localStorage.setItem('carry-calc', '{not valid json');
+  });
+
+  await page.reload();
+  await expect(page.locator('#remember-inputs')).toBeChecked();
+  await expect(page.locator('#stein-count')).toHaveValue('12');
+  await expect(page.locator('#total')).toHaveText('26.7');
+
+  await page.locator('#stein-count').fill('8');
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(8);
+});
+
 test('volume and mass inputs convert when switching units', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
