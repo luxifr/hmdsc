@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -922,7 +923,15 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(section.getByRole('link', { name: /full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
-  await expect(page.locator('footer').getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
+  const footerLink = page.locator('footer .footer-github');
+  if (process.env.PLAYWRIGHT_BUILD === '1') {
+    const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    await expect(footerLink).toHaveText(sourceCommit);
+    await expect(footerLink).toHaveAttribute('href', `https://github.com/luxifr/hmdsc/commit/${sourceCommit}`);
+    await expect(footerLink).toHaveAttribute('title', `Built from source commit ${sourceCommit}`);
+  } else {
+    await expect(footerLink).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
+  }
 
   await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
   await expect(section.locator('.sources-heading')).not.toContainText('biomechanics');

@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { build, transform } from 'esbuild';
 import { minify } from 'html-minifier-terser';
 
@@ -21,6 +22,10 @@ function replaceExactlyOnce(source, pattern, replacement, resourceName) {
 
 let html = await readFile(htmlPath, 'utf8');
 const css = await readFile(cssPath, 'utf8');
+const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+if (!/^[0-9a-f]{40}$/.test(sourceCommit)) {
+  throw new Error(`Expected a full Git commit hash; received ${sourceCommit}.`);
+}
 
 const jsBundle = await build({
   entryPoints: [jsPath],
@@ -53,6 +58,12 @@ html = replaceExactlyOnce(
   /<script\b(?=[^>]*\bsrc=["']app\.js["'])[^>]*>\s*<\/script>/gi,
   `<script>${inlineJs}</script>`,
   'application script',
+);
+html = replaceExactlyOnce(
+  html,
+  /<a\b(?=[^>]*\bclass=["']footer-github["'])(?=[^>]*\bhref=["']https:\/\/github\.com\/luxifr\/hmdsc["'])[^>]*>GitHub repository<\/a>/gi,
+  `<a class="footer-github" href="https://github.com/luxifr/hmdsc/commit/${sourceCommit}" title="Built from source commit ${sourceCommit}">${sourceCommit}</a>`,
+  'footer repository link',
 );
 
 const output = await minify(html, {
