@@ -256,7 +256,9 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(foam).toHaveAttribute('x', '18');
   await expect(foam).toHaveAttribute('y', '22');
   await expect(foam).toHaveAttribute('width', '39');
-  await expect(page.locator('.fill-stein path[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveAttribute('fill', 'none');
+  await expect(page.locator('.fill-stein path[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveCount(0);
+  await expect(foamCap).toHaveAttribute('transform', 'translate(1 0)');
+  await expect(page.locator('#fill-foam-cap-bubbles')).toHaveAttribute('transform', 'translate(1 0)');
   await expect(beerBubbles.first()).toHaveCSS('animation-name', 'fill-bubble-rise');
   await expect(beerBubbles.first()).toHaveCSS('r', '1.15px');
   await expect(page.locator('.fill-stein path[stroke="#8F592A"]')).toHaveCount(1);
