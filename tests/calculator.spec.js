@@ -144,7 +144,7 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.05 kg');
   await expect(page.locator('#secondary-total')).toHaveText("That's 59.0 ±1.4 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);
-  await expect(page.locator('.assumption-note a')).toHaveCount(8);
+  await expect(page.locator('.rationale-list a')).toHaveCount(7);
 });
 
 test('keeps the per-stein result clear of the total on desktop screens', async ({ page }) => {
@@ -888,7 +888,8 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(section.locator('.eyebrow')).toContainText('04');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText(/What the numbers\s*mean—and don’t\./);
   await expect(section.locator('.source-card')).toHaveCount(3);
-  await expect(section.locator('.source-card-wide')).not.toContainText('Neither is a safety assessment');
+  await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
+  await expect(section.locator('.source-card-wide')).toContainText('Neither is a safety assessment');
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
   await expect(section.getByRole('link', { name: /Read the full methods/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   await expect(page.locator('footer').getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
