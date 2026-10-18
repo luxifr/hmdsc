@@ -352,7 +352,7 @@ h1 em,h2 em {
 }
 .vertical-stepper {
   display: grid;
-  grid-template-columns: 76px;
+  grid-template-columns: 1fr 48px;
   grid-template-rows: 1fr 34px 1fr;
   width: 76px;
   height: 104px;
@@ -361,6 +361,7 @@ h1 em,h2 em {
 }
 .vertical-stepper .step-button {
   display: grid;
+  grid-column: 2;
   place-items: center;
   justify-self: center;
   align-self: center;
@@ -377,11 +378,20 @@ h1 em,h2 em {
   line-height: 1;
   text-align: center;
 }
+.vertical-stepper .step-button:first-child {
+  grid-row: 1;
+}
+.vertical-stepper .step-button:last-child {
+  grid-row: 3;
+}
 .vertical-stepper input::-webkit-outer-spin-button,.vertical-stepper input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 .stepper.vertical-stepper input {
+  grid-column: 2;
+  grid-row: 2;
+  width: 48px;
   min-height: 0;
   padding: 0;
   background: none;
@@ -389,8 +399,7 @@ h1 em,h2 em {
   font-size: 22px;
   font-weight: 600;
   line-height: 34px;
-  padding-right: 3px;
-  text-align: right;
+  text-align: center;
 }
 .step-button {
   flex: 0 0 38px;

@@ -556,7 +556,7 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   await expect(page.getByRole('slider', { name: 'Fill level' })).toHaveValue('90');
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize));
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).color)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).color));
-  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('right');
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
   await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
   const fillControls = await page.evaluate(() => {
@@ -620,10 +620,10 @@ test('primary stein controls pair a vertical counter with a matching-height fill
       const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
       return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
     });
-    const counter = document.querySelector('.vertical-stepper').getBoundingClientRect();
+    const countValue = document.querySelector('#stein-count').getBoundingClientRect();
     const countButtonCenterOffset = Math.max(...[...document.querySelectorAll('.vertical-stepper .step-button')].map((button) => {
       const rect = button.getBoundingClientRect();
-      return Math.abs(rect.left + rect.width / 2 - (counter.left + counter.width / 2));
+      return Math.abs(rect.left + rect.width / 2 - (countValue.left + countValue.width / 2));
     }));
     return {
       counter: rect('.vertical-stepper'),
@@ -654,17 +654,18 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.counter[2]).toBe(layout.fillStein[2]);
     expect(layout.counter[3]).toBe(layout.fillStein[3]);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
-    expect(layout.count[0]).toBe(layout.counter[0]);
     expect(layout.count[1]).toBe(layout.counter[1]);
     expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
     expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
-    expect(layout.count[4]).toBe(layout.counter[4]);
+    expect(layout.count[4]).toBe(48);
+    expect(layout.count[1]).toBe(layout.counter[1]);
     expect(layout.countPlus[4]).toBe(28);
     expect(layout.countMinus[4]).toBe(28);
     expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);
-    expect(layout.count[0] + layout.count[4] / 2).toBe(layout.counter[0] + layout.counter[4] / 2);
+    expect(Math.abs(layout.count[0] + layout.count[4] / 2 - (layout.countPlus[0] + layout.countPlus[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.count[0] + layout.count[4] / 2 - (layout.countMinus[0] + layout.countMinus[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.counter[2] + layout.counter[5] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
