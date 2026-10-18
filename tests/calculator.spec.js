@@ -54,7 +54,8 @@ test('forwards the browser referrer to GoatCounter', async ({ page }) => {
   }));
   await page.goto('/referrer-source?campaign=beer');
   await page.getByRole('link', { name: 'Continue' }).click();
-  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
+  const expectedReferrer = new URL('/referrer-source?campaign=beer', page.url()).href;
+  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe(expectedReferrer);
 });
 
 test('mobile places secondary controls after results while desktop keeps them in the controls column', async ({ page }) => {
@@ -143,7 +144,7 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#per-stein-uncertainty')).toHaveText('±0.05 kg');
   await expect(page.locator('#secondary-total')).toHaveText("That's 59.0 ±1.4 lb on the other side of the pond");
   await expect(page.locator('#range')).toHaveCount(0);
-  await expect(page.locator('.assumption-note a')).toHaveCount(8);
+  await expect(page.locator('.rationale-list a')).toHaveCount(7);
 });
 
 test('keeps the per-stein result clear of the total on desktop screens', async ({ page }) => {
@@ -878,4 +879,26 @@ test('stein stepper recalculates and respects count limits', async ({ page }) =>
   await page.goto('/?count=1');
   await page.getByRole('button', { name: 'Remove one stein' }).click();
   await expect(page.locator('#stein-count')).toHaveValue('1');
+});
+
+test('sources and model rationale section is linked, readable, and responsive', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#sources');
+  await expect(section).toHaveCount(1);
+  await expect(section.locator('.eyebrow')).toContainText('04');
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText(/How the estimate\s*comes together\./);
+  await expect(section.locator('.source-card')).toHaveCount(2);
+  await expect(section.getByText('Biomechanics: explanatory estimates')).toHaveCount(0);
+  await expect(section.getByRole('link', { name: /full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
+  await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
+  await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
+  await expect(page.locator('footer').getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
+
+  await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
+  await expect(section.locator('.sources-heading')).not.toContainText('biomechanics');
+
+  for (const width of [320, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
 });

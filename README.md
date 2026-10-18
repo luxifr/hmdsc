@@ -1,6 +1,6 @@
 # How Much Did She Carry?
 
-A static, single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. Adjust the fill level, stein count, and assumptions; compare metric and imperial units; or share a scenario.
+A static, single-page calculator for estimating the load in an Oktoberfest waitress's beer steins. Adjust the fill level, stein count, and assumptions; compare metric and imperial units; or share a scenario. The page includes a sources and model-rationale section; the full calculator and biomechanics methods remain documented in [MODEL.md](MODEL.md) and [BIOMECHANICS.md](BIOMECHANICS.md).
 
 ## Run locally
 
@@ -29,7 +29,7 @@ npx playwright install chromium
 npm test
 ```
 
-`npm test` runs calculation unit tests and Playwright browser tests. To run only the unit tests, use `npm run test:unit`.
+`npm test` runs calculation unit tests and Playwright browser tests against the source page. To run only the unit tests, use `npm run test:unit`. To run the browser tests against the generated deployment file, build first and run `PLAYWRIGHT_BUILD=1 npx playwright test`.
 
 ## Documentation
 

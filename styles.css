@@ -990,6 +990,113 @@ h1 em,h2 em {
 .assumption-note a {
   color: #b9a77d;
 }
+.sources-link {
+  margin: 15px 0 0;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.sources-link a,.source-card a {
+  color: var(--gold-pale);
+  text-decoration-color: #e3b85f66;
+  text-underline-offset: 3px;
+}
+.sources-link a:hover,.source-card a:hover {
+  color: #fff;
+  text-decoration-color: currentColor;
+}
+.sources-link a:focus-visible,.source-card a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+.sources-section {
+  max-width: 1180px;
+  margin: auto;
+  padding: 36px 30px 92px;
+}
+.sources-heading {
+  max-width: 700px;
+  margin-bottom: 34px;
+}
+.sources-heading .eyebrow {
+  margin-bottom: 19px;
+}
+.sources-heading h2 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.08;
+}
+.sources-heading > p:last-child {
+  max-width: 630px;
+  margin: 18px 0 0;
+  color: #a9a190;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 16px;
+}
+.source-card {
+  min-width: 0;
+  padding: 23px 25px;
+  border: 1px solid var(--line);
+  background: linear-gradient(145deg,#211e19,#1c1915);
+}
+.source-card-wide {
+  grid-column: 1/-1;
+}
+.source-card h3 {
+  margin: 0 0 14px;
+  color: var(--gold-pale);
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+.source-card p,.rationale-list {
+  color: #b2aa99;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.source-card p {
+  margin: 0 0 12px;
+}
+.source-card .source-equation {
+  margin: 15px 0;
+  padding: 11px 13px;
+  border-left: 2px solid var(--gold);
+  background: #ffffff06;
+  color: var(--gold-pale);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.rationale-list {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 13px;
+  padding-left: 19px;
+}
+.rationale-list li::marker {
+  color: var(--gold);
+}
+.rationale-list strong {
+  color: #e8dfcf;
+}
+.source-card .source-detail-link {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.footer-github {
+  color: inherit;
+  text-decoration-color: #7c756966;
+  text-underline-offset: 2px;
+}
+.footer-github:hover,.footer-github:focus-visible {
+  color: var(--paper);
+}
 footer {
   display: flex;
   justify-content: space-between;
@@ -1085,6 +1192,9 @@ footer {
   }
   .method-section {
     grid-template-columns: .8fr 1.2fr;
+  }
+  .sources-section {
+    padding-inline: 6vw;
   }
 }
 @media (max-width:650px) {
@@ -1203,6 +1313,25 @@ footer {
   }
   .method-content {
     padding: 0;
+  }
+  .sources-section {
+    padding: 54px 23px 68px;
+  }
+  .sources-heading {
+    margin-bottom: 25px;
+  }
+  .sources-heading h2 {
+    font-size: 40px;
+  }
+  .sources-grid {
+    grid-template-columns: minmax(0,1fr);
+    gap: 12px;
+  }
+  .source-card-wide {
+    grid-column: auto;
+  }
+  .source-card {
+    padding: 20px;
   }
   footer {
     flex-wrap: wrap;

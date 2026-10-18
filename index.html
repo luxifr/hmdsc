@@ -116,11 +116,36 @@
           <div class="equation"><span class="eq-number">01</span><div><span class="eq-title">Beer mass</span><p><i>number of steins</i> × <i>volume per stein</i> × <i>fill fraction</i> × <i>beer density</i></p><strong id="beer-equation">12 × 1.00 L × 90% × 1.010 kg/L = 10.91 kg</strong></div></div>
           <div class="equation"><span class="eq-number">02</span><div><span class="eq-title">Glass mass</span><p><i>number of steins</i> × <i>empty glass weight</i></p><strong id="glass-equation">12 × 1.32 kg = 15.84 kg</strong></div></div>
           <div class="equation total-equation"><span class="eq-number">03</span><div><span class="eq-title">Total carried</span><p>beer mass + glass mass</p><strong id="total-equation">10.91 kg + 15.84 kg = 26.75 kg</strong></div></div>
-          <p class="caveat"><span>✳</span> This is the load in the glasses only. It excludes tray weight, movement, grip forces, and the very real challenge of keeping everything upright.</p>
-          <p class="assumption-note">BJCP Festbier/Märzen final gravity SG 1.010–1.014 converts to about 1.008–1.012 kg/L at 20 °C (default midpoint 1.010); comparable empty 1 L glass Maßkrüge weigh 1.27–1.37 kg (default midpoint 1.32). Defaults use ±50 g (±0.110 lb) glass-weight uncertainty and ±2 g/L (±0.017 lb/gal) beer-density uncertainty. These worst-case uncertainty contributions are added. Oktoberfest beer is served in glass Maßkrüge. Sources: <a href="https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier">Festbier</a>, <a href="https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen">Märzen</a>, <a href="https://byo.com/articles/calculating-alcohol/">gravity</a>, <a href="https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html">water density</a>, <a href="https://www.atrium-hotel.de/en/a-mass-faq-and-interesting-facts-about-the-popular-gift-mass/">Oktoberfest glassware</a>, and comparable <a href="https://trinklusiv.at/products/paulaner-masskrug-glas-1l">Paulaner</a>, <a href="https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/">Schweiger</a>, and <a href="https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html">Stölzle Isar</a> weights.</p>
         </div>
       </section>
-      <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span><details class="analytics-privacy"><summary>ANALYTICS &amp; PRIVACY</summary><div><p>We use GoatCounter to count visits and two fixed events: <code>calculator_used</code> and <code>share_clicked</code>. The enabled reports include sessions, browser and operating-system categories derived from your browser’s User-Agent, screen width, and country-level location inferred from your IP address. We send the referring page URL reported by your browser; depending on the referring site and browser policy, it may include URL details such as a path or query string. For this site's URL, GoatCounter receives only the page path: calculator values, query strings, and URL fragments are not sent.</p><p>GoatCounter says it temporarily holds the site, IP address, and User-Agent combination in memory for up to eight hours to recognize repeat visits. It says raw IP addresses and full User-Agent strings are not stored in its analytics database. Its tracker does not use cookies or browser storage. <a href="https://www.goatcounter.com/help/privacy">GoatCounter privacy details</a>.</p></div></details></footer>
+
+      <section class="sources-section" id="sources" aria-labelledby="sources-title">
+        <div class="sources-heading">
+          <p class="eyebrow"><span>04</span> &nbsp; SOURCES &amp; MODEL RATIONALE</p>
+          <h2 id="sources-title">How the estimate<br /><em>comes together.</em></h2>
+          <p>The calculator estimates the combined mass of the beer and glassware. These references explain the inputs and assumptions behind that estimate.</p>
+        </div>
+        <div class="sources-grid">
+          <article class="source-card">
+            <h3>01 &nbsp; The calculator model</h3>
+            <p>Beer mass is stein count × beer volume × fill fraction × beer density. Glass mass is stein count × empty-glass mass. The total is their sum; tray weight and movement are not included.</p>
+            <p class="source-equation">Total load = beer mass + glass mass</p>
+            <p>Defaults use ±0.05 kg per glass and ±0.002 kg/L beer density. For each stein, the calculator adds the glass uncertainty to the density uncertainty converted by beer volume × fill level, then sums that margin across the steins. This is a conservative scenario range, not a statistical confidence interval.</p>
+            <a class="source-detail-link" href="https://github.com/luxifr/hmdsc/blob/main/MODEL.md">Read the full calculator model and assumptions →</a>
+          </article>
+          <article class="source-card">
+            <h3>02 &nbsp; Why these defaults?</h3>
+            <ul class="rationale-list">
+              <li><strong>90% fill:</strong> an adjustable example, not a claim about every served stein.</li>
+              <li><strong>1.010 kg/L beer density:</strong> a modeled midpoint for an estimated 1.008–1.012 kg/L range. <a href="https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier">BJCP Festbier</a> and <a href="https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen">Märzen</a> gravity ranges inform the beer assumption; <a href="https://byo.com/articles/calculating-alcohol/">specific gravity</a> and <a href="https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html">water density at 20 °C</a> inform the conversion.</li>
+              <li><strong>1.32 kg empty glass:</strong> the midpoint of comparable 1 L Maßkrug product listings around 1.27–1.37 kg: <a href="https://trinklusiv.at/products/paulaner-masskrug-glas-1l">Paulaner</a>, <a href="https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/">Schweiger</a>, and <a href="https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html">Stölzle Isar</a>.</li>
+            </ul>
+            <p>These product listings and beer-style ranges inform practical defaults; they are not a survey of every mug or beer served at Oktoberfest.</p>
+          </article>
+
+        </div>
+      </section>
+      <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span><a class="footer-github" href="https://github.com/luxifr/hmdsc">GitHub repository</a><details class="analytics-privacy"><summary>ANALYTICS &amp; PRIVACY</summary><div><p>We use GoatCounter to count visits and two fixed events: <code>calculator_used</code> and <code>share_clicked</code>. The enabled reports include sessions, browser and operating-system categories derived from your browser’s User-Agent, screen width, and country-level location inferred from your IP address. We send the referring page URL reported by your browser; depending on the referring site and browser policy, it may include URL details such as a path or query string. For this site's URL, GoatCounter receives only the page path: calculator values, query strings, and URL fragments are not sent.</p><p>GoatCounter says it temporarily holds the site, IP address, and User-Agent combination in memory for up to eight hours to recognize repeat visits. It says raw IP addresses and full User-Agent strings are not stored in its analytics database. Its tracker does not use cookies or browser storage. <a href="https://www.goatcounter.com/help/privacy">GoatCounter privacy details</a>.</p></div></details></footer>
     </main>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js" type="module"></script>
