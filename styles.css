@@ -678,29 +678,23 @@ h1 em,h2 em {
   margin-top: 8px;
 }
 .result-share {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #ffffff16;
-}
-.result-share button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 0 2px 12px;
+  gap: 6px;
+  padding: 2px 0;
   background: none;
   border: 0;
   color: var(--gold-pale);
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: .08em;
+  font-size: 8px;
+  letter-spacing: .06em;
+  white-space: nowrap;
   cursor: pointer;
 }
-.result-share button:hover {
+.result-share:hover {
   color: #fff;
 }
-.result-share button:focus-visible {
+.result-share:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 4px;
 }
@@ -739,6 +733,8 @@ h1 em,h2 em {
   box-shadow: 0 0 0 18px #dfb86408,0 0 0 38px #dfb86405;
 }
 .result-top {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -38,8 +38,8 @@ test('GoatCounter receives only fixed events and scenario data stays out of quer
 
   await page.locator('#stein-count').fill('7');
   await page.locator('#stein-count').fill('8');
-  await page.getByRole('button', { name: /copy link/i }).click();
-  await page.getByRole('button', { name: /copy link/i }).click();
+  await page.getByRole('button', { name: /share your scenario/i }).click();
+  await page.getByRole('button', { name: /share your scenario/i }).click();
   await expect.poll(() => page.evaluate(() => window.__goatcounterEvents)).toEqual([
     { path: 'calculator_used', event: true },
     { path: 'share_clicked', event: true },
@@ -89,11 +89,18 @@ test('mobile places secondary controls after results while desktop keeps them in
   expect(positions.result.top).toBeLessThan(positions.secondary.top);
 });
 
-test('copy-link action is integrated at the bottom of the result card', async ({ page }) => {
+test('scenario sharing sits in the top-right of the result card, above the stein visual', async ({ page }) => {
   await page.goto('/');
-  const share = page.locator('.result-card #share');
+  const share = page.getByRole('button', { name: /share your scenario/i });
   await expect(share).toBeVisible();
   await expect(page.locator('.result-card #reset')).toHaveCount(0);
+  expect(await share.evaluate((button) => button.parentElement.classList.contains('result-top'))).toBe(true);
+  expect(await share.evaluate((button) => Math.abs(button.getBoundingClientRect().right - button.parentElement.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
+  expect(await page.locator('.result-card').evaluate((card) => card.lastElementChild.id)).toBe('visualizer');
+  for (const width of [430, 390, 375, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
   await share.click();
   await expect(page).toHaveURL(/#scenario=count=12/);
 });
@@ -364,7 +371,7 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
 test('share puts the scenario in a fragment and the shared scenario loads', async ({ page }) => {
   await page.goto('/');
   await page.locator('#stein-count').fill('7');
-  await page.getByRole('button', { name: /copy link/i }).click();
+  await page.getByRole('button', { name: /share your scenario/i }).click();
 
   await expect.poll(() => new URL(page.url()).hash).toContain('#scenario=count=7');
   await expect(page).toHaveURL(/^[^?]+#/);
@@ -538,7 +545,7 @@ test('unit toggles keep the original scenario without cumulative rounding drift'
 
 test('share links preserve full calculation precision', async ({ page }) => {
   await page.goto('/?volume=1.23456789&density=1.01234567');
-  await page.getByRole('button', { name: /copy link/i }).click();
+  await page.getByRole('button', { name: /share your scenario/i }).click();
 
   await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('volume')).toBe('1.23456789');
   await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('density')).toBe('1.01234567');
