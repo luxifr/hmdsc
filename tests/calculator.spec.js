@@ -250,6 +250,13 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(page.locator('.fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
   await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
   await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
+  await expect(page.locator('#fill-glass-clip path')).toHaveAttribute('d', 'M18 22h39l-6 77H24Z');
+  await expect(beer).toHaveAttribute('x', '18');
+  await expect(beer).toHaveAttribute('width', '39');
+  await expect(foam).toHaveAttribute('x', '18');
+  await expect(foam).toHaveAttribute('y', '22');
+  await expect(foam).toHaveAttribute('width', '39');
+  await expect(page.locator('.fill-stein path[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveAttribute('fill', 'none');
   await expect(beerBubbles.first()).toHaveCSS('animation-name', 'fill-bubble-rise');
   await expect(beerBubbles.first()).toHaveCSS('r', '1.15px');
   await expect(page.locator('.fill-stein path[stroke="#8F592A"]')).toHaveCount(1);
@@ -257,7 +264,8 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(fill).toHaveCSS('opacity', '0');
   await expect(page.locator('.fill-handle')).toHaveCount(0);
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(34.6);
-  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(6.6);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(12.6);
+  expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
   await expect(capBubbles).toHaveCount(9);
   await expect(beerBubbles).toHaveCount(18);
   await expect(page.locator('#fill-foam-cap')).toHaveAttribute('fill', '#F0E9D9');
@@ -276,7 +284,8 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await fill.fill('85');
   await expect(page.locator('#fill-output')).toHaveValue('85');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(37.9);
-  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(9.9);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(15.9);
+  expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
 
   await fill.scrollIntoViewIfNeeded();
   const bounds = await fill.boundingBox();
@@ -287,7 +296,8 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(fill).toHaveValue('70');
   await expect(page.locator('#fill-output')).toHaveValue('70');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(47.8);
-  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(19.8);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(25.8);
+  expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
 
   await fill.focus();
   await fill.press('ArrowUp');
@@ -299,12 +309,15 @@ test('editable fill percentage stays synchronized with the slider and stein', as
   await page.goto('/');
   const percentage = page.getByLabel('Fill level percentage');
   const slider = page.getByRole('slider', { name: 'Fill level' });
+  const beer = page.locator('#fill-beer');
+  const foam = page.locator('#fill-foam');
 
   await percentage.fill('85');
   await expect(slider).toHaveValue('85');
   await expect(page.locator('#fill-output')).toHaveValue('85');
-  expect(Number(await page.locator('#fill-beer').getAttribute('y'))).toBeCloseTo(37.9);
-  expect(Number(await page.locator('#fill-foam').getAttribute('height'))).toBeCloseTo(9.9);
+  expect(Number(await beer.getAttribute('y'))).toBeCloseTo(37.9);
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(15.9);
+  expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
 
   await slider.fill('76');
   await expect(percentage).toHaveValue('76');
@@ -315,6 +328,8 @@ test('editable fill percentage stays synchronized with the slider and stein', as
   await expect(percentage).toHaveValue('100');
   await expect(slider).toHaveValue('100');
   await expect(page.locator('#fill-beer')).toHaveAttribute('height', '66');
+  expect(Number(await foam.getAttribute('height'))).toBeCloseTo(6);
+  expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
 });
 
 test('unit selector sits beside the primary inputs in a vertical stack', async ({ page }) => {
