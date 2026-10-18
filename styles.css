@@ -315,24 +315,50 @@ h1 em,h2 em {
 .controls {
   padding: 5px 28px 0 0;
 }
-.control-row {
+.primary-controls {
   display: grid;
-  grid-template-columns: minmax(0,1fr) 190px;
-  gap: 20px;
-  align-items: center;
-  padding: 19px 0;
+  grid-template-columns: 70px minmax(0,1fr);
+  gap: 18px;
+  padding: 19px 0 20px;
   border-bottom: 1px solid var(--line);
 }
-.control-row label,.advanced-fields>label {
+.count-control,.fill-setting {
+  min-width: 0;
+}
+.count-control>label,.fill-setting>label,.advanced-fields>label {
   font-size: 13px;
   font-weight: 600;
   color: #ece4d4;
+}
+.count-control>label,.fill-setting>label {
+  display: block;
+  margin-bottom: 8px;
 }
 .stepper {
   display: flex;
   height: 38px;
   border: 1px solid #4a4438;
   align-items: center;
+}
+.vertical-stepper {
+  display: grid;
+  grid-template-rows: 1fr 34px 1fr;
+  width: 60px;
+  height: 104px;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.vertical-stepper .step-button {
+  width: 100%;
+  min-height: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+.vertical-stepper input {
+  min-height: 0;
+  background: #ffffff08;
+  font-size: 16px;
+  font-weight: 600;
 }
 .step-button {
   flex: 0 0 38px;
@@ -878,9 +904,9 @@ footer {
   .controls {
     padding-right: 12px;
   }
-  .control-row {
-    grid-template-columns: minmax(0,1fr) 160px;
-    gap: 12px;
+  .primary-controls {
+    grid-template-columns: 64px minmax(0,1fr);
+    gap: 14px;
   }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr) 150px;
@@ -974,14 +1000,14 @@ footer {
   .controls {
     padding: 0;
   }
-  .control-row {
-    grid-template-columns: minmax(0,1fr) 155px;
-    padding: 16px 0;
+  .primary-controls {
+    grid-template-columns: 64px minmax(0,1fr);
+    gap: 14px;
   }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr) 156px;
   }
-  .control-row label {
+  .count-control>label,.fill-setting>label {
     font-size: 12px;
   }
   .result-card {
@@ -1042,8 +1068,12 @@ footer {
   .total-primary .total-uncertainty {
     font-size: 9px;
   }
-  .control-row {
-    grid-template-columns: minmax(0,1fr) 130px;
+  .primary-controls {
+    grid-template-columns: 58px minmax(0,1fr);
+    gap: 10px;
+  }
+  .vertical-stepper {
+    width: 54px;
   }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr);

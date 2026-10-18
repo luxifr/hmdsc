@@ -495,7 +495,7 @@ test('input displays cap decimals while retaining scenario precision', async ({ 
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
 });
 
-test('main and fine-tune values, units, and buttons align independently', async ({ page }) => {
+test('primary stein controls pair a vertical counter with a matching-height fill stein', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
   await expect(page.locator('.advanced-fields > label')).toHaveText([
@@ -507,60 +507,57 @@ test('main and fine-tune values, units, and buttons align independently', async 
   ]);
   await expect(page.locator('#beer-volume')).toHaveValue('1');
   const measure = () => page.evaluate(() => {
-    const bounds = (element) => {
-      const { left, right, width } = element.getBoundingClientRect();
-      return [left, right, width].map((value) => Math.round(value * 100) / 100);
+    const rect = (selector) => {
+      const { left, right, top, bottom, width, height } = document.querySelector(selector).getBoundingClientRect();
+      return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
     };
-    const one = (selector) => bounds(document.querySelector(selector));
-    const many = (selector) => [...document.querySelectorAll(selector)].map(bounds);
+    const many = (selector) => [...document.querySelectorAll(selector)].map((element) => {
+      const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
+      return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
+    });
     return {
-      mainLabels: many('.count-row > :first-child'),
-      mainControls: many('.count-row > :last-child'),
-      mainValues: [one('#stein-count')],
-      stepButtons: many('.stepper .step-button'),
-      fineTuneLabels: many('.advanced-fields > label'),
+      counter: rect('.vertical-stepper'),
+      count: rect('#stein-count'),
+      fillStein: rect('.fill-slider'),
+      stepButtons: many('.vertical-stepper .step-button'),
       fineTuneControls: many('.advanced-fields > .input-with-unit'),
       fineTuneValues: many('.advanced-fields input'),
       fineTuneUnits: many('.advanced-fields .input-with-unit span'),
       fineTunePlusButtons: many('.advanced-fields .input-with-unit > .step-button:last-child'),
       suffixesFit: [...document.querySelectorAll('.input-with-unit span')].every((element) => element.scrollWidth <= element.clientWidth),
+      pageFits: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     };
   });
-  const expectSameColumn = (items, index) => expect(new Set(items.map((item) => item[index])).size).toBe(1);
-  const expectLayoutAligned = (layout) => {
-    expectSameColumn(layout.mainLabels, 0);
-    expectSameColumn(layout.mainControls, 1);
-    expectSameColumn(layout.mainControls, 2);
-    expect(layout.stepButtons[0][1]).toBe(layout.mainValues[0][0]);
-    expect(Math.abs(layout.stepButtons[1][1] - layout.mainControls[0][1])).toBeLessThanOrEqual(1);
-    expectSameColumn(layout.fineTuneLabels, 0);
-    expectSameColumn(layout.fineTuneControls, 1);
-    expectSameColumn(layout.fineTuneControls, 2);
-    expect(layout.fineTuneValues[1]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[2]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[3]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[4]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneUnits[1]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[2]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[3]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[4]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTunePlusButtons).toHaveLength(5);
+  const expectLayout = (layout) => {
+    expect(layout.counter[5]).toBe(layout.fillStein[5]);
+    expect(layout.counter[2]).toBe(layout.fillStein[2]);
+    expect(layout.counter[3]).toBe(layout.fillStein[3]);
+    expect(layout.counter[0]).toBeLessThan(layout.fillStein[0]);
+    expect(layout.count[2]).toBeGreaterThan(layout.stepButtons[0][3]);
+    expect(layout.count[3]).toBeLessThan(layout.stepButtons[1][2]);
+    expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(1);
+    expect(Math.abs(layout.stepButtons[1][3] - layout.counter[3])).toBeLessThanOrEqual(1);
+    expect(layout.fineTuneControls).toHaveLength(5);
     layout.fineTuneControls.forEach((control, index) => {
+      expect(control[0]).toBe(layout.fineTuneControls[0][0]);
+      expect(control[1]).toBe(layout.fineTuneControls[0][1]);
+      expect(layout.fineTuneValues[index][0]).toBe(layout.fineTuneValues[0][0]);
+      expect(layout.fineTuneUnits[index][0]).toBe(layout.fineTuneUnits[0][0]);
       expect(Math.abs(layout.fineTunePlusButtons[index][1] - control[1])).toBeLessThanOrEqual(1);
       expect(Math.abs(layout.fineTuneUnits[index][0] - (control[0] + control[1]) / 2)).toBeLessThanOrEqual(1);
     });
-    expect(layout.mainValues[0][0]).not.toBe(layout.fineTuneValues[0][0]);
     expect(layout.suffixesFit).toBe(true);
+    expect(layout.pageFits).toBe(true);
   };
 
   for (const width of [1280, 900, 650, 380, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const metricLayout = await measure();
-    expectLayoutAligned(metricLayout);
+    expectLayout(metricLayout);
 
     await page.getByRole('button', { name: 'IMPERIAL' }).click();
     const imperialLayout = await measure();
-    expectLayoutAligned(imperialLayout);
+    expectLayout(imperialLayout);
     expect(imperialLayout).toEqual(metricLayout);
     await page.getByRole('button', { name: 'METRIC' }).click();
   }
