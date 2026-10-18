@@ -1133,8 +1133,7 @@ h1 em,h2 em {
 }
 .footer-github {
   color: inherit;
-  text-decoration-color: #7c756966;
-  text-underline-offset: 2px;
+  text-decoration: none;
 }
 .footer-github:hover,.footer-github:focus-visible {
   color: var(--paper);
