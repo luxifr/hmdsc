@@ -352,8 +352,8 @@ h1 em,h2 em {
 }
 .vertical-stepper {
   display: grid;
-  grid-template-columns: 1fr 48px;
-  grid-template-rows: 1fr 34px 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 35px 34px 35px;
   width: 76px;
   height: 104px;
   overflow: visible;
@@ -361,7 +361,7 @@ h1 em,h2 em {
 }
 .vertical-stepper .step-button {
   display: grid;
-  grid-column: 2;
+  grid-column: 1;
   place-items: center;
   justify-self: center;
   align-self: center;
@@ -384,14 +384,38 @@ h1 em,h2 em {
 .vertical-stepper .step-button:last-child {
   grid-row: 3;
 }
+.count-value-row {
+  display: flex;
+  grid-column: 1;
+  grid-row: 2;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 34px;
+  justify-self: center;
+}
+.count-value-row input {
+  width: 44px;
+  height: 34px;
+  flex: 0 0 44px;
+  padding: 0;
+  text-align: right;
+}
+.count-value-row span {
+  width: 16px;
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 34px;
+  text-align: left;
+}
 .vertical-stepper input::-webkit-outer-spin-button,.vertical-stepper input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 .stepper.vertical-stepper input {
-  grid-column: 2;
-  grid-row: 2;
-  width: 48px;
+  width: 44px;
   min-height: 0;
   padding: 0;
   background: none;
@@ -399,7 +423,7 @@ h1 em,h2 em {
   font-size: 22px;
   font-weight: 600;
   line-height: 34px;
-  text-align: center;
+  text-align: right;
 }
 .step-button {
   flex: 0 0 38px;
@@ -430,24 +454,50 @@ h1 em,h2 em {
 }
 .fill-control {
   display: grid;
-  grid-template-columns: 76px 48px;
-  grid-template-rows: 1fr 34px 1fr;
+  grid-template-columns: 76px 60px;
+  grid-template-rows: 35px 34px 35px;
   align-items: center;
   justify-content: start;
   justify-items: center;
   gap: 0 12px;
   height: 104px;
 }
-.fill-control output {
+.fill-value-row {
+  display: flex;
   grid-column: 2;
   grid-row: 2;
-  width: 100%;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 34px;
+}
+.fill-value-row input {
+  appearance: textfield;
+  -webkit-appearance: none;
+  width: 44px;
+  flex: 0 0 44px;
+  padding: 0;
+  background: none;
+  border: 0;
   color: var(--gold);
   font-family: var(--mono);
   font-size: 22px;
   font-weight: 600;
-  text-align: center;
-  white-space: nowrap;
+  line-height: 34px;
+  text-align: right;
+}
+.fill-value-row input::-webkit-inner-spin-button,.fill-value-row input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.fill-value-row span {
+  width: 16px;
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 34px;
+  text-align: left;
 }
 .fill-slider {
   position: relative;
@@ -1104,7 +1154,7 @@ footer {
     grid-template-columns: 76px minmax(0,1fr);
     gap: 12px;
   }
-  .stepper.vertical-stepper input,.fill-control output {
+  .stepper.vertical-stepper input,.count-value-row span,.fill-value-row input,.fill-value-row span {
     font-size: 24px;
   }
   .advanced-fields {
@@ -1169,7 +1219,7 @@ footer {
     font-size: 9px;
   }
   .fill-control {
-    grid-template-columns: 68px 48px;
+    grid-template-columns: 68px 60px;
     column-gap: 12px;
   }
   .fill-slider,.fill-stein {

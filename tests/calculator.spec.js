@@ -109,7 +109,7 @@ test('announces the total without making the entire result card live', async ({ 
 test('shows sourced median assumptions as the initial defaults', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#fill')).toHaveValue('90');
-  await expect(page.locator('#fill-output')).toHaveText('90%');
+  await expect(page.locator('#fill-output')).toHaveValue('90');
   await expect(page.locator('#mug-mass')).toHaveValue('1.32');
   expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
   await expect(page.locator('#uncertainty')).toHaveValue('50');
@@ -261,7 +261,7 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   expect(overflowBounds.y).toBeLessThan(glassBounds.y);
 
   await fill.fill('85');
-  await expect(page.locator('#fill-output')).toHaveText('85%');
+  await expect(page.locator('#fill-output')).toHaveValue('85');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(37.9);
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(9.9);
 
@@ -272,13 +272,36 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height - 4, { steps: 10 });
   await page.mouse.up();
   await expect(fill).toHaveValue('70');
-  await expect(page.locator('#fill-output')).toHaveText('70%');
+  await expect(page.locator('#fill-output')).toHaveValue('70');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(47.8);
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(19.8);
 
   await fill.focus();
   await fill.press('ArrowUp');
   await expect(fill).toHaveValue('71');
+});
+
+test('editable fill percentage stays synchronized with the slider and stein', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const percentage = page.getByLabel('Fill level percentage');
+  const slider = page.getByRole('slider', { name: 'Fill level' });
+
+  await percentage.fill('85');
+  await expect(slider).toHaveValue('85');
+  await expect(page.locator('#fill-output')).toHaveValue('85');
+  expect(Number(await page.locator('#fill-beer').getAttribute('y'))).toBeCloseTo(37.9);
+  expect(Number(await page.locator('#fill-foam').getAttribute('height'))).toBeCloseTo(9.9);
+
+  await slider.fill('76');
+  await expect(percentage).toHaveValue('76');
+  expect(Number(await page.locator('#fill-beer').getAttribute('y'))).toBeCloseTo(43.84);
+
+  await percentage.fill('105');
+  await percentage.press('Tab');
+  await expect(percentage).toHaveValue('100');
+  await expect(slider).toHaveValue('100');
+  await expect(page.locator('#fill-beer')).toHaveAttribute('height', '66');
 });
 
 test('clicking either unit control always toggles the display units', async ({ page }) => {
@@ -553,10 +576,12 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   await page.goto('/');
   await expect(page.locator('.count-control label, .fill-setting label, .range-labels')).toHaveCount(0);
   await expect(page.getByLabel('Number of steins')).toHaveValue('12');
+  await expect(page.locator('.count-value-row span')).toHaveText('×');
+  await expect(page.getByLabel('Fill level percentage')).toHaveValue('90');
   await expect(page.getByRole('slider', { name: 'Fill level' })).toHaveValue('90');
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize));
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).color)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).color));
-  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('right');
   await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
   const fillControls = await page.evaluate(() => {
@@ -577,16 +602,16 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   expect(fillControls.value.bottom).toBeLessThanOrEqual(fillControls.minus.top);
   await page.getByRole('button', { name: 'Increase fill level' }).click();
   await expect(page.locator('#fill')).toHaveValue('91');
-  await expect(page.locator('#fill-output')).toHaveText('91%');
+  await expect(page.locator('#fill-output')).toHaveValue('91');
   expect(await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width)).toBe(fillControls.valueWidth);
   await expect(page.locator('#beer-total')).not.toHaveText('—');
   await page.getByRole('button', { name: 'Decrease fill level' }).click();
   await expect(page.locator('#fill')).toHaveValue('90');
   await page.goto('/?fill=99');
-  const widthBelow100 = await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width);
+  const widthBelow100 = await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width);
   await page.getByRole('button', { name: 'Increase fill level' }).click();
-  await expect(page.locator('#fill-output')).toHaveText('100%');
-  expect(await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width)).toBe(widthBelow100);
+  await expect(page.locator('#fill-output')).toHaveValue('100');
+  expect(await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width)).toBe(widthBelow100);
   await page.goto('/?fill=100');
   await page.getByRole('button', { name: 'Increase fill level' }).click();
   await expect(page.locator('#fill')).toHaveValue('100');
@@ -620,13 +645,14 @@ test('primary stein controls pair a vertical counter with a matching-height fill
       const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
       return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
     });
-    const countValue = document.querySelector('#stein-count').getBoundingClientRect();
+    const countValue = document.querySelector('.count-value-row').getBoundingClientRect();
     const countButtonCenterOffset = Math.max(...[...document.querySelectorAll('.vertical-stepper .step-button')].map((button) => {
       const rect = button.getBoundingClientRect();
       return Math.abs(rect.left + rect.width / 2 - (countValue.left + countValue.width / 2));
     }));
     return {
       counter: rect('.vertical-stepper'),
+      countValue: rect('.count-value-row'),
       count: rect('#stein-count'),
       countPlus: rect('.vertical-stepper .step-button:first-child'),
       countMinus: rect('.vertical-stepper .step-button:last-child'),
@@ -634,9 +660,9 @@ test('primary stein controls pair a vertical counter with a matching-height fill
       countButtonCenterOffset,
       fillControlsGap: parseFloat(getComputedStyle(document.querySelector('.fill-control')).columnGap),
       fillPlus: rect('.fill-control .fill-step-button:first-child'),
-      fillValue: rect('#fill-output'),
+      fillValue: rect('.fill-value-row'),
       fillMinus: rect('.fill-control .fill-step-button:last-child'),
-      fillValues: [...document.querySelectorAll('#fill-output')].map((element) => {
+      fillValues: [...document.querySelectorAll('.fill-value-row')].map((element) => {
         const { width } = element.getBoundingClientRect();
         return width;
       }),
@@ -654,20 +680,23 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.counter[2]).toBe(layout.fillStein[2]);
     expect(layout.counter[3]).toBe(layout.fillStein[3]);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
-    expect(layout.count[1]).toBe(layout.counter[1]);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.counter[0] + layout.counter[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
     expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
-    expect(layout.count[4]).toBe(48);
-    expect(layout.count[1]).toBe(layout.counter[1]);
+    expect(layout.count[4]).toBe(44);
+    expect(layout.countValue[4]).toBe(60);
+    expect(layout.countValue[5]).toBe(34);
+    expect(layout.fillValue[4]).toBe(60);
+    expect(layout.fillValue[5]).toBe(34);
     expect(layout.countPlus[4]).toBe(28);
     expect(layout.countMinus[4]).toBe(28);
     expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);
-    expect(Math.abs(layout.count[0] + layout.count[4] / 2 - (layout.countPlus[0] + layout.countPlus[4] / 2))).toBeLessThanOrEqual(0.02);
-    expect(Math.abs(layout.count[0] + layout.count[4] / 2 - (layout.countMinus[0] + layout.countMinus[4] / 2))).toBeLessThanOrEqual(0.02);
-    expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.counter[2] + layout.counter[5] / 2))).toBeLessThanOrEqual(0.02);
-    expect(Math.abs(layout.count[2] + layout.count[5] / 2 - (layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.countPlus[0] + layout.countPlus[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.countMinus[0] + layout.countMinus[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[2] + layout.countValue[5] / 2 - (layout.counter[2] + layout.counter[5] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[2] + layout.countValue[5] / 2 - (layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillMinus[0] + layout.fillMinus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillValue[2] + layout.fillValue[5] / 2 - (layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
