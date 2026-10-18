@@ -83,4 +83,5 @@ If the worktree is clean and all tests pass, you're allowed to merge back into
 that affect the visual presentation of the resulting artifact, in which case ask
 me to confirm that the result matches my intent.
 
-Make sure to also switch to the branch you last merged to.
+Make sure to also switch to the branch base if you worked on more than one
+branch in one go.
