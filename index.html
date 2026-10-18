@@ -7,6 +7,23 @@
     <meta name="description" content="A tiny, transparent calculator for the load behind the legendary Oktoberfest beer carry." />
     <title>How Much Did She Carry?</title>
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      if (location.search) {
+        window.initialScenarioSearch = location.search;
+        const query = new URLSearchParams(location.search);
+        const scenario = new URLSearchParams();
+        ['count', 'fill', 'volume', 'mugMass', 'density', 'uncertainty', 'densityUncertainty']
+          .forEach((key) => { if (query.has(key)) scenario.set(key, query.get(key)); });
+        const hash = scenario.size ? `#scenario=${scenario}` : location.hash;
+        history.replaceState(null, '', `${location.pathname}${hash}`);
+      }
+      window.goatcounter = {
+        path: () => location.pathname || '/',
+        referrer: () => document.referrer || '',
+        title: () => null,
+      };
+    </script>
+    <script id="goatcounter-script" data-goatcounter="https://hmdsc.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23171512'/%3E%3Cpath d='M16 18h34l-3 35H19z' fill='%23B77932' stroke='%23E4C781' stroke-width='4'/%3E%3Cpath d='M50 26h4a7 7 0 0 1 0 14h-5' fill='none' stroke='%23D8C69F' stroke-width='4'/%3E%3C/svg%3E" />
 
   </head>
@@ -101,7 +118,7 @@
           <p class="assumption-note">BJCP Festbier/Märzen final gravity SG 1.010–1.014 converts to about 1.008–1.012 kg/L at 20 °C (default midpoint 1.010); comparable empty 1 L glass Maßkrüge weigh 1.27–1.37 kg (default midpoint 1.32). Defaults use ±50 g (±0.110 lb) glass-weight uncertainty and ±2 g/L (±0.017 lb/gal) beer-density uncertainty. These worst-case uncertainty contributions are added. Oktoberfest beer is served in glass Maßkrüge. Sources: <a href="https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier">Festbier</a>, <a href="https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen">Märzen</a>, <a href="https://byo.com/articles/calculating-alcohol/">gravity</a>, <a href="https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html">water density</a>, <a href="https://www.atrium-hotel.de/en/a-mass-faq-and-interesting-facts-about-the-popular-gift-mass/">Oktoberfest glassware</a>, and comparable <a href="https://trinklusiv.at/products/paulaner-masskrug-glas-1l">Paulaner</a>, <a href="https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/">Schweiger</a>, and <a href="https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html">Stölzle Isar</a> weights.</p>
         </div>
       </section>
-      <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span></footer>
+      <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span><details class="analytics-privacy"><summary>ANALYTICS &amp; PRIVACY</summary><div><p>We use GoatCounter to count visits and two fixed events: <code>calculator_used</code> and <code>share_clicked</code>. The enabled reports include sessions, browser and operating-system categories derived from your browser’s User-Agent, screen width, and country-level location inferred from your IP address. We send the referring page URL reported by your browser; depending on the referring site and browser policy, it may include URL details such as a path or query string. For this site's URL, GoatCounter receives only the page path: calculator values, query strings, and URL fragments are not sent.</p><p>GoatCounter says it temporarily holds the site, IP address, and User-Agent combination in memory for up to eight hours to recognize repeat visits. It says raw IP addresses and full User-Agent strings are not stored in its analytics database. Its tracker does not use cookies or browser storage. <a href="https://www.goatcounter.com/help/privacy">GoatCounter privacy details</a>.</p></div></details></footer>
     </main>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js" type="module"></script>

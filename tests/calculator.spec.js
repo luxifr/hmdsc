@@ -1,5 +1,62 @@
 import { expect, test } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.route('https://gc.zgo.at/count.js', (route) => route.fulfill({
+    contentType: 'application/javascript',
+    body: `window.__goatcounterLoadedSearch = location.search;
+    window.goatcounter.count = (data) => {
+      window.__goatcounterEvents ||= [];
+      window.__goatcounterEvents.push({ path: typeof data.path === 'function' ? data.path() : data.path, event: !!data.event });
+    };`,
+  }));
+});
+
+test('GoatCounter receives only fixed events and scenario data stays out of query strings', async ({ page }) => {
+  await page.goto('/?count=6&fill=82&volume=1.5');
+  await expect(page.locator('#stein-count')).toHaveValue('6');
+  await expect(page.locator('#fill')).toHaveValue('82');
+  await expect(page).toHaveURL(/#scenario=count=6/);
+
+  const analyticsConfig = await page.evaluate(() => ({
+    search: location.search,
+    path: window.goatcounter.path(),
+    referrer: window.goatcounter.referrer(),
+    title: window.goatcounter.title(),
+    loadedSearch: window.__goatcounterLoadedSearch,
+    cookie: document.cookie,
+    endpoint: document.querySelector('#goatcounter-script').dataset.goatcounter,
+  }));
+  expect(analyticsConfig).toEqual({
+    search: '',
+    path: '/',
+    referrer: '',
+    title: null,
+    loadedSearch: '',
+    cookie: '',
+    endpoint: 'https://hmdsc.goatcounter.com/count',
+  });
+
+  await page.locator('#stein-count').fill('7');
+  await page.locator('#stein-count').fill('8');
+  await page.getByRole('button', { name: /copy link/i }).click();
+  await page.getByRole('button', { name: /copy link/i }).click();
+  await expect.poll(() => page.evaluate(() => window.__goatcounterEvents)).toEqual([
+    { path: 'calculator_used', event: true },
+    { path: 'share_clicked', event: true },
+  ]);
+  await expect(page).toHaveURL(/^[^?]+#/);
+});
+
+test('forwards the browser referrer to GoatCounter', async ({ page }) => {
+  await page.route('**/referrer-source?campaign=beer', (route) => route.fulfill({
+    contentType: 'text/html',
+    body: '<a href="/">Continue</a>',
+  }));
+  await page.goto('/referrer-source?campaign=beer');
+  await page.getByRole('link', { name: 'Continue' }).click();
+  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
+});
+
 test('announces the total without making the entire result card live', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
@@ -239,12 +296,13 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
   await expect(page.locator('#stein-count')).toHaveValue('12');
 });
 
-test('share updates the URL and the shared scenario loads', async ({ page }) => {
+test('share puts the scenario in a fragment and the shared scenario loads', async ({ page }) => {
   await page.goto('/');
   await page.locator('#stein-count').fill('7');
   await page.getByRole('button', { name: /copy link/i }).click();
 
-  await expect.poll(() => new URL(page.url()).searchParams.get('count')).toBe('7');
+  await expect.poll(() => new URL(page.url()).hash).toContain('#scenario=count=7');
+  await expect(page).toHaveURL(/^[^?]+#/);
 
   await page.reload();
   await expect(page.locator('#stein-count')).toHaveValue('7');
@@ -417,8 +475,8 @@ test('share links preserve full calculation precision', async ({ page }) => {
   await page.goto('/?volume=1.23456789&density=1.01234567');
   await page.getByRole('button', { name: /copy link/i }).click();
 
-  await expect.poll(() => new URL(page.url()).searchParams.get('volume')).toBe('1.23456789');
-  await expect.poll(() => new URL(page.url()).searchParams.get('density')).toBe('1.01234567');
+  await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('volume')).toBe('1.23456789');
+  await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('density')).toBe('1.01234567');
 });
 
 test('input displays cap decimals while retaining scenario precision', async ({ page }) => {

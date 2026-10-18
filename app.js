@@ -14,6 +14,8 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   let scenario;
   let toastTimer;
   let rememberInputs = false;
+  let calculatorUsedTracked = false;
+  let shareClickedTracked = false;
 
   function readNumber(field, fallback) {
     const value = field.valueAsNumber;
@@ -119,6 +121,33 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
       try { localStorage.setItem('carry-calc', JSON.stringify(s)); } catch { /* The calculator still works when storage is unavailable. */ }
     }
   }
+  const pendingAnalyticsEvents = [];
+  const goatCounterScript = $('#goatcounter-script');
+  function flushAnalyticsEvents() {
+    if (typeof window.goatcounter?.count !== 'function') return;
+    while (pendingAnalyticsEvents.length) {
+      const path = pendingAnalyticsEvents.shift();
+      window.goatcounter.count({ path, event: true });
+    }
+  }
+  function trackOnce(flag) {
+    if (flag === 'calculator' && !calculatorUsedTracked) {
+      calculatorUsedTracked = true;
+      trackAnalyticsEvent('calculator_used');
+    } else if (flag === 'share' && !shareClickedTracked) {
+      shareClickedTracked = true;
+      trackAnalyticsEvent('share_clicked');
+    }
+  }
+  function trackAnalyticsEvent(path) {
+    if (typeof window.goatcounter?.count === 'function') {
+      window.goatcounter.count({ path, event: true });
+    } else if (!pendingAnalyticsEvents.includes(path)) {
+      pendingAnalyticsEvents.push(path);
+    }
+  }
+  goatCounterScript?.addEventListener('load', flushAnalyticsEvents);
+
   function toast(message) {
     const element = $('#toast');
     element.textContent = message;
@@ -133,7 +162,10 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     rememberCheckbox.checked = rememberInputs;
     if (!rememberInputs) localStorage.removeItem('carry-calc');
   } catch { /* The calculator still works when storage is unavailable. */ }
-  const fromUrl = stateFromSearch(location.search);
+  const sharedHash = location.hash.startsWith('#scenario=')
+    ? `?${location.hash.slice('#scenario='.length)}`
+    : '';
+  const fromUrl = stateFromSearch(window.initialScenarioSearch || sharedHash || location.search);
   let initialState = fromUrl;
   if (!initialState && rememberInputs) {
     try { initialState = JSON.parse(localStorage.getItem('carry-calc')); } catch { /* Use defaults for unavailable or invalid local storage. */ }
@@ -156,11 +188,13 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     } catch { /* The calculator still works when storage is unavailable. */ }
   });
   Object.entries(fields).forEach(([key, field]) => field.addEventListener('input', () => {
+    trackOnce('calculator');
     const edited = readState();
     render({ ...scenario, [key]: edited[key] });
   }));
   ['volume', 'mugMass', 'density', 'uncertainty', 'densityUncertainty'].forEach((key) => fields[key].addEventListener('blur', () => setInputValues(scenario)));
   document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
+    trackOnce('calculator');
     const field = button.dataset.stepInput ? $(`#${button.dataset.stepInput}`) : fields.count;
     const key = Object.keys(fields).find((name) => fields[name] === field);
     const factor = key === 'volume' ? (unit === 'imperial' ? OZ_PER_L : 1)
@@ -189,15 +223,17 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     toast('Back to the standard scenario. Prost!');
   });
   $('#share').addEventListener('click', async () => {
+    trackOnce('share');
     const state = scenario;
     const params = new URLSearchParams(Object.entries(state).map(([key, value]) => [key, String(value)]));
-    const url = `${location.origin}${location.pathname}?${params}`;
+    const sharedScenario = `#scenario=${params}`;
+    const url = `${location.origin}${location.pathname}${sharedScenario}`;
     try {
       await navigator.clipboard.writeText(url);
-      history.replaceState(null, '', `?${params}`);
+      history.replaceState(null, '', sharedScenario);
       toast('Scenario link copied to clipboard.');
     } catch {
-      history.replaceState(null, '', `?${params}`);
+      history.replaceState(null, '', sharedScenario);
       toast('Scenario link ready in your address bar.');
     }
   });
