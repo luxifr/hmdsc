@@ -91,8 +91,8 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     const beerTop = 94 - 66 * s.fill / 100;
     $('#fill-beer').setAttribute('y', String(beerTop));
     $('#fill-beer').setAttribute('height', String(94 - beerTop));
-    $('#fill-foam').setAttribute('height', String(beerTop - 28));
-    $('#fill-foam-area').setAttribute('height', String(beerTop - 28));
+    $('#fill-foam').setAttribute('height', String(beerTop - 22));
+    $('#fill-foam-area').setAttribute('height', String(beerTop - 22));
     $('#total').textContent = pretty(load.total, 1);
     $('#total-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
     const uncertainty = load.high - load.total;
