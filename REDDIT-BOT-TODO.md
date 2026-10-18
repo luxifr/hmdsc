@@ -8,26 +8,45 @@ Find Reddit posts where someone asks how much an Oktoberfest server is carrying,
 
 ## Phase 0 — Check permission and operating boundaries
 
-- [ ] Review Reddit's current Data API Terms, Developer Documentation, User Agreement, and each target subreddit's rules before creating the app. Recheck before launch; Reddit's terms and API access can change.
-- [ ] Confirm what API access and rate limits apply to this exact use case and obtain the required credentials/approval. Do not scrape pages or work around API restrictions if access is unavailable.
-- [ ] Decide who operates the bot, how it will be identified, and how users or moderators can contact the operator.
-- [ ] Ask moderators of each intended subreddit whether monitoring and, later, occasional bot replies are welcome. Respect subreddit-specific rules and removals; an API credential is not permission to post in every community.
-- [ ] Keep the use non-commercial unless Reddit has explicitly approved any use that requires separate approval. Do not use Reddit content to train a model without the applicable rightsholders' express permission.
-- [ ] Write down an acceptable-use policy: no DMs, no votes, no replies to users who do not want them, no repeated promotion, and no evasion of moderator or user blocks.
+### Research findings (checked 2026-10-18)
 
-**Gate:** stop if API access, terms, subreddit rules, or moderator feedback do not support the planned monitoring/reply behavior. Reddit's Data API Terms prohibit using the API to spam users and limit content use to the approved use case; treat this as a product constraint, not a launch-time formality.
+- **The API has the mechanics needed for a limited bot.** Reddit's API reference documents a subreddit `/new` listing and a `POST /api/comment` endpoint. A top-level post comment requires the OAuth `submit` scope. This establishes that the API has comment functionality; it does **not** establish that Reddit has approved this particular app or promotional use.
+- **API access is conditional and can be limited.** The Data API Terms require documented access credentials/OAuth and an honest User-Agent; Reddit reserves the right to enforce request limits. The terms limit data use to the approved use case and prohibit API use to spam users. If a use is not expressly permitted—or is commercial—the terms say a separate agreement is needed.
+- **A relevant one-time comment is still a link promotion.** Your desired UX is now: when a post is clearly about the Oktoberfest stein-carrying load, the bot may add one top-level comment with a short description and calculator link. It must never create posts, DM, vote, or reply to comments. This is narrower than broad promotion, but relevance alone does not guarantee Reddit or subreddit permission. Reddit's Rule 2 also requires authentic participation and prohibits spam; moderator approval is essential but does not guarantee Reddit will consider the behavior compliant.
+- **“Any post on Reddit” is not a safe initial scope.** Start with a small named subreddit allowlist. Reddit also documents a global `GET /search` endpoint (the `/r/{subreddit}` prefix is optional), so searching text matches across communities may be technically possible. Search is not a complete visual-content detector: a GIF with no useful title/body text will not be found by relevant keywords, and the API docs do not promise exhaustive real-time discovery. Posting is riskier than read-only discovery because each community has its own rules; start comments in a small moderator-approved allowlist. Ask Reddit whether global search for this use case is permitted and what its practical limits are.
+- **Community rules remain unverified.** Reddit blocked unauthenticated access to the current `r/theydidthemath` and `r/oktoberfest` rules/API pages during this research. Do not infer permission from that failure. A moderator must confirm whether monitoring and a single relevant calculator comment are acceptable in their community.
+- **Account-specific access remains unverified.** Creating an app, obtaining credentials, and confirming any required Reddit approval or separate agreement require the account operator. No account, credential, or approval has been created or tested here.
+
+### Required before implementation/posting
+
+- [ ] Ask Reddit through its current Data API access/support channel whether this exact use—discovering relevant posts and posting at most one context-triggered top-level comment linking to the calculator—is allowed under the current approved-use process, and whether written approval or a separate agreement is required. Do not treat the standard comment endpoint as approval.
+- [ ] Ask moderators of each proposed subreddit for explicit permission to monitor posts and have the bot leave one relevant top-level comment. Begin with `r/theydidthemath` only if its moderators agree; add communities one at a time. No permission for one subreddit carries over to another.
+- [ ] Confirm access method, credentials/scopes, allowed endpoints, retention rules, and current rate limits from Reddit's current developer documentation and the granted app access.
+- [ ] Decide the public bot name, operator/contact route, and privacy notice. Identify it as an automated bot in the comment.
+- [ ] Keep the use non-commercial unless Reddit explicitly approves any use that requires separate approval. Do not use Reddit content to train a model without the applicable rightsholders' express permission.
+
+**Proposed action boundary:** one top-level comment per qualifying post, only in moderator-approved communities; no DMs, new posts, votes, comment replies, repeat comments, or broad cross-Reddit scanning. Use a kill switch and stop on any moderator objection or Reddit warning. Do not launch until both platform access/use and each community's posting permission are clear.
+
+**Moderator message draft:**
+
+> Hi moderators — I made a calculator that estimates the load from carrying multiple full beer steins: [calculator URL]. I’m considering a small bot that watches only this subreddit for clearly relevant Oktoberfest/beer-stein carrying posts and leaves at most one short top-level comment with a link and a brief description. It would not create posts, send DMs, vote, reply to comments, or comment on unrelated posts. Would you allow this in your community? Are there conditions or a preferred disclosure/format? I will not enable it here unless you approve, and I’ll stop if you ask.
+
+**Reddit API access question draft:**
+
+> I want to build a small bot for my beer-stein carrying-load calculator ([calculator URL]). The goal is to discover clearly relevant posts, potentially using Reddit's global text-search endpoint, and add no more than one top-level comment to a qualifying post with a short explanation and a link. If global discovery is not permitted or appropriate, I can restrict monitoring and comments to named, moderator-approved subreddits. The bot would not create submissions, send private messages, vote, reply to comments, or contact users otherwise. Is this use permitted under the current Data API terms and access process? Does it require written approval or a separate agreement, and what application/use-case details, endpoints, or limits apply? Please also clarify whether linking to my site counts as commercial or promotional use. [Disclose any monetization or commercial relationship here.]
+
+**Gate:** no Reddit API use or bot comments until the platform's approved-use/access question and per-subreddit moderator permission are resolved. Reddit's terms prohibit API spam and restrict data to the approved use case; moderator permission does not replace Reddit's API approval, and API access does not replace moderator permission.
 
 ## Phase 1 — Define the first use case
 
-- [ ] Start with a small, explicit subreddit allowlist (for example, `r/theydidthemath` only after checking its current rules and moderator preferences).
-- [ ] Define separate detection cases:
-  - **Direct question:** text/title asks how much weight, how many steins, or what load is being carried.
-  - **Likely relevant clip:** title/body/link mentions Oktoberfest, a server/waitress, Maß/stein, or carrying multiple beers.
-  - **Visual-only candidate:** the post is a GIF/video/image with little useful text. This is a review candidate, not an automatic match.
-- [ ] Decide the useful response: link to the calculator, optionally state what it estimates, and make clear that results depend on user-adjustable assumptions. Do not claim an exact weight from a clip when count, fill, or glass mass cannot be established.
-- [ ] Choose initial limits: maximum posts reviewed per day, reply frequency, quiet hours, and what to do when the bot/operator is unavailable.
+- [ ] Begin with one explicitly approved subreddit, likely `r/theydidthemath` if its moderators agree. Do not treat "anywhere on Reddit" as the first deployment scope.
+- [ ] Define a high-confidence match as an explicit question or clearly described post about an Oktoberfest server carrying multiple beer steins / Maßkrüge and their load. Mere mentions of beer, Germany, or carrying are not sufficient.
+- [ ] Treat a media-only post with no clear textual context as uncertain; do not comment automatically on it in the first version.
+- [ ] Keep the intended public action minimal: one top-level comment on the post with a brief, factual calculator description and link. State that the estimate depends on assumptions; don't infer exact count, fill, or glass mass from an ambiguous clip.
+- [ ] Hard-code the non-actions: never create posts, send DMs, vote, reply to comments, or post a second comment on a post.
+- [ ] Set a per-community daily cap and a global kill switch; leave comments disabled in any community without documented permission.
 
-## Phase 2 — Build a read-only, human-reviewed MVP
+## Phase 2 — Build a read-only detection prototype (before enabling replies)
 
 - [ ] Register an API application using Reddit's documented access flow and store credentials in environment variables or a secrets manager—never in the repository.
 - [ ] Monitor only new posts in the configured subreddit allowlist using the permitted API endpoints and rate limits. Start with polling; do not promise real-time detection.
@@ -45,14 +64,14 @@ Find Reddit posts where someone asks how much an Oktoberfest server is carrying,
 - [ ] Set a minimum precision target for each category before enabling any reply. Keep visual-only posts human-reviewed unless a separately tested approach reaches the target.
 - [ ] Ask participating moderators whether the review results and proposed replies are welcome. Stop or narrow monitoring if they object.
 
-## Phase 4 — Carefully limited replies (only after approval)
+## Phase 4 — Single top-level comments (only after approval)
 
-- [ ] Enable replies only in moderator-approved subreddits and only for high-confidence direct questions. Keep all other matches in the human queue.
-- [ ] Require a human to approve every reply at first. Consider full automation only after an extended, measured trial and explicit moderator acceptance.
-- [ ] Use one short, non-repetitive reply per post, clearly identify the bot, answer the question before linking, and include the calculator only when genuinely relevant. Avoid copy-pasting the same promotional comment across communities.
-- [ ] Enforce hard safeguards in code: one reply per post, no reply if locked/removed/already answered by the bot, per-community and global daily caps, moderator allowlist, opt-out/disable list, and a global kill switch.
-- [ ] Never reply to comments, message users, vote, or contact authors directly in the MVP.
-- [ ] Monitor removals, user reports, moderator feedback, and API errors. Automatically pause replies on repeated removals, rate-limit problems, or unexpected behavior.
+- [ ] Enable automatic comments only in communities where Reddit access/use is approved and moderators have explicitly allowed this behavior. First deployment should be a single approved subreddit.
+- [ ] Run the read-only matcher first and review its false positives. Begin comment mode only after the high-confidence rule performs reliably; keep uncertain/media-only matches out.
+- [ ] Post at most one short, clearly bot-identified top-level comment per qualifying post. Explain the calculator briefly and link only when relevant; do not claim a precise load based on a clip alone. Avoid identical boilerplate across unrelated threads.
+- [ ] Enforce hard safeguards in code: one comment per post, no comment if the post is locked/removed or the bot has already commented, per-community and global daily caps, strict subreddit allowlist, and a global kill switch.
+- [ ] Never create posts, send DMs, vote, or reply to comments. Do not contact authors directly.
+- [ ] Monitor removals, user reports, moderator feedback, and API errors. Automatically pause comments on any moderator objection, Reddit warning, repeated removals, rate-limit problems, or unexpected behavior.
 
 ## Phase 5 — Privacy, reliability, and operations
 
@@ -75,14 +94,14 @@ Start as one small service with a simple local database and private digest. Avoi
 
 ## MVP acceptance criteria
 
-- [ ] Uses only approved Reddit API access and respects documented rate limits.
-- [ ] Watches only an explicit subreddit allowlist; no broad all-Reddit scanning.
-- [ ] Detects direct text questions and queues ambiguous/media-only posts for a human.
-- [ ] Generates no automatic comments, votes, or DMs.
-- [ ] Deduplicates posts across polling and restarts; has a tested pause switch.
-- [ ] Reviewer can explain why each candidate was surfaced and report false positives/misses.
-- [ ] Stores only documented minimum metadata with a defined short retention policy.
-- [ ] Read-only trial meets the chosen relevance target and moderators approve any next step before replies are enabled.
+- [ ] Uses only Reddit-approved API access, documented OAuth scopes, and current rate limits.
+- [ ] Watches only an explicit moderator-approved subreddit allowlist; no broad all-Reddit scanning.
+- [ ] Read-only trial detects explicit/high-confidence text cases, flags ambiguous/media-only posts, and measures false positives before writing is enabled.
+- [ ] Final comment behavior is exactly one top-level comment per qualifying post; no new posts, DMs, votes, or comment replies.
+- [ ] Has restart-safe deduplication, per-community/global caps, a strict allowlist, and a tested kill switch before comment mode.
+- [ ] The comment identifies the bot, briefly describes the estimate and its assumptions, and links only when the post is clearly relevant.
+- [ ] Stores only minimum permitted metadata with a defined short retention policy.
+- [ ] No comment mode until Reddit's API-use/access question and that community's moderator permission are both resolved.
 
 ## Decisions to make later
 
@@ -96,5 +115,7 @@ Start as one small service with a simple local database and private digest. Avoi
 
 ## Sources
 
-- Reddit, [Data API Terms](https://www.redditinc.com/policies/data-api-terms): access is conditional on compliance; content is user-owned; requires appropriate privacy disclosures; restricts use beyond the approved use case and use of the API to spam, incentivize, or harass users; notes separate approval may be required for uses not expressly permitted.
-- Reddit, [API reference](https://www.reddit.com/dev/api/): documented API endpoints. Confirm current authentication, endpoint availability, and rate limits during Phase 0; this roadmap does not assume global discovery is available.
+- Reddit, [Data API Terms](https://www.redditinc.com/policies/data-api-terms), especially §§2.4, 2.6, 2.8–2.9, 3.1–3.2: user ownership and app privacy disclosures; documented OAuth/access information and non-masked User-Agent; discretionary API limits; approved-use restrictions; separate agreement for commercial or otherwise unapproved uses; and prohibition on API spam.
+- Reddit, [API reference](https://www.reddit.com/dev/api/), endpoints `GET [/r/{subreddit}/]new`, `GET [/r/{subreddit}/]search`, and `POST /api/comment`. The comment endpoint documents the OAuth `submit` scope and supports a top-level comment when `parent` is a post. Endpoint availability is not permission to use it for this promotion.
+- Reddit, [Rules, Rule 2](https://redditinc.com/policies/reddit-rules): participate authentically, follow community rules, and do not spam or engage in disruptive behavior.
+- `r/theydidthemath` and `r/oktoberfest` rules were not verifiable in this research session: Reddit denied unauthenticated rules/API access. Contact moderators directly and check the live rules while logged in before adding either community.
