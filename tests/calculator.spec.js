@@ -182,6 +182,27 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(fill).toHaveValue('71');
 });
 
+test('clicking either unit control always toggles the display units', async ({ page }) => {
+  await page.goto('/');
+  const metric = page.getByRole('button', { name: 'METRIC' });
+  const imperial = page.getByRole('button', { name: 'IMPERIAL' });
+  const expectUnits = async (active, inactive, unit) => {
+    await expect(active).toHaveAttribute('aria-pressed', 'true');
+    await expect(inactive).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#total-unit')).toHaveText(unit);
+  };
+
+  await expectUnits(metric, imperial, 'kg');
+  await metric.click();
+  await expectUnits(imperial, metric, 'lb');
+  await metric.click();
+  await expectUnits(metric, imperial, 'kg');
+  await imperial.click();
+  await expectUnits(imperial, metric, 'lb');
+  await imperial.click();
+  await expectUnits(metric, imperial, 'kg');
+});
+
 test('beer density switches units and preserves its value', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();

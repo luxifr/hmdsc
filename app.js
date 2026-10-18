@@ -175,10 +175,9 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     render(nextState);
   }));
   document.querySelectorAll('[data-unit]').forEach((button) => button.addEventListener('click', () => {
-    if (unit === button.dataset.unit) return;
     const state = scenario;
-    unit = button.dataset.unit;
-    document.querySelectorAll('[data-unit]').forEach((toggle) => toggle.setAttribute('aria-pressed', String(toggle === button)));
+    unit = unit === 'metric' ? 'imperial' : 'metric';
+    document.querySelectorAll('[data-unit]').forEach((toggle) => toggle.setAttribute('aria-pressed', String(toggle.dataset.unit === unit)));
     updateInputConstraints();
     setInputValues(state);
     render(state);
