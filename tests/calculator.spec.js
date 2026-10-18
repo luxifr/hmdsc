@@ -636,26 +636,34 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   expect(await page.locator('.form-actions .text-button').evaluate((button) => getComputedStyle(button).textAlign)).toBe('left');
 });
 
-test('one- and two-digit values stay centered on their steppers', async ({ page }) => {
-  await page.goto('/?count=1&fill=90');
-  const centers = () => page.evaluate(() => Object.fromEntries([
-    ['count', ['#stein-count', '.vertical-stepper .step-button:first-child', '.vertical-stepper .step-button:last-child']],
-    ['fill', ['#fill-output', '.fill-control .fill-step-button:first-child', '.fill-control .fill-step-button:last-child']],
-  ].map(([name, selectors]) => [name, selectors.map((selector) => {
-    const rect = document.querySelector(selector).getBoundingClientRect();
-    return rect.left + rect.width / 2;
-  })])));
+test('unit suffixes sit about one character from two-digit values', async ({ page }) => {
+  await page.goto('/?count=12&fill=90');
+  const suffixGaps = async () => page.evaluate(() => ['#stein-count', '#fill-output'].map((selector) => {
+    const input = document.querySelector(selector);
+    const suffix = input.parentElement.querySelector('span');
+    const inputRect = input.getBoundingClientRect();
+    const suffixRect = suffix.getBoundingClientRect();
+    const style = getComputedStyle(input);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const characterWidth = context.measureText('0').width;
+    return {
+      gap: suffixRect.left - (inputRect.left + inputRect.width / 2 + input.value.length * characterWidth / 2),
+      characterWidth,
+    };
+  }));
   for (const width of [430, 390, 375, 320]) {
     await page.setViewportSize({ width, height: 844 });
-    const oneDigit = await centers();
-    Object.values(oneDigit).forEach((group) => expect(new Set(group.map((center) => Math.round(center * 100) / 100)).size).toBe(1));
-    await page.locator('#stein-count').fill('12');
+    for (const { gap, characterWidth } of await suffixGaps()) {
+      expect(gap).toBeGreaterThan(characterWidth * 0.85);
+      expect(gap).toBeLessThan(characterWidth * 1.15);
+    }
     await page.locator('#fill-output').fill('100');
-    const twoDigits = await centers();
-    Object.values(twoDigits).forEach((group) => expect(new Set(group.map((center) => Math.round(center * 100) / 100)).size).toBe(1));
+    const [{ gap, characterWidth }] = (await suffixGaps()).slice(1);
+    expect(gap).toBeGreaterThan(-characterWidth * 0.6);
     await expect(page.locator('#fill')).toHaveValue('100');
     await expect(page.locator('#fill-output')).toHaveValue('100');
-    await page.locator('#stein-count').fill('1');
     await page.locator('#fill-output').fill('90');
   }
 });

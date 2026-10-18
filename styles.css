@@ -388,6 +388,7 @@ h1 em,h2 em {
 .count-value-row {
   position: relative;
   display: flex;
+  font-size: 22px;
   grid-column: 1;
   grid-row: 2;
   align-items: center;
@@ -405,7 +406,7 @@ h1 em,h2 em {
 }
 .count-value-row span {
   position: absolute;
-  left: 100%;
+  left: calc(50% + 2ch);
   width: 16px;
   pointer-events: none;
   color: var(--gold);
@@ -470,6 +471,7 @@ h1 em,h2 em {
 .fill-value-row {
   position: relative;
   display: flex;
+  font-size: 22px;
   grid-column: 2;
   grid-row: 2;
   align-items: center;
@@ -500,7 +502,7 @@ h1 em,h2 em {
 }
 .fill-value-row span {
   position: absolute;
-  left: 100%;
+  left: calc(50% + 2ch);
   width: 16px;
   pointer-events: none;
   color: var(--gold);
@@ -1166,7 +1168,7 @@ footer {
     grid-template-columns: 76px minmax(0,1fr);
     gap: 12px;
   }
-  .stepper.vertical-stepper input,.count-value-row span,.fill-value-row input,.fill-value-row span {
+  .count-value-row,.fill-value-row,.stepper.vertical-stepper input,.count-value-row span,.fill-value-row input,.fill-value-row span {
     font-size: 24px;
   }
   .advanced-fields {
