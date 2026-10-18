@@ -531,6 +531,25 @@ h1 em,h2 em {
   width: 76px;
   height: 104px;
 }
+#fill-foam-cap-bubbles circle {
+  r: 1.5px;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: fill-foam-bubble 1.4s ease-in-out infinite alternate;
+}
+#fill-foam-cap-bubbles circle:nth-child(2n) {
+  animation-delay: -.7s;
+}
+@keyframes fill-foam-bubble {
+  from {
+    transform: scale(.5);
+    opacity: .25;
+  }
+  to {
+    transform: scale(1.8);
+    opacity: 1;
+  }
+}
 .fill-beer-bubbles circle {
   r: 1.15px;
   animation: fill-bubble-rise 2.4s linear infinite;

@@ -236,6 +236,7 @@ test('uses a valid inline SVG favicon', async ({ page }) => {
 });
 
 test('stein fill slider updates beer, foam, and its accessible value', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   const fill = page.locator('#fill');
   const beer = page.locator('#fill-beer');
@@ -250,12 +251,12 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await expect(page.locator('.fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
   await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
   await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
-  await expect(page.locator('#fill-glass-clip path')).toHaveAttribute('d', 'M18 22h39l-6 77H24Z');
-  await expect(beer).toHaveAttribute('x', '18');
-  await expect(beer).toHaveAttribute('width', '39');
-  await expect(foam).toHaveAttribute('x', '18');
+  await expect(page.locator('#fill-glass-clip path')).toHaveAttribute('d', 'M15 22h45l-6 77H21Z');
+  await expect(beer).toHaveAttribute('x', '15');
+  await expect(beer).toHaveAttribute('width', '45');
+  await expect(foam).toHaveAttribute('x', '15');
   await expect(foam).toHaveAttribute('y', '22');
-  await expect(foam).toHaveAttribute('width', '39');
+  await expect(foam).toHaveAttribute('width', '45');
   await expect(page.locator('.fill-stein path[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveCount(0);
   await expect(foamCap).toHaveAttribute('transform', 'translate(1 0)');
   await expect(page.locator('#fill-foam-cap-bubbles')).toHaveAttribute('transform', 'translate(1 0)');
@@ -269,6 +270,12 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(12.6);
   expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
   await expect(capBubbles).toHaveCount(9);
+  await expect(capBubbles.first()).toHaveCSS('animation-name', 'fill-foam-bubble');
+  await expect(capBubbles.first()).toHaveCSS('animation-play-state', 'running');
+  await expect(capBubbles.first()).toHaveCSS('r', '1.5px');
+  const initialBubbleTime = await capBubbles.first().evaluate((element) => element.getAnimations()[0].currentTime);
+  await page.waitForTimeout(120);
+  expect(await capBubbles.first().evaluate((element) => element.getAnimations()[0].currentTime)).toBeGreaterThan(initialBubbleTime);
   await expect(beerBubbles).toHaveCount(18);
   await expect(page.locator('#fill-foam-cap')).toHaveAttribute('fill', '#F0E9D9');
   const capAndRim = await page.evaluate(() => {
