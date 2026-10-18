@@ -186,6 +186,7 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   await page.goto('/');
   await expect(page.locator('.hero-beer-bubbles circle')).toHaveCount(12);
   await expect(page.locator('.hero-foam-bubbles circle')).toHaveCount(9);
+  await expect(page.locator('.hero-stein circle[fill="#8B332B"]')).toHaveCount(0);
   await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('fill', '#F4C66C');
   await expect(page.locator('.hero-beer-bubbles')).toHaveAttribute('opacity', '.85');
   await expect(page.locator('.hero-foam-bubbles')).toHaveAttribute('fill', '#FFF8E9');
