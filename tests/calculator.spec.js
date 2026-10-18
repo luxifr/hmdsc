@@ -73,11 +73,14 @@ test('mobile places secondary controls after results while desktop keeps them in
     };
   });
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  let positions = await layout();
-  expect(positions.primary.bottom).toBeLessThan(positions.result.top);
-  expect(positions.result.bottom).toBeLessThan(positions.secondary.top);
-  expect(positions.mobileOrder).toBeTruthy();
+  let positions;
+  for (const width of [320, 390, 650]) {
+    await page.setViewportSize({ width, height: 844 });
+    positions = await layout();
+    expect(positions.primary.bottom).toBeLessThan(positions.result.top);
+    expect(positions.result.bottom).toBeLessThan(positions.secondary.top);
+    expect(positions.mobileOrder).toBeTruthy();
+  }
 
   await page.setViewportSize({ width: 1280, height: 900 });
   positions = await layout();
@@ -201,8 +204,9 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   expect(beerBubbleMotion[4]).toBeLessThan(beerBubbleMotion[3]);
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
-  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1e-05s');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', 'infinite');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-duration', '2.4s');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1.8s');
 });
 
 test('uses a valid inline SVG favicon', async ({ page }) => {
@@ -531,6 +535,18 @@ test('input displays cap decimals while retaining scenario precision', async ({ 
   await page.locator('#mug-mass').fill('1.111119');
   await page.locator('#mug-mass').press('Tab');
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
+});
+
+test('decorative animations run when reduced motion is requested', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const animation = page.locator('.hero-stein');
+  await expect.poll(() => animation.evaluate((element) => element.getAnimations()[0]?.playState)).toBe('running');
+  const initialTime = await animation.evaluate((element) => element.getAnimations()[0].currentTime);
+  await page.waitForTimeout(120);
+  const currentTime = await animation.evaluate((element) => element.getAnimations()[0].currentTime);
+  expect(currentTime).toBeGreaterThan(initialTime);
+  await expect(animation).toHaveCSS('animation-duration', '5s');
 });
 
 test('primary stein controls pair a vertical counter with a matching-height fill stein', async ({ page }) => {
