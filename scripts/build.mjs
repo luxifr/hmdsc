@@ -62,7 +62,7 @@ html = replaceExactlyOnce(
 html = replaceExactlyOnce(
   html,
   /<a\b(?=[^>]*\bclass=["']footer-github["'])(?=[^>]*\bhref=["']https:\/\/github\.com\/luxifr\/hmdsc["'])[^>]*>GitHub repository<\/a>/gi,
-  `<a class="footer-github" href="https://github.com/luxifr/hmdsc/commit/${sourceCommit}" title="Built from source commit ${sourceCommit}">${sourceCommit.slice(0, 7)}</a>`,
+  `<a class="footer-github" href="https://github.com/luxifr/hmdsc/tree/${sourceCommit}" title="Built from source commit ${sourceCommit}">${sourceCommit.slice(0, 7)}</a>`,
   'footer repository link',
 );
 

@@ -928,7 +928,7 @@ test('sources and model rationale section is linked, readable, and responsive', 
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     await expect(footerLink).toHaveText(sourceCommit.slice(0, 7));
     await expect(footerLink).toHaveCSS('text-decoration-line', 'none');
-    await expect(footerLink).toHaveAttribute('href', `https://github.com/luxifr/hmdsc/commit/${sourceCommit}`);
+    await expect(footerLink).toHaveAttribute('href', `https://github.com/luxifr/hmdsc/tree/${sourceCommit}`);
     await expect(footerLink).toHaveAttribute('title', `Built from source commit ${sourceCommit}`);
   } else {
     await expect(footerLink).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
