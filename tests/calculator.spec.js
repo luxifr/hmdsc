@@ -86,6 +86,15 @@ test('mobile places secondary controls after results while desktop keeps them in
   expect(positions.result.top).toBeLessThan(positions.secondary.top);
 });
 
+test('copy-link action is integrated at the bottom of the result card', async ({ page }) => {
+  await page.goto('/');
+  const share = page.locator('.result-card #share');
+  await expect(share).toBeVisible();
+  await expect(page.locator('.result-card #reset')).toHaveCount(0);
+  await share.click();
+  await expect(page).toHaveURL(/#scenario=count=12/);
+});
+
 test('announces the total without making the entire result card live', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
