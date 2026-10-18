@@ -588,6 +588,7 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).borderWidth)).toBe('0px');
   expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).outlineStyle)).toBe('none');
   expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).boxShadow)).toBe('none');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).appearance)).toBe('textfield');
   const fillControls = await page.evaluate(() => {
     const rect = (selector) => {
       const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
@@ -605,8 +606,8 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
     };
   });
   expect(fillControls.plus.left).toBeGreaterThanOrEqual(fillControls.stein.left + 68);
-  expect(fillControls.plusWidth).toBe(fillControls.inputWidth);
-  expect(fillControls.minusWidth).toBe(fillControls.inputWidth);
+  expect(fillControls.plusWidth).toBe(fillControls.valueWidth);
+  expect(fillControls.minusWidth).toBe(fillControls.valueWidth);
   expect(fillControls.plus.bottom).toBeLessThanOrEqual(fillControls.value.top);
   expect(fillControls.value.bottom).toBeLessThanOrEqual(fillControls.minus.top);
   await page.getByRole('button', { name: 'Increase fill level' }).click();
@@ -697,8 +698,10 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.countValue[5]).toBe(34);
     expect(layout.fillValue[4]).toBe(60);
     expect(layout.fillValue[5]).toBe(34);
-    expect(layout.countPlus[4]).toBe(layout.count[4]);
-    expect(layout.countMinus[4]).toBe(layout.count[4]);
+    expect(layout.fillPlus[4]).toBe(layout.fillValue[4]);
+    expect(layout.fillMinus[4]).toBe(layout.fillValue[4]);
+    expect(layout.countPlus[4]).toBe(layout.countValue[4]);
+    expect(layout.countMinus[4]).toBe(layout.countValue[4]);
     expect(layout.count[4]).toBe(44);
     expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);

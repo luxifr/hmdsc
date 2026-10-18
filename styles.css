@@ -366,8 +366,8 @@ h1 em,h2 em {
   place-items: center;
   justify-self: center;
   align-self: center;
-  flex: 0 0 44px;
-  width: 44px;
+  flex: 0 0 60px;
+  width: 60px;
   height: 32px;
   min-height: 0;
   margin: 0;
@@ -474,7 +474,7 @@ h1 em,h2 em {
 }
 .fill-value-row input {
   appearance: textfield;
-  -webkit-appearance: none;
+  -moz-appearance: textfield;
   width: 44px;
   flex: 0 0 44px;
   padding: 0;
@@ -517,8 +517,8 @@ h1 em,h2 em {
 .fill-step-button {
   display: grid;
   place-items: center;
-  flex: 0 0 44px;
-  width: 44px;
+  flex: 0 0 60px;
+  width: 60px;
   height: 32px;
   padding: 0;
   background: none;
