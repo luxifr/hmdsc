@@ -87,7 +87,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     if (Number.isFinite(fields.count.valueAsNumber)) fields.count.value = String(s.count);
     const load = computeLoad(s, unit);
     const { beerKg: beer, glassKg: glass, totalKg: total } = load;
-    $('#fill-output').textContent = `${s.fill}%`;
+    $('#fill-output').value = String(s.fill);
     const beerTop = 94 - 66 * s.fill / 100;
     $('#fill-beer').setAttribute('y', String(beerTop));
     $('#fill-beer').setAttribute('height', String(94 - beerTop));
@@ -192,6 +192,21 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     const edited = readState();
     render({ ...scenario, [key]: edited[key] });
   }));
+  const fillOutput = $('#fill-output');
+  fillOutput.addEventListener('input', () => {
+    const value = fillOutput.valueAsNumber;
+    if (!Number.isFinite(value) || value < Number(fillOutput.min) || value > Number(fillOutput.max)) return;
+    fields.fill.value = String(value);
+    trackOnce('calculator');
+    render({ ...scenario, fill: value });
+  });
+  fillOutput.addEventListener('change', () => {
+    const value = Number.isFinite(fillOutput.valueAsNumber)
+      ? clamp(fillOutput.valueAsNumber, Number(fillOutput.min), Number(fillOutput.max))
+      : scenario.fill;
+    fields.fill.value = String(value);
+    render({ ...scenario, fill: value });
+  });
   ['volume', 'mugMass', 'density', 'uncertainty', 'densityUncertainty'].forEach((key) => fields[key].addEventListener('blur', () => setInputValues(scenario)));
   document.querySelectorAll('.step-button').forEach((button) => button.addEventListener('click', () => {
     trackOnce('calculator');

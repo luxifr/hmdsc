@@ -57,6 +57,47 @@ test('forwards the browser referrer to GoatCounter', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
 });
 
+test('mobile places secondary controls after results while desktop keeps them in the controls column', async ({ page }) => {
+  await page.goto('/');
+  const layout = () => page.evaluate(() => {
+    const bounds = (selector) => {
+      const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
+      return { left, top, bottom };
+    };
+    return {
+      primary: bounds('.primary-controls'),
+      result: bounds('.result-card'),
+      secondary: bounds('.secondary-controls'),
+      mobileOrder: document.querySelector('.primary-controls').compareDocumentPosition(document.querySelector('.result-card')) & Node.DOCUMENT_POSITION_FOLLOWING
+        && document.querySelector('.result-card').compareDocumentPosition(document.querySelector('.secondary-controls')) & Node.DOCUMENT_POSITION_FOLLOWING,
+    };
+  });
+
+  let positions;
+  for (const width of [320, 390, 650]) {
+    await page.setViewportSize({ width, height: 844 });
+    positions = await layout();
+    expect(positions.primary.bottom).toBeLessThan(positions.result.top);
+    expect(positions.result.bottom).toBeLessThan(positions.secondary.top);
+    expect(positions.mobileOrder).toBeTruthy();
+  }
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  positions = await layout();
+  expect(positions.primary.left).toBe(positions.secondary.left);
+  expect(positions.primary.left).toBeLessThan(positions.result.left);
+  expect(positions.result.top).toBeLessThan(positions.secondary.top);
+});
+
+test('copy-link action is integrated at the bottom of the result card', async ({ page }) => {
+  await page.goto('/');
+  const share = page.locator('.result-card #share');
+  await expect(share).toBeVisible();
+  await expect(page.locator('.result-card #reset')).toHaveCount(0);
+  await share.click();
+  await expect(page).toHaveURL(/#scenario=count=12/);
+});
+
 test('announces the total without making the entire result card live', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
@@ -68,7 +109,7 @@ test('announces the total without making the entire result card live', async ({ 
 test('shows sourced median assumptions as the initial defaults', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#fill')).toHaveValue('90');
-  await expect(page.locator('#fill-output')).toHaveText('90%');
+  await expect(page.locator('#fill-output')).toHaveValue('90');
   await expect(page.locator('#mug-mass')).toHaveValue('1.32');
   expect(await page.locator('#mug-mass').evaluate((input) => input.checkValidity())).toBe(true);
   await expect(page.locator('#uncertainty')).toHaveValue('50');
@@ -163,8 +204,9 @@ test('hero stein has beer and foam bubbles matching the fill control', async ({ 
   expect(beerBubbleMotion[4]).toBeLessThan(beerBubbleMotion[3]);
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', '1');
-  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1e-05s');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-iteration-count', 'infinite');
+  await expect(page.locator('.hero-beer-bubbles circle').first()).toHaveCSS('animation-duration', '2.4s');
+  await expect(page.locator('.hero-foam-bubbles circle').first()).toHaveCSS('animation-duration', '1.8s');
 });
 
 test('uses a valid inline SVG favicon', async ({ page }) => {
@@ -219,7 +261,7 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   expect(overflowBounds.y).toBeLessThan(glassBounds.y);
 
   await fill.fill('85');
-  await expect(page.locator('#fill-output')).toHaveText('85%');
+  await expect(page.locator('#fill-output')).toHaveValue('85');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(37.9);
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(9.9);
 
@@ -230,13 +272,36 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height - 4, { steps: 10 });
   await page.mouse.up();
   await expect(fill).toHaveValue('70');
-  await expect(page.locator('#fill-output')).toHaveText('70%');
+  await expect(page.locator('#fill-output')).toHaveValue('70');
   expect(Number(await beer.getAttribute('y'))).toBeCloseTo(47.8);
   expect(Number(await foam.getAttribute('height'))).toBeCloseTo(19.8);
 
   await fill.focus();
   await fill.press('ArrowUp');
   await expect(fill).toHaveValue('71');
+});
+
+test('editable fill percentage stays synchronized with the slider and stein', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const percentage = page.getByLabel('Fill level percentage');
+  const slider = page.getByRole('slider', { name: 'Fill level' });
+
+  await percentage.fill('85');
+  await expect(slider).toHaveValue('85');
+  await expect(page.locator('#fill-output')).toHaveValue('85');
+  expect(Number(await page.locator('#fill-beer').getAttribute('y'))).toBeCloseTo(37.9);
+  expect(Number(await page.locator('#fill-foam').getAttribute('height'))).toBeCloseTo(9.9);
+
+  await slider.fill('76');
+  await expect(percentage).toHaveValue('76');
+  expect(Number(await page.locator('#fill-beer').getAttribute('y'))).toBeCloseTo(43.84);
+
+  await percentage.fill('105');
+  await percentage.press('Tab');
+  await expect(percentage).toHaveValue('100');
+  await expect(slider).toHaveValue('100');
+  await expect(page.locator('#fill-beer')).toHaveAttribute('height', '66');
 });
 
 test('clicking either unit control always toggles the display units', async ({ page }) => {
@@ -495,7 +560,115 @@ test('input displays cap decimals while retaining scenario precision', async ({ 
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
 });
 
-test('main and fine-tune values, units, and buttons align independently', async ({ page }) => {
+test('decorative animations run when reduced motion is requested', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const animation = page.locator('.hero-stein');
+  await expect.poll(() => animation.evaluate((element) => element.getAnimations()[0]?.playState)).toBe('running');
+  const initialTime = await animation.evaluate((element) => element.getAnimations()[0].currentTime);
+  await page.waitForTimeout(120);
+  const currentTime = await animation.evaluate((element) => element.getAnimations()[0].currentTime);
+  expect(currentTime).toBeGreaterThan(initialTime);
+  await expect(animation).toHaveCSS('animation-duration', '5s');
+});
+
+test('primary inputs are simplified, enlarged, and fill buttons adjust the hidden slider value', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.count-control label, .fill-setting label, .range-labels')).toHaveCount(0);
+  await expect(page.getByLabel('Number of steins')).toHaveValue('12');
+  await expect(page.locator('.count-value-row span')).toHaveText('×');
+  await expect(page.getByLabel('Fill level percentage')).toHaveValue('90');
+  await expect(page.getByRole('slider', { name: 'Fill level' })).toHaveValue('90');
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize));
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).color)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).color));
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
+  await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
+  await page.getByLabel('Fill level percentage').focus();
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).borderWidth)).toBe('0px');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).outlineStyle)).toBe('none');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).boxShadow)).toBe('none');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).appearance)).toBe('textfield');
+  const fillControls = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
+      return { left, top, bottom };
+    };
+    return {
+      stein: rect('.fill-slider'),
+      plus: rect('.fill-control .fill-step-button:first-child'),
+      value: rect('.fill-value-row'),
+      minus: rect('.fill-control .fill-step-button:last-child'),
+      valueWidth: document.querySelector('.fill-value-row').getBoundingClientRect().width,
+      plusWidth: document.querySelector('.fill-control .fill-step-button:first-child').getBoundingClientRect().width,
+      minusWidth: document.querySelector('.fill-control .fill-step-button:last-child').getBoundingClientRect().width,
+      inputWidth: document.querySelector('#fill-output').getBoundingClientRect().width,
+    };
+  });
+  expect(fillControls.plus.left).toBeGreaterThanOrEqual(fillControls.stein.left + 68);
+  expect(fillControls.plusWidth).toBe(fillControls.valueWidth);
+  expect(fillControls.minusWidth).toBe(fillControls.valueWidth);
+  expect(fillControls.plus.bottom).toBeLessThanOrEqual(fillControls.value.top);
+  expect(fillControls.value.bottom).toBeLessThanOrEqual(fillControls.minus.top);
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('91');
+  await expect(page.locator('#fill-output')).toHaveValue('91');
+  expect(await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width)).toBe(fillControls.valueWidth);
+  await expect(page.locator('#beer-total')).not.toHaveText('—');
+  await page.getByRole('button', { name: 'Decrease fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('90');
+  await page.goto('/?fill=99');
+  const widthBelow100 = await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width);
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill-output')).toHaveValue('100');
+  expect(await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width)).toBe(widthBelow100);
+  await page.goto('/?fill=100');
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('100');
+  await page.goto('/?fill=70');
+  await page.getByRole('button', { name: 'Decrease fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('70');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe('24px');
+  expect(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize)).toBe('24px');
+  expect(await page.locator('.vertical-stepper').evaluate((stepper) => getComputedStyle(stepper).borderTopWidth)).toBe('0px');
+  expect(await page.locator('.form-actions .text-button').evaluate((button) => getComputedStyle(button).textAlign)).toBe('left');
+});
+
+test('unit suffixes sit about one character from two-digit values', async ({ page }) => {
+  await page.goto('/?count=12&fill=90');
+  const suffixGaps = async () => page.evaluate(() => ['#stein-count', '#fill-output'].map((selector) => {
+    const input = document.querySelector(selector);
+    const suffix = input.parentElement.querySelector('span');
+    const inputRect = input.getBoundingClientRect();
+    const suffixRect = suffix.getBoundingClientRect();
+    const style = getComputedStyle(input);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    const characterWidth = context.measureText('0').width;
+    return {
+      gap: suffixRect.left - (inputRect.left + inputRect.width / 2 + input.value.length * characterWidth / 2),
+      characterWidth,
+    };
+  }));
+  for (const width of [430, 390, 375, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const { gap, characterWidth } of await suffixGaps()) {
+      expect(gap).toBeGreaterThan(characterWidth * 0.85);
+      expect(gap).toBeLessThan(characterWidth * 1.15);
+    }
+    await page.locator('#fill-output').fill('100');
+    const [{ gap, characterWidth }] = (await suffixGaps()).slice(1);
+    expect(gap).toBeGreaterThan(-characterWidth * 0.6);
+    await expect(page.locator('#fill')).toHaveValue('100');
+    await expect(page.locator('#fill-output')).toHaveValue('100');
+    await page.locator('#fill-output').fill('90');
+  }
+});
+
+test('primary stein controls pair a vertical counter with a matching-height fill stein', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
   await expect(page.locator('.advanced-fields > label')).toHaveText([
@@ -507,60 +680,99 @@ test('main and fine-tune values, units, and buttons align independently', async 
   ]);
   await expect(page.locator('#beer-volume')).toHaveValue('1');
   const measure = () => page.evaluate(() => {
-    const bounds = (element) => {
-      const { left, right, width } = element.getBoundingClientRect();
-      return [left, right, width].map((value) => Math.round(value * 100) / 100);
+    const rect = (selector) => {
+      const { left, right, top, bottom, width, height } = document.querySelector(selector).getBoundingClientRect();
+      return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
     };
-    const one = (selector) => bounds(document.querySelector(selector));
-    const many = (selector) => [...document.querySelectorAll(selector)].map(bounds);
+    const many = (selector) => [...document.querySelectorAll(selector)].map((element) => {
+      const { left, right, top, bottom, width, height } = element.getBoundingClientRect();
+      return [left, right, top, bottom, width, height].map((value) => Math.round(value * 100) / 100);
+    });
+    const countValue = document.querySelector('.count-value-row').getBoundingClientRect();
+    const countButtonCenterOffset = Math.max(...[...document.querySelectorAll('.vertical-stepper .step-button')].map((button) => {
+      const rect = button.getBoundingClientRect();
+      return Math.abs(rect.left + rect.width / 2 - (countValue.left + countValue.width / 2));
+    }));
     return {
-      mainLabels: many('.count-row > :first-child'),
-      mainControls: many('.count-row > :last-child'),
-      mainValues: [one('#stein-count')],
-      stepButtons: many('.stepper .step-button'),
-      fineTuneLabels: many('.advanced-fields > label'),
+      counter: rect('.vertical-stepper'),
+      countValue: rect('.count-value-row'),
+      count: rect('#stein-count'),
+      countPlus: rect('.vertical-stepper .step-button:first-child'),
+      countMinus: rect('.vertical-stepper .step-button:last-child'),
+      fillStein: rect('.fill-slider'),
+      countButtonCenterOffset,
+      fillControlsGap: parseFloat(getComputedStyle(document.querySelector('.fill-control')).columnGap),
+      fillPlus: rect('.fill-control .fill-step-button:first-child'),
+      fillValue: rect('.fill-value-row'),
+      fillInput: rect('#fill-output'),
+      fillMinus: rect('.fill-control .fill-step-button:last-child'),
+      fillValues: [...document.querySelectorAll('.fill-value-row')].map((element) => {
+        const { width } = element.getBoundingClientRect();
+        return width;
+      }),
+      stepButtons: many('.vertical-stepper .step-button'),
       fineTuneControls: many('.advanced-fields > .input-with-unit'),
       fineTuneValues: many('.advanced-fields input'),
       fineTuneUnits: many('.advanced-fields .input-with-unit span'),
       fineTunePlusButtons: many('.advanced-fields .input-with-unit > .step-button:last-child'),
       suffixesFit: [...document.querySelectorAll('.input-with-unit span')].every((element) => element.scrollWidth <= element.clientWidth),
+      pageFits: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     };
   });
-  const expectSameColumn = (items, index) => expect(new Set(items.map((item) => item[index])).size).toBe(1);
-  const expectLayoutAligned = (layout) => {
-    expectSameColumn(layout.mainLabels, 0);
-    expectSameColumn(layout.mainControls, 1);
-    expectSameColumn(layout.mainControls, 2);
-    expect(layout.stepButtons[0][1]).toBe(layout.mainValues[0][0]);
-    expect(Math.abs(layout.stepButtons[1][1] - layout.mainControls[0][1])).toBeLessThanOrEqual(1);
-    expectSameColumn(layout.fineTuneLabels, 0);
-    expectSameColumn(layout.fineTuneControls, 1);
-    expectSameColumn(layout.fineTuneControls, 2);
-    expect(layout.fineTuneValues[1]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[2]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[3]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneValues[4]).toEqual(layout.fineTuneValues[0]);
-    expect(layout.fineTuneUnits[1]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[2]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[3]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTuneUnits[4]).toEqual(layout.fineTuneUnits[0]);
-    expect(layout.fineTunePlusButtons).toHaveLength(5);
+  const expectLayout = (layout) => {
+    expect(layout.counter[5]).toBe(layout.fillStein[5]);
+    expect(layout.counter[2]).toBe(layout.fillStein[2]);
+    expect(layout.counter[3]).toBe(layout.fillStein[3]);
+    expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.counter[0] + layout.counter[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
+    expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
+    expect(layout.count[4]).toBe(60);
+    expect(layout.countValue[4]).toBe(60);
+    expect(layout.countValue[5]).toBe(34);
+    expect(layout.fillValue[4]).toBe(60);
+    expect(layout.fillValue[5]).toBe(34);
+    expect(layout.fillInput[4]).toBe(layout.fillValue[4]);
+    expect(layout.fillPlus[4]).toBe(layout.fillValue[4]);
+    expect(layout.fillMinus[4]).toBe(layout.fillValue[4]);
+    expect(layout.countPlus[4]).toBe(layout.countValue[4]);
+    expect(layout.countMinus[4]).toBe(layout.countValue[4]);
+    expect(layout.count[4]).toBe(layout.countValue[4]);
+    expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
+    expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
+    expect(layout.count[5]).toBe(34);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.countPlus[0] + layout.countPlus[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.countMinus[0] + layout.countMinus[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[2] + layout.countValue[5] / 2 - (layout.counter[2] + layout.counter[5] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.countValue[2] + layout.countValue[5] / 2 - (layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.fillMinus[0] + layout.fillMinus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.fillValue[2] + layout.fillValue[5] / 2 - (layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2)).toBeLessThanOrEqual(0.02);
+    expect(layout.stepButtons[0][5]).toBe(32);
+    expect(layout.stepButtons[1][5]).toBe(32);
+    expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(2);
+    expect(Math.abs(layout.stepButtons[1][3] - layout.counter[3])).toBeLessThanOrEqual(2);
+    expect(layout.fineTuneControls).toHaveLength(5);
     layout.fineTuneControls.forEach((control, index) => {
+      expect(control[0]).toBe(layout.fineTuneControls[0][0]);
+      expect(control[1]).toBe(layout.fineTuneControls[0][1]);
+      expect(layout.fineTuneValues[index][0]).toBe(layout.fineTuneValues[0][0]);
+      expect(layout.fineTuneUnits[index][0]).toBe(layout.fineTuneUnits[0][0]);
       expect(Math.abs(layout.fineTunePlusButtons[index][1] - control[1])).toBeLessThanOrEqual(1);
       expect(Math.abs(layout.fineTuneUnits[index][0] - (control[0] + control[1]) / 2)).toBeLessThanOrEqual(1);
     });
-    expect(layout.mainValues[0][0]).not.toBe(layout.fineTuneValues[0][0]);
     expect(layout.suffixesFit).toBe(true);
+    expect(layout.pageFits).toBe(true);
   };
 
-  for (const width of [1280, 900, 650, 380, 320]) {
+  for (const width of [1280, 900, 650, 430, 414, 390, 375, 360, 320]) {
     await page.setViewportSize({ width, height: 900 });
     const metricLayout = await measure();
-    expectLayoutAligned(metricLayout);
+    expectLayout(metricLayout);
 
     await page.getByRole('button', { name: 'IMPERIAL' }).click();
     const imperialLayout = await measure();
-    expectLayoutAligned(imperialLayout);
+    expectLayout(imperialLayout);
     expect(imperialLayout).toEqual(metricLayout);
     await page.getByRole('button', { name: 'METRIC' }).click();
   }
