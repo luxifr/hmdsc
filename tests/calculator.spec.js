@@ -29,7 +29,7 @@ test('GoatCounter receives only fixed events and scenario data stays out of quer
   expect(analyticsConfig).toEqual({
     search: '',
     path: '/',
-    referrer: null,
+    referrer: '',
     title: null,
     loadedSearch: '',
     cookie: '',
@@ -45,6 +45,16 @@ test('GoatCounter receives only fixed events and scenario data stays out of quer
     { path: 'share_clicked', event: true },
   ]);
   await expect(page).toHaveURL(/^[^?]+#/);
+});
+
+test('forwards the browser referrer to GoatCounter', async ({ page }) => {
+  await page.route('**/referrer-source?campaign=beer', (route) => route.fulfill({
+    contentType: 'text/html',
+    body: '<a href="/">Continue</a>',
+  }));
+  await page.goto('/referrer-source?campaign=beer');
+  await page.getByRole('link', { name: 'Continue' }).click();
+  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
 });
 
 test('announces the total without making the entire result card live', async ({ page }) => {
