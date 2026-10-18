@@ -581,7 +581,8 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   await expect(page.getByRole('slider', { name: 'Fill level' })).toHaveValue('90');
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize));
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).color)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).color));
-  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('right');
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).textAlign)).toBe('center');
   await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
   await page.getByLabel('Fill level percentage').focus();
@@ -635,6 +636,30 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   expect(await page.locator('.form-actions .text-button').evaluate((button) => getComputedStyle(button).textAlign)).toBe('left');
 });
 
+test('one- and two-digit values stay centered on their steppers', async ({ page }) => {
+  await page.goto('/?count=1&fill=90');
+  const centers = () => page.evaluate(() => Object.fromEntries([
+    ['count', ['#stein-count', '.vertical-stepper .step-button:first-child', '.vertical-stepper .step-button:last-child']],
+    ['fill', ['#fill-output', '.fill-control .fill-step-button:first-child', '.fill-control .fill-step-button:last-child']],
+  ].map(([name, selectors]) => [name, selectors.map((selector) => {
+    const rect = document.querySelector(selector).getBoundingClientRect();
+    return rect.left + rect.width / 2;
+  })])));
+  for (const width of [430, 390, 375, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    const oneDigit = await centers();
+    Object.values(oneDigit).forEach((group) => expect(new Set(group.map((center) => Math.round(center * 100) / 100)).size).toBe(1));
+    await page.locator('#stein-count').fill('12');
+    await page.locator('#fill-output').fill('100');
+    const twoDigits = await centers();
+    Object.values(twoDigits).forEach((group) => expect(new Set(group.map((center) => Math.round(center * 100) / 100)).size).toBe(1));
+    await expect(page.locator('#fill')).toHaveValue('100');
+    await expect(page.locator('#fill-output')).toHaveValue('100');
+    await page.locator('#stein-count').fill('1');
+    await page.locator('#fill-output').fill('90');
+  }
+});
+
 test('primary stein controls pair a vertical counter with a matching-height fill stein', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
@@ -671,6 +696,7 @@ test('primary stein controls pair a vertical counter with a matching-height fill
       fillControlsGap: parseFloat(getComputedStyle(document.querySelector('.fill-control')).columnGap),
       fillPlus: rect('.fill-control .fill-step-button:first-child'),
       fillValue: rect('.fill-value-row'),
+      fillInput: rect('#fill-output'),
       fillMinus: rect('.fill-control .fill-step-button:last-child'),
       fillValues: [...document.querySelectorAll('.fill-value-row')].map((element) => {
         const { width } = element.getBoundingClientRect();
@@ -693,16 +719,17 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(Math.abs(layout.countValue[0] + layout.countValue[4] / 2 - (layout.counter[0] + layout.counter[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
     expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
-    expect(layout.count[4]).toBe(44);
+    expect(layout.count[4]).toBe(60);
     expect(layout.countValue[4]).toBe(60);
     expect(layout.countValue[5]).toBe(34);
     expect(layout.fillValue[4]).toBe(60);
     expect(layout.fillValue[5]).toBe(34);
+    expect(layout.fillInput[4]).toBe(layout.fillValue[4]);
     expect(layout.fillPlus[4]).toBe(layout.fillValue[4]);
     expect(layout.fillMinus[4]).toBe(layout.fillValue[4]);
     expect(layout.countPlus[4]).toBe(layout.countValue[4]);
     expect(layout.countMinus[4]).toBe(layout.countValue[4]);
-    expect(layout.count[4]).toBe(44);
+    expect(layout.count[4]).toBe(layout.countValue[4]);
     expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);

@@ -352,7 +352,7 @@ h1 em,h2 em {
 }
 .vertical-stepper {
   display: grid;
-  grid-template-columns: 60px;
+  grid-template-columns: 76px;
   grid-template-rows: 35px 34px 35px;
   justify-content: center;
   width: 76px;
@@ -386,6 +386,7 @@ h1 em,h2 em {
   grid-row: 3;
 }
 .count-value-row {
+  position: relative;
   display: flex;
   grid-column: 1;
   grid-row: 2;
@@ -396,14 +397,17 @@ h1 em,h2 em {
   justify-self: center;
 }
 .count-value-row input {
-  width: 44px;
+  width: 60px;
   height: 34px;
-  flex: 0 0 44px;
+  flex: 0 0 60px;
   padding: 0;
-  text-align: right;
+  text-align: center;
 }
 .count-value-row span {
+  position: absolute;
+  left: 100%;
   width: 16px;
+  pointer-events: none;
   color: var(--gold);
   font-family: var(--mono);
   font-size: 22px;
@@ -416,7 +420,7 @@ h1 em,h2 em {
   margin: 0;
 }
 .stepper.vertical-stepper input {
-  width: 44px;
+  width: 60px;
   min-height: 0;
   padding: 0;
   background: none;
@@ -424,7 +428,7 @@ h1 em,h2 em {
   font-size: 22px;
   font-weight: 600;
   line-height: 34px;
-  text-align: right;
+  text-align: center;
 }
 .step-button {
   flex: 0 0 38px;
@@ -464,6 +468,7 @@ h1 em,h2 em {
   height: 104px;
 }
 .fill-value-row {
+  position: relative;
   display: flex;
   grid-column: 2;
   grid-row: 2;
@@ -475,8 +480,8 @@ h1 em,h2 em {
 .fill-value-row input {
   appearance: textfield;
   -moz-appearance: textfield;
-  width: 44px;
-  flex: 0 0 44px;
+  width: 60px;
+  flex: 0 0 60px;
   padding: 0;
   background: none;
   border: 0;
@@ -487,14 +492,17 @@ h1 em,h2 em {
   font-size: 22px;
   font-weight: 600;
   line-height: 34px;
-  text-align: right;
+  text-align: center;
 }
 .fill-value-row input::-webkit-inner-spin-button,.fill-value-row input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 .fill-value-row span {
+  position: absolute;
+  left: 100%;
   width: 16px;
+  pointer-events: none;
   color: var(--gold);
   font-family: var(--mono);
   font-size: 22px;
