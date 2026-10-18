@@ -653,6 +653,12 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
     expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
     expect(layout.count[4]).toBe(layout.counter[4]);
+    expect(layout.countPlus[4]).toBe(28);
+    expect(layout.countMinus[4]).toBe(28);
+    expect(layout.fillStein[0] - layout.countMinus[1]).toBe(layout.fillControlsGap);
+    expect(layout.countPlus[1]).toBe(layout.counter[1]);
+    expect(layout.countMinus[1]).toBe(layout.counter[1]);
+    expect(layout.fillStein[0] - layout.countPlus[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);
     expect(layout.count[0] + layout.count[4] / 2).toBe(layout.counter[0] + layout.counter[4] / 2);
     expect(layout.count[2] + layout.count[5] / 2).toBe(layout.counter[2] + layout.counter[5] / 2);
