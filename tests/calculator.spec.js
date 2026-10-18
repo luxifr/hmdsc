@@ -341,8 +341,9 @@ test('editable fill percentage stays synchronized with the slider and stein', as
   expect(Number(await foam.getAttribute('y')) + Number(await foam.getAttribute('height'))).toBeCloseTo(Number(await beer.getAttribute('y')));
 });
 
-test('unit selector sits beside the primary inputs in a vertical stack', async ({ page }) => {
+test('unit selector is rectangular and sits beside the primary inputs in a vertical stack', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('.unit-switch')).toHaveCSS('border-radius', '0px');
   const layout = await page.evaluate(() => {
     const rect = (selector) => {
       const { left, right, top, bottom, width, height } = document.querySelector(selector).getBoundingClientRect();
