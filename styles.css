@@ -799,10 +799,52 @@ h1 em,h2 em {
 footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 15px;
   padding: 22px max(calc((100vw - 1120px)/2),6.3vw);
   border-top: 1px solid #ffffff12;
   color: #7c7569;
   font-size: 8px;
+}
+.analytics-privacy {
+  position: relative;
+  flex: 0 0 auto;
+}
+.analytics-privacy summary {
+  cursor: pointer;
+  list-style: none;
+}
+.analytics-privacy summary::-webkit-details-marker {
+  display: none;
+}
+.analytics-privacy summary:hover,
+.analytics-privacy summary:focus-visible {
+  color: var(--paper);
+}
+.analytics-privacy > div {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: calc(100% + 12px);
+  width: min(360px, calc(100vw - 32px));
+  padding: 15px 17px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--paper);
+  text-align: left;
+  text-transform: none;
+  font-size: 12px;
+  line-height: 1.6;
+  box-shadow: 0 8px 28px #0008;
+}
+.analytics-privacy p {
+  margin: 0;
+}
+.analytics-privacy p + p {
+  margin-top: 10px;
+}
+.analytics-privacy a {
+  color: var(--gold-pale);
 }
 .toast {
   position: fixed;
@@ -967,9 +1009,13 @@ footer {
     padding: 0;
   }
   footer {
+    flex-wrap: wrap;
     padding: 19px 22px;
     font-size: 7px;
     gap: 15px;
+  }
+  .analytics-privacy {
+    margin-left: auto;
   }
   footer span:last-child {
     text-align: right;
