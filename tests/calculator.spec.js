@@ -549,6 +549,57 @@ test('decorative animations run when reduced motion is requested', async ({ page
   await expect(animation).toHaveCSS('animation-duration', '5s');
 });
 
+test('primary inputs are simplified, enlarged, and fill buttons adjust the hidden slider value', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.count-control label, .fill-setting label, .range-labels')).toHaveCount(0);
+  await expect(page.getByLabel('Number of steins')).toHaveValue('12');
+  await expect(page.getByRole('slider', { name: 'Fill level' })).toHaveValue('90');
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize));
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).color)).toBe(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).color));
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('right');
+  await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
+  const fillControls = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
+      return { left, top, bottom };
+    };
+    return {
+      stein: rect('.fill-slider'),
+      plus: rect('.fill-control .fill-step-button:first-child'),
+      value: rect('#fill-output'),
+      minus: rect('.fill-control .fill-step-button:last-child'),
+      valueWidth: document.querySelector('#fill-output').getBoundingClientRect().width,
+    };
+  });
+  expect(fillControls.plus.left).toBeGreaterThanOrEqual(fillControls.stein.left + 68);
+  expect(fillControls.plus.bottom).toBeLessThanOrEqual(fillControls.value.top);
+  expect(fillControls.value.bottom).toBeLessThanOrEqual(fillControls.minus.top);
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('91');
+  await expect(page.locator('#fill-output')).toHaveText('91%');
+  expect(await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width)).toBe(fillControls.valueWidth);
+  await expect(page.locator('#beer-total')).not.toHaveText('—');
+  await page.getByRole('button', { name: 'Decrease fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('90');
+  await page.goto('/?fill=99');
+  const widthBelow100 = await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width);
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill-output')).toHaveText('100%');
+  expect(await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width)).toBe(widthBelow100);
+  await page.goto('/?fill=100');
+  await page.getByRole('button', { name: 'Increase fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('100');
+  await page.goto('/?fill=70');
+  await page.getByRole('button', { name: 'Decrease fill level' }).click();
+  await expect(page.locator('#fill')).toHaveValue('70');
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).fontSize)).toBe('24px');
+  expect(await page.locator('#fill-output').evaluate((output) => getComputedStyle(output).fontSize)).toBe('24px');
+  expect(await page.locator('.vertical-stepper').evaluate((stepper) => getComputedStyle(stepper).borderTopWidth)).toBe('0px');
+  expect(await page.locator('.form-actions .text-button').evaluate((button) => getComputedStyle(button).textAlign)).toBe('left');
+});
+
 test('primary stein controls pair a vertical counter with a matching-height fill stein', async ({ page }) => {
   await page.goto('/');
   await page.getByText('Fine-tune the assumptions').click();
@@ -572,7 +623,17 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     return {
       counter: rect('.vertical-stepper'),
       count: rect('#stein-count'),
+      countPlus: rect('.vertical-stepper .step-button:first-child'),
+      countMinus: rect('.vertical-stepper .step-button:last-child'),
       fillStein: rect('.fill-slider'),
+      fillControlsGap: parseFloat(getComputedStyle(document.querySelector('.fill-control')).columnGap),
+      fillPlus: rect('.fill-control .fill-step-button:first-child'),
+      fillValue: rect('#fill-output'),
+      fillMinus: rect('.fill-control .fill-step-button:last-child'),
+      fillValues: [...document.querySelectorAll('#fill-output')].map((element) => {
+        const { width } = element.getBoundingClientRect();
+        return width;
+      }),
       stepButtons: many('.vertical-stepper .step-button'),
       fineTuneControls: many('.advanced-fields > .input-with-unit'),
       fineTuneValues: many('.advanced-fields input'),
@@ -586,9 +647,19 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.counter[5]).toBe(layout.fillStein[5]);
     expect(layout.counter[2]).toBe(layout.fillStein[2]);
     expect(layout.counter[3]).toBe(layout.fillStein[3]);
-    expect(layout.counter[0]).toBeLessThan(layout.fillStein[0]);
-    expect(layout.count[2]).toBeGreaterThan(layout.stepButtons[0][3]);
-    expect(layout.count[3]).toBeLessThan(layout.stepButtons[1][2]);
+    expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
+    expect(layout.count[0]).toBe(layout.counter[0]);
+    expect(layout.count[1]).toBe(layout.counter[1]);
+    expect(layout.count[2]).toBeGreaterThanOrEqual(layout.stepButtons[0][3]);
+    expect(layout.count[3]).toBeLessThanOrEqual(layout.stepButtons[1][2]);
+    expect(layout.count[4]).toBe(layout.counter[4]);
+    expect(layout.count[5]).toBe(34);
+    expect(layout.count[0] + layout.count[4] / 2).toBe(layout.counter[0] + layout.counter[4] / 2);
+    expect(layout.count[2] + layout.count[5] / 2).toBe(layout.counter[2] + layout.counter[5] / 2);
+    expect(layout.count[2] + layout.count[5] / 2).toBe((layout.countPlus[2] + layout.countPlus[5] / 2 + layout.countMinus[2] + layout.countMinus[5] / 2) / 2);
+    expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(Math.abs(layout.fillMinus[0] + layout.fillMinus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
+    expect(layout.fillValue[2] + layout.fillValue[5] / 2).toBe((layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2);
     expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(1);
     expect(Math.abs(layout.stepButtons[1][3] - layout.counter[3])).toBeLessThanOrEqual(1);
     expect(layout.fineTuneControls).toHaveLength(5);

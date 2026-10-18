@@ -330,22 +330,19 @@ h1 em,h2 em {
 }
 .primary-controls {
   display: grid;
-  grid-template-columns: 70px minmax(0,1fr);
-  gap: 18px;
+  grid-template-columns: 76px minmax(0,1fr);
+  gap: 12px;
   padding: 19px 0 20px;
   border-bottom: 1px solid var(--line);
+  align-items: center;
 }
 .count-control,.fill-setting {
   min-width: 0;
 }
-.count-control>label,.fill-setting>label,.advanced-fields>label {
+.advanced-fields>label {
   font-size: 13px;
   font-weight: 600;
   color: #ece4d4;
-}
-.count-control>label,.fill-setting>label {
-  display: block;
-  margin-bottom: 8px;
 }
 .stepper {
   display: flex;
@@ -356,10 +353,10 @@ h1 em,h2 em {
 .vertical-stepper {
   display: grid;
   grid-template-rows: 1fr 34px 1fr;
-  width: 60px;
+  width: 76px;
   height: 104px;
-  overflow: hidden;
-  border-radius: 2px;
+  overflow: visible;
+  border: 0;
 }
 .vertical-stepper .step-button {
   width: 100%;
@@ -367,11 +364,20 @@ h1 em,h2 em {
   font-size: 16px;
   line-height: 1;
 }
-.vertical-stepper input {
+.vertical-stepper input::-webkit-outer-spin-button,.vertical-stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.stepper.vertical-stepper input {
   min-height: 0;
-  background: #ffffff08;
-  font-size: 16px;
+  padding: 0;
+  background: none;
+  color: var(--gold);
+  font-size: 22px;
   font-weight: 600;
+  line-height: 34px;
+  padding-right: 3px;
+  text-align: right;
 }
 .step-button {
   flex: 0 0 38px;
@@ -400,22 +406,31 @@ h1 em,h2 em {
 .stepper input::-webkit-inner-spin-button,.input-with-unit input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
-.range-wrap {
+.fill-control {
   display: grid;
-  grid-template-columns: 76px 1fr;
+  grid-template-columns: 76px 48px;
+  grid-template-rows: 1fr 34px 1fr;
   align-items: center;
-  gap: 4px 12px;
+  justify-content: start;
+  justify-items: center;
+  gap: 0 12px;
+  height: 104px;
 }
-.range-wrap output {
+.fill-control output {
   grid-column: 2;
+  grid-row: 2;
+  width: 100%;
   color: var(--gold);
   font-family: var(--mono);
-  font-size: 16px;
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 .fill-slider {
   position: relative;
   grid-column: 1;
-  grid-row: 1;
+  grid-row: 1 / 4;
   width: 76px;
   height: 104px;
 }
@@ -423,6 +438,34 @@ h1 em,h2 em {
   display: block;
   width: 76px;
   height: 104px;
+}
+.fill-step-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--gold);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.fill-step-button:hover {
+  color: var(--gold-pale);
+}
+.fill-step-button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.fill-control>.fill-step-button:first-child {
+  grid-column: 2;
+  grid-row: 1;
+}
+.fill-control>.fill-step-button:last-child {
+  grid-column: 2;
+  grid-row: 3;
 }
 .fill-slider input {
   position: absolute;
@@ -584,11 +627,8 @@ h1 em,h2 em {
   letter-spacing: .08em;
   cursor: pointer;
 }
-.text-button:first-child {
+.form-actions .text-button {
   text-align: left;
-}
-.text-button:last-child {
-  text-align: right;
 }
 .text-button:hover {
   color: var(--gold);
@@ -943,10 +983,6 @@ footer {
   .primary-controls,.secondary-controls {
     margin-right: 12px;
   }
-  .primary-controls {
-    grid-template-columns: 64px minmax(0,1fr);
-    gap: 14px;
-  }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr) 150px;
     column-gap: 12px;
@@ -1043,14 +1079,14 @@ footer {
     padding-right: 0;
   }
   .primary-controls {
-    grid-template-columns: 64px minmax(0,1fr);
-    gap: 14px;
+    grid-template-columns: 76px minmax(0,1fr);
+    gap: 12px;
+  }
+  .stepper.vertical-stepper input,.fill-control output {
+    font-size: 24px;
   }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr) 156px;
-  }
-  .count-control>label,.fill-setting>label {
-    font-size: 12px;
   }
   .result-card {
     padding: 24px 20px 18px;
@@ -1110,12 +1146,12 @@ footer {
   .total-primary .total-uncertainty {
     font-size: 9px;
   }
-  .primary-controls {
-    grid-template-columns: 58px minmax(0,1fr);
-    gap: 10px;
+  .fill-control {
+    grid-template-columns: 68px 48px;
+    column-gap: 12px;
   }
-  .vertical-stepper {
-    width: 54px;
+  .fill-slider,.fill-stein {
+    width: 68px;
   }
   .advanced-fields {
     grid-template-columns: minmax(0,1fr);
