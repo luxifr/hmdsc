@@ -886,12 +886,12 @@ test('sources and model rationale section is linked, readable, and responsive', 
   const section = page.locator('#sources');
   await expect(section).toHaveCount(1);
   await expect(section.locator('.eyebrow')).toContainText('04');
-  await expect(section.getByRole('heading', { level: 2 })).toHaveText(/What the numbers\s*mean—and don’t\./);
-  await expect(section.locator('.source-card')).toHaveCount(3);
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText(/How the estimate\s*comes together\./);
+  await expect(section.locator('.source-card')).toHaveCount(2);
+  await expect(section.getByText('Biomechanics: explanatory estimates')).toHaveCount(0);
+  await expect(section.getByRole('link', { name: /full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
-  await expect(section.locator('.source-card-wide')).toContainText('Neither is a safety assessment');
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
-  await expect(section.getByRole('link', { name: /Read the full methods/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   await expect(page.locator('footer').getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
 
   await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
