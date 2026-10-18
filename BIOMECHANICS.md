@@ -2,9 +2,9 @@
 
 ## Evidence limits and modeling choices
 
-There is no published measurement here of servers carrying six steins in one hand, their joint angles, or their hand forces. So this is a **simplified, conditional lever model**, not a measured technique or clinical assessment. It uses the carrying arrangement you described—six steins in a circle with handles facing inward, optionally a seventh supported on the handles—and explicitly assumed shoulder/elbow positions. Dimensions below come from retail listings for 1 L Maßkrüge; the inferred cluster geometry is an approximation.
+There are no published measurements here of servers carrying six steins in one hand, their joint angles, or hand forces. This is therefore a **simplified lever model**, based on the carrying arrangement you described—six steins in a circle, handles inward, optionally a seventh supported on the handles. Product dimensions inform the bundle geometry; joint angles and segment lengths are explicit modeling assumptions.
 
-For the default 12-steins / two-arm example, the model assumes six steins per hand, 90% fill, both arms sharing the load evenly, and steady transport. Angles and lever lengths are varied as stated below. The glasses are kept level; hand orientation therefore depends on shoulder and elbow orientation, rather than assuming a fixed wrist angle. Results are external gravitational moments from the stein load. They are useful for scale and comparison, not precise internal muscle or tendon forces.
+The neutral posture is the upper arm hanging vertically down, with the shoulder at 0° and the elbow bent about 90°. During transport, the model allows the upper arm to swing at most 25° forward or backward. The elbow does most of the adjustment so the forearm and grip stay near their carrying orientation and the steins remain level. The primary comparison holds the forearm about horizontal; a ±10° deviation is used as a small sensitivity case. Results are external gravitational moments, not clinical estimates of individual muscle or tendon force.
 
 ## Reference load
 
@@ -19,66 +19,61 @@ A seventh stein on top adds about **21.9 N** to that hand's load (about 153 N fo
 
 ## Cluster geometry and keeping the steins level
 
-A 1 L Paulaner Maßkrug listing gives approximately **20 cm height and 10.5 cm body diameter**; another Isar Maßkrug listing gives **20.2 cm height and 10.9 cm diameter**. A Schweiger listing gives overall dimensions of **15.5 × 20 cm**. Treating the 15.5 cm overall width as body diameter plus handle projection suggests the handle reaches about 2–3 cm beyond the body's 5.25 cm radius, with a grasp point roughly **6–8 cm from the mug's center**. This is an estimate from product dimensions, not a measured grip location.
+A 1 L Paulaner Maßkrug listing gives approximately **20 cm height and 10.5 cm body diameter**; another Isar Maßkrug listing gives **20.2 cm height and 10.9 cm diameter**. A Schweiger listing gives overall dimensions of **15.5 × 20 cm**. Treating 15.5 cm as body diameter plus handle projection suggests a grasp point roughly **6–8 cm from the mug's center**. This is estimated from product dimensions, not a measured grip location.
 
-For six mugs packed in a ring with their bodies approximately tangent, the mug centers sit about one body diameter (**10.5–10.9 cm**) from the bundle center. Their handles point inward, putting the grasp regions in the central opening. Each mug's weight therefore acts at a substantial radial offset from the central grasp, but in an evenly filled six-mug ring the six offsets cancel in the combined load: the **bundle center of mass remains near the central grip**. The group does not create six additive wrist moments in the same direction. Uneven fill or an off-center seventh mug can shift the resultant center of mass and add a moment.
+For six mugs packed in a ring with their bodies approximately tangent, mug centers sit about one body diameter (**10.5–10.9 cm**) from the bundle center. With handles facing inward, the grasp regions meet around the central opening. The six individual weight offsets largely cancel in a symmetric, evenly filled ring, leaving the combined center of mass near the bundle center. Uneven fill or an off-center seventh mug can shift that center.
 
-For a planar arm model, define:
+Use these planar angles:
 
-- `θs`: upper-arm angle forward from vertical at the shoulder,
-- `β`: elbow flexion angle, modeled as folding the forearm back toward the torso,
-- `θf = θs − β`: forearm angle from vertical,
-- `ω`: hand/wrist angle relative to the forearm.
+- `θs`: upper-arm swing from vertical down; forward is positive, backward is negative.
+- `β`: elbow flexion from a straight arm; bending the elbow brings the forearm forward.
+- `θf = θs + β`: forearm direction from vertical down.
 
-If the handles keep the stein axes upright, the orientation constraint is `θf + ω ≈ 0°`, or `ω ≈ β − θs`. The wrist therefore compensates for the *combined* shoulder and elbow posture; it does not simply copy the elbow angle. The example range below keeps the wrist compensation at about 0–30° in magnitude for the selected poses, while allowing the shoulder to move forward and the elbow to flex.
+At the neutral posture, `θs = 0°` and `β ≈ 90°`, so the forearm is horizontal (`θf ≈ 90°`). To keep that forearm orientation as the shoulder swings, the elbow compensates: `β ≈ 90° − θs`. Thus at `θs = −25°`, elbow flexion is about 115°; at `θs = +25°`, it is about 65°. The hand/grip can remain near its baseline orientation, with the wrist making small corrections for any residual forearm tilt. In general, keeping the steins upright requires hand/grip orientation to counter the forearm's tilt, but that correction is not simply equal to elbow flexion.
 
-## Joint moment estimates
+## Joint moment model
 
-Assume the centered handle bundle places the combined load's vertical line of action over the wrist in the first-pass projection; the wrist-to-grip offset is taken as vertical, so it adds no horizontal lever arm at the elbow or shoulder. Use upper-arm length `L1 = 0.28–0.34 m` and forearm length `L2 = 0.25–0.30 m` as broad adult modeling inputs, broadly consistent with standard segment-proportion datasets [6]. With `W = 131 N` per arm, the stein-load moments are:
+Assume the bundle's combined vertical load line passes through the central grip and the wrist-to-grip offset is vertical. For segment lengths use upper arm `L1 = 0.28–0.34 m` and forearm `L2 = 0.25–0.30 m`, broad adult inputs consistent with standard segment data [6]. With six default steins per hand, `W ≈ 131 N`:
 
-- **Elbow:** `M_e,load = W × L2 × |sin(θf)|`.
-- **Shoulder:** `M_s,load = W × |L1 sin(θs) + L2 sin(θf)|`.
+- **Elbow moment from steins:** `M_e,load = W × L2 × |sin(θf)|`.
+- **Shoulder moment from steins:** `M_s,load = W × |L1 sin(θs) + L2 sin(θf)|`.
 
-To include the arm itself, use standard adult segment mass fractions from de Leva—upper arm 2.55–2.71%, forearm 1.38–1.62%, hand 0.56–0.61% of body mass—and assume a 60–80 kg adult. Place each segment's center of mass at its midpoint for this simple calculation. Its gravitational moment can reinforce or partly offset the stein-load moment depending on posture; across the sweep it contributes up to about **2.8 N·m at the elbow** and **10.5 N·m at the shoulder**. Hand weight acts at the wrist line in this level-hand model. The totals below are stein-load plus arm-segment gravitational moments; movement acceleration is not included.
+These are weight times the horizontal distance to the vertical load line. The shoulder formula includes both upper-arm and forearm projections; this is why shoulder moment changes with shoulder swing even when elbow compensation holds the forearm nearly fixed.
 
-For a sensitivity sweep using shoulder angle `θs = 45–70°` forward from vertical, elbow flexion `β = 45–100°`, `L1 = 0.28–0.34 m`, and `L2 = 0.25–0.30 m`, let forearm orientation be `θf = θs − β`:
+The arm's own weight also contributes. Using de Leva's adult segment mass fractions—upper arm 2.55–2.71%, forearm 1.38–1.62%, hand 0.56–0.61% of body mass—and an illustrative 60–80 kg body mass, with each segment center of mass at its midpoint, gives the following total external gravitational moments. The hand is treated as acting at the wrist/grip point; acceleration is excluded.
 
-| Example posture | Shoulder / elbow / forearm / wrist angle | Elbow total moment | Shoulder total moment |
+| Shoulder / elbow / forearm | Wrist/grip correction from baseline | Elbow total moment | Shoulder total moment |
 | --- | --- | ---: | ---: |
-| Shoulder forward, forearm vertical | 45° / 45° / 0° / 0° | approximately 0 N·m | 30–38 N·m |
-| Shoulder forward, modest wrist compensation | 60° / 75° / −15° / 15° | 9–11 N·m | 26–38 N·m |
-| Shoulder forward, elbow more flexed | 60° / 90° / −30° / 30° | 17–21 N·m | 16–29 N·m |
-| Arm farther forward, elbow bent | 70° / 100° / −30° / 30° | 17–21 N·m | 19–33 N·m |
-| Arm farther forward, forearm angled ahead | 70° / 45° / 25° / −25° | 15–18 N·m | 54–69 N·m |
+| −25° / 115° / 90° | about 0° | 35–43 N·m | 13–24 N·m |
+| 0° / 90° / 90° | about 0° | 35–43 N·m | 35–43 N·m |
+| +25° / 65° / 90° | about 0° | 35–43 N·m | 52–66 N·m |
+| 0° / 80° / 80° | about +10° | 34–42 N·m | 34–42 N·m |
+| 0° / 100° / 100° | about −10° | 34–42 N·m | 34–42 N·m |
 
-The entries are linked example poses, not every angle combination. Across the full sweep, the model spans about **0–35 N·m at the elbow** and **0–69 N·m at the shoulder**; the examples show how shifting shoulder position can redistribute the moment between joints while wrist motion keeps the steins upright. A seventh stein increases the stein-load portion by about **17%** on that side if its weight acts through the same line.
+The wrist correction column is a relative adjustment to keep the hand/stein bundle level when the forearm departs from its baseline orientation; signs depend on the side and angle convention. It is not a clinical wrist-flexion measurement. The model illustrates the main point: with the elbow compensating for ±25° of shoulder swing, elbow moment stays broadly similar while the shoulder moment changes substantially—roughly **13–66 N·m** across the three primary positions. A seventh stein increases the stein-load part of the moments on that side by about **17%** if it acts through the same line.
 
-The symmetric six-steins-in-a-circle assumption puts the combined load near the bundle center. For comparison, a **5 cm horizontal shift** of the combined load's line of action would add `131 N × 0.05 m = 6.6 N·m` at any joint proximal to that shift. A seventh stein directly on top of the handles can add load without much horizontal offset; if its center is displaced, include the extra eccentric moment separately. The 5 cm example is a sensitivity value, not the nominal symmetric case.
-
-At the wrist, take the center grip to sit **about 8 cm distal to the wrist**, along an upright hand/stein axis. In that idealized level-hand posture, the vertical load line runs through the wrist, so the bundle's load-only wrist moment is **approximately 0 N·m**; the hand still has to grip and stabilize the handles. If the grip/load line is offset from the wrist by 2–5 cm horizontally, the wrist moment is about **2.6–6.6 N·m** (`131 N × offset`). The roughly 10.5 cm radius from the bundle center to each mug's center is not itself the net wrist moment arm because the six radial offsets cancel around the symmetric bundle.
+At the wrist, take the bundle's combined load line to pass near the central grip. In the symmetric arrangement, the load-only wrist moment is therefore near **0 N·m**. If the resultant line is offset horizontally by 2–5 cm, the wrist moment is about **2.6–6.6 N·m** (`131 N × offset`). The roughly 10.5 cm radius from bundle center to each mug center is not itself the net wrist moment arm: those six radial offsets largely cancel.
 
 ## Main tissues involved
 
-The hand/finger flexors and thumb muscles grip the inward-facing handles; wrist flexors/extensors stabilize the hand; elbow flexors/extensors and shoulder muscles support the link posture. The hand, wrist, elbow, and shoulder joints transmit the forces. Their required activity changes with hand placement, wrist compensation, arm angles, and how load is shared across fingers.
+The hand/finger flexors and thumb muscles grip the inward-facing handles; wrist flexors/extensors stabilize the hand; elbow flexors/extensors and shoulder muscles support the arm posture. The hand, wrist, elbow, and shoulder joints transmit the forces. Wrist posture can alter extrinsic finger-muscle activity; one experiment found changes in EMG of up to 70% in some muscles across tested wrist positions [1].
 
-The external moments above are not tendon forces. Converting a joint moment into an individual muscle/tendon force requires that muscle's moment arm and its share of the joint moment; several muscles can co-contract and share the same net moment. A wrist-posture experiment found that changing wrist position changed extrinsic finger-muscle EMG by up to 70% in some muscles [1], which supports including posture as a sensitivity factor. This note therefore quantifies the net external moments, and identifies the involved tissues, without pretending the net moment uniquely determines an individual tendon force.
+Joint moments are not individual tendon forces. Estimating a specific muscle or tendon force requires its posture-dependent moment arm and its share of the net joint moment. This note therefore reports the net external moments and identifies involved tissues without assigning unsupported individual tendon loads.
 
 ## Energy per active minute
 
-The 2024 Adult Compendium lists **5.5 MET** for “walking or walk downstairs or standing, carrying objects about 50 to 74 lbs” (activity code 11830) [4]. The two-arm default load is about 59 lb, so this provides a category-level proxy for an active carrying minute. It is not specific to static holding or the repeated pickup/set-down sequence.
+The 2024 Adult Compendium lists **5.5 MET** for “walking or walk downstairs or standing, carrying objects about 50 to 74 lbs” (activity code 11830) [4]. The two-arm default load is about 59 lb, so this is a reasonable category-level proxy for an active carrying minute, though not specific to static holding or the repeated pickup/set-down sequence.
 
-Using the Compendium's approximate conversion of `1 MET ≈ 1 kcal/kg/hour` [5], for an assumed 60–80 kg adult:
+Using the Compendium's approximate conversion of `1 MET ≈ 1 kcal/kg/hour` [5], for an illustrative 60–80 kg adult:
 
 - **Gross:** `5.5 × body mass ÷ 60` = about **5.5–7.3 kcal/min** while actively carrying.
 - **Net above a 1-MET resting baseline:** about **4.5–6.0 kcal/min** during that active period.
 
-This is a per-person activity estimate, not calories per lift. If carrying occupies only fraction `f` of each work minute, a simple average is `f × active rate + (1 − f) × resting rate`; pickup frequency, walking time, holding time, and recovery determine `f`. The useful conclusion is the scale: moving with this load is a substantial activity, while the energy cost of one pickup or a static hold cannot be isolated from the Compendium category alone.
+This is a per-person activity estimate, not calories per lift. If carrying occupies fraction `f` of each work minute, average expenditure can be approximated as `f × active rate + (1 − f) × resting rate`; pickup frequency, walking time, holding time, and recovery determine `f`.
 
-## Summary and next step
+## Summary
 
-For the symmetric six-per-hand scenario, each arm supports about 131 N. Across the assumed shoulder/elbow sweep, the stein load plus modeled arm weight creates about **25–43 N·m elbow** and **25–70 N·m shoulder**, with near-zero external wrist moment in the centered, level-grip case. Level steins impose a coupled orientation constraint across shoulder, elbow, and wrist; the six-steins radial geometry keeps the idealized combined center of mass near the central grip. A seventh stein adds about 17% load to that hand. The broad estimate is suitable as an explanatory model, not a personalized injury or safe-load threshold.
-
-A useful next iteration would add an explicit per-hand stein count (including the optional seventh), a selectable posture scenario, and the simple moment equations above. The interface should label them as estimated external moments, not muscle/tendon forces.
+For six default steins per hand, each arm supports about **131 N**. With the upper arm near vertical and allowed to swing ±25°, the elbow shifts around its neutral 90° bend to keep the forearm/grip near its carrying orientation. The simplified model gives about **35–43 N·m at the elbow** and **13–66 N·m at the shoulder**, depending on shoulder position. For active carrying of the full 59 lb load, the broad energy proxy is **5.5–7.3 gross kcal/min** for an assumed 60–80 kg adult.
 
 ## Sources
 
