@@ -24,11 +24,12 @@ npm test
 ```
 
 `npm test` runs dependency-free calculation tests with Node's built-in test
-runner, then Playwright browser smoke tests for unit conversion, reset, share
-links, URL validation, saved scenarios, stein stepper limits, and the draggable
-stein fill control, and opt-in local scenario persistence. Run only the
-calculation tests with `npm run test:unit`. These test dependencies are
-development-only; the published calculator remains static and dependency-free.
+runner, including normalization and URL boundary cases, then Playwright browser
+smoke tests for unit conversion, reset, share links, URL validation, saved
+scenario precedence and recovery, stein stepper limits, and the draggable stein
+fill control. Run only the calculation tests with `npm run test:unit`. These
+test dependencies are development-only; the published calculator remains static
+and dependency-free.
 
 ## Model and assumptions
 
