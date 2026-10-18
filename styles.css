@@ -286,17 +286,24 @@ h1 em,h2 em {
   margin: 0;
 }
 .unit-switch {
-  display: flex;
-  padding: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  align-self: center;
+  justify-self: stretch;
+  height: 104px;
+  box-sizing: border-box;
   border: 1px solid var(--line);
-  gap: 3px;
+  border-radius: 999px;
+  overflow: hidden;
 }
 .unit-switch button {
+  flex: 1;
   background: none;
   border: 0;
   color: #9e9686;
   padding: 9px 12px;
-  font-size: 9px;
+  white-space: nowrap;
+  font-size: 12px;
   letter-spacing: .1em;
   cursor: pointer;
 }
@@ -330,7 +337,7 @@ h1 em,h2 em {
 }
 .primary-controls {
   display: grid;
-  grid-template-columns: 76px minmax(0,1fr);
+  grid-template-columns: 76px auto auto;
   gap: 12px;
   padding: 19px 0 20px;
   border-bottom: 1px solid var(--line);
@@ -1146,9 +1153,12 @@ footer {
   .section-heading .eyebrow {
     font-size: 8px;
   }
+  .unit-switch {
+    grid-column: 3;
+  }
   .unit-switch button {
     padding: 8px 9px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .workspace {
     grid-template-columns: 1fr;
@@ -1161,7 +1171,7 @@ footer {
     padding-right: 0;
   }
   .primary-controls {
-    grid-template-columns: 76px minmax(0,1fr);
+    grid-template-columns: 76px auto auto;
     gap: 12px;
   }
   .count-value-row,.fill-value-row,.stepper.vertical-stepper input,.count-value-row span,.fill-value-row input,.fill-value-row span {

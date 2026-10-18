@@ -311,6 +311,48 @@ test('editable fill percentage stays synchronized with the slider and stein', as
   await expect(page.locator('#fill-beer')).toHaveAttribute('height', '66');
 });
 
+test('unit selector sits beside the primary inputs in a vertical stack', async ({ page }) => {
+  await page.goto('/');
+  const layout = await page.evaluate(() => {
+    const rect = (selector) => {
+      const { left, right, top, bottom, width, height } = document.querySelector(selector).getBoundingClientRect();
+      return { left, right, top, bottom, width, height };
+    };
+    return {
+      inputs: rect('.fill-slider'),
+      primary: rect('.primary-controls'),
+      selector: rect('.unit-switch'),
+      metric: rect('.unit-switch button[data-unit="metric"]'),
+      imperial: rect('.unit-switch button[data-unit="imperial"]'),
+    };
+  });
+  expect(layout.selector.left).toBeGreaterThan(layout.inputs.right);
+  expect(layout.selector.top).toBe(layout.inputs.top);
+  expect(layout.selector.bottom).toBe(layout.inputs.bottom);
+  expect(layout.selector.height).toBe(layout.inputs.height);
+  expect(layout.selector.height).toBe(104);
+  expect(layout.metric.bottom).toBeLessThanOrEqual(layout.imperial.top);
+  expect(Math.abs(layout.metric.left + layout.metric.width / 2 - (layout.selector.left + layout.selector.width / 2))).toBeLessThanOrEqual(1);
+  expect(Math.abs(layout.imperial.left + layout.imperial.width / 2 - (layout.selector.left + layout.selector.width / 2))).toBeLessThanOrEqual(1);
+
+  for (const width of [430, 390, 375, 360, 320]) {
+    await page.setViewportSize({ width, height: 844 });
+    const mobile = await page.evaluate(() => {
+      const inputs = [...document.querySelectorAll('.count-control, .fill-setting')].map((element) => element.getBoundingClientRect());
+      const stein = document.querySelector('.fill-slider').getBoundingClientRect();
+      const primary = document.querySelector('.primary-controls').getBoundingClientRect();
+      const selector = document.querySelector('.unit-switch').getBoundingClientRect();
+      return { inputRight: Math.max(...inputs.map((rect) => rect.right)), selectorLeft: selector.left, selectorRight: selector.right, selectorHeight: selector.height, steinHeight: stein.height, primaryTop: primary.top, primaryBottom: primary.bottom, primaryRight: primary.right, selectorTop: selector.top, selectorBottom: selector.bottom };
+    });
+    expect(mobile.selectorLeft).toBeGreaterThan(mobile.inputRight);
+    expect(mobile.selectorRight).toBeLessThanOrEqual(mobile.primaryRight);
+    expect(mobile.selectorHeight).toBe(mobile.steinHeight);
+    expect(mobile.selectorTop).toBeGreaterThanOrEqual(mobile.primaryTop);
+    expect(mobile.selectorBottom).toBeLessThanOrEqual(mobile.primaryBottom);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
+});
+
 test('clicking either unit control always toggles the display units', async ({ page }) => {
   await page.goto('/');
   const metric = page.getByRole('button', { name: 'METRIC' });
