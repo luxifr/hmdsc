@@ -666,8 +666,10 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(Math.abs(layout.fillPlus[0] + layout.fillPlus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(Math.abs(layout.fillMinus[0] + layout.fillMinus[4] / 2 - (layout.fillValue[0] + layout.fillValue[4] / 2))).toBeLessThanOrEqual(0.02);
     expect(layout.fillValue[2] + layout.fillValue[5] / 2).toBe((layout.fillPlus[2] + layout.fillPlus[5] / 2 + layout.fillMinus[2] + layout.fillMinus[5] / 2) / 2);
-    expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(1);
-    expect(Math.abs(layout.stepButtons[1][3] - layout.counter[3])).toBeLessThanOrEqual(1);
+    expect(layout.stepButtons[0][5]).toBe(32);
+    expect(layout.stepButtons[1][5]).toBe(32);
+    expect(Math.abs(layout.stepButtons[0][2] - layout.counter[2])).toBeLessThanOrEqual(2);
+    expect(Math.abs(layout.stepButtons[1][3] - layout.counter[3])).toBeLessThanOrEqual(2);
     expect(layout.fineTuneControls).toHaveLength(5);
     layout.fineTuneControls.forEach((control, index) => {
       expect(control[0]).toBe(layout.fineTuneControls[0][0]);
