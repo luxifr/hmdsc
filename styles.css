@@ -1158,7 +1158,7 @@ footer {
   }
   .unit-switch button {
     padding: 8px 9px;
-    font-size: 8px;
+    font-size: 11px;
   }
   .workspace {
     grid-template-columns: 1fr;
