@@ -352,8 +352,9 @@ h1 em,h2 em {
 }
 .vertical-stepper {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 60px;
   grid-template-rows: 35px 34px 35px;
+  justify-content: center;
   width: 76px;
   height: 104px;
   overflow: visible;
@@ -365,8 +366,8 @@ h1 em,h2 em {
   place-items: center;
   justify-self: center;
   align-self: center;
-  flex: 0 0 28px;
-  width: 28px;
+  flex: 0 0 44px;
+  width: 44px;
   height: 32px;
   min-height: 0;
   margin: 0;
@@ -479,6 +480,8 @@ h1 em,h2 em {
   padding: 0;
   background: none;
   border: 0;
+  outline: 0;
+  box-shadow: none;
   color: var(--gold);
   font-family: var(--mono);
   font-size: 22px;
@@ -514,7 +517,8 @@ h1 em,h2 em {
 .fill-step-button {
   display: grid;
   place-items: center;
-  width: 28px;
+  flex: 0 0 44px;
+  width: 44px;
   height: 32px;
   padding: 0;
   background: none;

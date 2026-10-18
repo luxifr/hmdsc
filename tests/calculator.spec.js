@@ -584,6 +584,10 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
   expect(await page.locator('#stein-count').evaluate((input) => getComputedStyle(input).textAlign)).toBe('right');
   await expect(page.getByRole('button', { name: 'Increase fill level' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Decrease fill level' })).toBeVisible();
+  await page.getByLabel('Fill level percentage').focus();
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).borderWidth)).toBe('0px');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).outlineStyle)).toBe('none');
+  expect(await page.locator('#fill-output').evaluate((input) => getComputedStyle(input).boxShadow)).toBe('none');
   const fillControls = await page.evaluate(() => {
     const rect = (selector) => {
       const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
@@ -592,18 +596,23 @@ test('primary inputs are simplified, enlarged, and fill buttons adjust the hidde
     return {
       stein: rect('.fill-slider'),
       plus: rect('.fill-control .fill-step-button:first-child'),
-      value: rect('#fill-output'),
+      value: rect('.fill-value-row'),
       minus: rect('.fill-control .fill-step-button:last-child'),
-      valueWidth: document.querySelector('#fill-output').getBoundingClientRect().width,
+      valueWidth: document.querySelector('.fill-value-row').getBoundingClientRect().width,
+      plusWidth: document.querySelector('.fill-control .fill-step-button:first-child').getBoundingClientRect().width,
+      minusWidth: document.querySelector('.fill-control .fill-step-button:last-child').getBoundingClientRect().width,
+      inputWidth: document.querySelector('#fill-output').getBoundingClientRect().width,
     };
   });
   expect(fillControls.plus.left).toBeGreaterThanOrEqual(fillControls.stein.left + 68);
+  expect(fillControls.plusWidth).toBe(fillControls.inputWidth);
+  expect(fillControls.minusWidth).toBe(fillControls.inputWidth);
   expect(fillControls.plus.bottom).toBeLessThanOrEqual(fillControls.value.top);
   expect(fillControls.value.bottom).toBeLessThanOrEqual(fillControls.minus.top);
   await page.getByRole('button', { name: 'Increase fill level' }).click();
   await expect(page.locator('#fill')).toHaveValue('91');
   await expect(page.locator('#fill-output')).toHaveValue('91');
-  expect(await page.locator('#fill-output').evaluate((output) => output.getBoundingClientRect().width)).toBe(fillControls.valueWidth);
+  expect(await page.locator('.fill-value-row').evaluate((row) => row.getBoundingClientRect().width)).toBe(fillControls.valueWidth);
   await expect(page.locator('#beer-total')).not.toHaveText('—');
   await page.getByRole('button', { name: 'Decrease fill level' }).click();
   await expect(page.locator('#fill')).toHaveValue('90');
@@ -688,8 +697,9 @@ test('primary stein controls pair a vertical counter with a matching-height fill
     expect(layout.countValue[5]).toBe(34);
     expect(layout.fillValue[4]).toBe(60);
     expect(layout.fillValue[5]).toBe(34);
-    expect(layout.countPlus[4]).toBe(28);
-    expect(layout.countMinus[4]).toBe(28);
+    expect(layout.countPlus[4]).toBe(layout.count[4]);
+    expect(layout.countMinus[4]).toBe(layout.count[4]);
+    expect(layout.count[4]).toBe(44);
     expect(layout.countButtonCenterOffset).toBeLessThanOrEqual(0.02);
     expect(layout.fillStein[0] - layout.counter[1]).toBe(layout.fillControlsGap);
     expect(layout.count[5]).toBe(34);
