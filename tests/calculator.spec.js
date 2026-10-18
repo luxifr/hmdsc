@@ -57,6 +57,35 @@ test('forwards the browser referrer to GoatCounter', async ({ page }) => {
   await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
 });
 
+test('mobile places secondary controls after results while desktop keeps them in the controls column', async ({ page }) => {
+  await page.goto('/');
+  const layout = () => page.evaluate(() => {
+    const bounds = (selector) => {
+      const { left, top, bottom } = document.querySelector(selector).getBoundingClientRect();
+      return { left, top, bottom };
+    };
+    return {
+      primary: bounds('.primary-controls'),
+      result: bounds('.result-card'),
+      secondary: bounds('.secondary-controls'),
+      mobileOrder: document.querySelector('.primary-controls').compareDocumentPosition(document.querySelector('.result-card')) & Node.DOCUMENT_POSITION_FOLLOWING
+        && document.querySelector('.result-card').compareDocumentPosition(document.querySelector('.secondary-controls')) & Node.DOCUMENT_POSITION_FOLLOWING,
+    };
+  });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  let positions = await layout();
+  expect(positions.primary.bottom).toBeLessThan(positions.result.top);
+  expect(positions.result.bottom).toBeLessThan(positions.secondary.top);
+  expect(positions.mobileOrder).toBeTruthy();
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  positions = await layout();
+  expect(positions.primary.left).toBe(positions.secondary.left);
+  expect(positions.primary.left).toBeLessThan(positions.result.left);
+  expect(positions.result.top).toBeLessThan(positions.secondary.top);
+});
+
 test('announces the total without making the entire result card live', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
