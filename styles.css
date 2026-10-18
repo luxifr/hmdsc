@@ -293,7 +293,7 @@ h1 em,h2 em {
   height: 104px;
   box-sizing: border-box;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 0;
   overflow: hidden;
 }
 .unit-switch button {
