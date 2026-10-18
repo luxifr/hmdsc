@@ -531,6 +531,29 @@ h1 em,h2 em {
   width: 76px;
   height: 104px;
 }
+.fill-beer-bubbles circle {
+  r: 1.15px;
+  animation: fill-bubble-rise 2.4s linear infinite;
+}
+.fill-beer-bubbles circle:nth-child(3n) {
+  animation-delay: -.8s;
+}
+.fill-beer-bubbles circle:nth-child(3n + 1) {
+  animation-delay: -1.6s;
+}
+@keyframes fill-bubble-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15%,85% {
+    opacity: .85;
+  }
+  100% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+}
 .fill-step-button {
   display: grid;
   place-items: center;
