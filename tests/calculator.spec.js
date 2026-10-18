@@ -54,7 +54,8 @@ test('forwards the browser referrer to GoatCounter', async ({ page }) => {
   }));
   await page.goto('/referrer-source?campaign=beer');
   await page.getByRole('link', { name: 'Continue' }).click();
-  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe('http://127.0.0.1:4173/referrer-source?campaign=beer');
+  const expectedReferrer = new URL('/referrer-source?campaign=beer', page.url()).href;
+  await expect.poll(() => page.evaluate(() => window.goatcounter.referrer())).toBe(expectedReferrer);
 });
 
 test('mobile places secondary controls after results while desktop keeps them in the controls column', async ({ page }) => {
@@ -878,4 +879,24 @@ test('stein stepper recalculates and respects count limits', async ({ page }) =>
   await page.goto('/?count=1');
   await page.getByRole('button', { name: 'Remove one stein' }).click();
   await expect(page.locator('#stein-count')).toHaveValue('1');
+});
+
+test('sources and model rationale section is linked, readable, and responsive', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#sources');
+  await expect(section).toHaveCount(1);
+  await expect(section.locator('.eyebrow')).toContainText('04');
+  await expect(section.getByRole('heading', { level: 2 })).toHaveText(/What the numbers\s*mean—and don’t\./);
+  await expect(section.locator('.source-card')).toHaveCount(3);
+  await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
+  await expect(section.getByRole('link', { name: /Read the full methods/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
+
+  const jumpLink = page.getByRole('link', { name: /See sources & model rationale/ });
+  await jumpLink.click();
+  await expect(page).toHaveURL(/#sources$/);
+
+  for (const width of [320, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  }
 });

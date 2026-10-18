@@ -26,14 +26,14 @@ tests and a minified single-file deployment build are development-only.
    calculator inputs or units change. Keep the existing weight calculation
    authoritative; treat the biomechanical values as estimates, and link to the
    full methods/limitations rather than implying a safety assessment.
-4. Add a dedicated sources and model-rationale section to the page. Explain why
-   the calculator and biomechanics model use their chosen assumptions, how the
-   simplified mechanics and energy estimates are derived, which sources support
-   each consequential input, and what evidence does and does not establish.
-   Connect each cited source to the related assumption or result, keep citations
-   readable and accessible, and link to the fuller research notes in
-   `BIOMECHANICS.md` where appropriate. Update the page's section navigation and
-   numbering consistently if needed.
+4. [x] Add a dedicated sources and model-rationale section to the page. Explain
+   why the calculator and biomechanics model use their chosen assumptions, how
+   the simplified mechanics and energy estimates are derived, which sources
+   support each consequential input, and what evidence does and does not
+   establish. Connect each cited source to the related assumption or result,
+   keep citations readable and accessible, and link to the fuller research
+   notes in `BIOMECHANICS.md` where appropriate. Update the page's section
+   navigation and numbering consistently if needed.
 
 ## Deferred
 
