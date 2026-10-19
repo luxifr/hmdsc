@@ -91,6 +91,40 @@ test('mobile places secondary controls after results while desktop keeps them in
   expect(positions.result.top).toBeLessThan(positions.secondary.top);
 });
 
+test('desktop fine-tune spacing does not resize the result card', async ({ page }) => {
+  await page.goto('/');
+
+  const bounds = async () => page.evaluate(() => {
+    const rect = (selector) => {
+      const element = document.querySelector(selector);
+      const { left, top, right, bottom, width, height } = element.getBoundingClientRect();
+      return { left, top: top + window.scrollY, right, bottom: bottom + window.scrollY, width, height };
+    };
+    return {
+      primary: rect('.primary-controls'),
+      result: rect('.result-card'),
+      secondary: rect('.secondary-controls'),
+    };
+  });
+
+  for (const width of [651, 900, 1280]) {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const unit of ['METRIC', 'IMPERIAL']) {
+      await page.getByRole('button', { name: unit }).click();
+      const closed = await bounds();
+      expect(closed.primary.left).toBe(closed.secondary.left);
+      expect(closed.primary.left).toBeLessThan(closed.result.left);
+      expect(closed.secondary.top - closed.primary.bottom).toBeLessThanOrEqual(24);
+
+      await page.locator('.advanced summary').click();
+      const open = await bounds();
+      expect(open.secondary.top - open.primary.bottom).toBeLessThanOrEqual(24);
+      expect(open.result).toEqual(closed.result);
+      await page.locator('.advanced summary').click();
+    }
+  }
+});
+
 test('scenario sharing sits in the top-right of the result card, above the stein visual', async ({ page }) => {
   await page.goto('/');
   const share = page.getByRole('button', { name: /share your scenario/i });
