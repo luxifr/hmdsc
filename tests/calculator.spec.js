@@ -132,13 +132,56 @@ test('scenario sharing sits in the top-right of the result card, above the stein
   await expect(page.locator('.result-card #reset')).toHaveCount(0);
   expect(await share.evaluate((button) => button.parentElement.classList.contains('result-top'))).toBe(true);
   expect(await share.evaluate((button) => Math.abs(button.getBoundingClientRect().right - button.parentElement.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
-  expect(await page.locator('.result-card').evaluate((card) => card.lastElementChild.id)).toBe('visualizer');
+  expect(await page.locator('.result-card .result-details').evaluate((details) => details.lastElementChild.id)).toBe('visualizer');
   for (const width of [430, 390, 375, 320]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   }
   await share.click();
   await expect(page).toHaveURL(/#scenario=count=12/);
+});
+
+test('result breakdown is left-aligned without dividers and biomechanics labels stay full', async ({ page }) => {
+  await page.goto('/');
+
+  for (const width of [1280, 900, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    const layout = await page.evaluate(() => {
+      const tops = (selector) => [...document.querySelectorAll(selector)].map((element) => element.getBoundingClientRect().top);
+      const result = document.querySelector('.biomechanics-result');
+      return {
+        breakdownRows: tops('.breakdown-item'),
+        breakdownValues: tops('.breakdown-item strong'),
+        biomechanicsItems: tops('.biomechanics-result > *'),
+        totalBottom: document.querySelector('.total-line').getBoundingClientRect().bottom,
+        breakdownTop: document.querySelector('.breakdown').getBoundingClientRect().top,
+        detailGaps: (() => { const items = [...document.querySelector('.result-details').children]; return items.slice(1).map((item, index) => Math.round(item.getBoundingClientRect().top - items[index].getBoundingClientRect().bottom)); })(),
+        illustrationBottomGap: Math.round(document.querySelector('.result-card').getBoundingClientRect().bottom - document.querySelector('.visualizer').getBoundingClientRect().bottom),
+        documentWidth: document.documentElement.scrollWidth,
+        resultBorder: getComputedStyle(result).borderTopStyle,
+        breakdownBorders: [...document.querySelectorAll('.breakdown-item')].map((element) => getComputedStyle(element).borderLeftStyle),
+        breakdownAligned: [...document.querySelectorAll('.breakdown-item')].every((element) => getComputedStyle(element).justifyContent !== 'flex-end'),
+        firstLabelStyle: (() => { const style = getComputedStyle(document.querySelector('#result-biomechanics-hand')); return [style.fontFamily, style.fontSize, style.fontWeight, style.letterSpacing, style.textTransform]; })(),
+        momentLabelStyle: (() => { const style = getComputedStyle(document.querySelector('.biomechanics-result [aria-label="Elbow joint moment"]')); return [style.fontFamily, style.fontSize, style.fontWeight, style.letterSpacing, style.textTransform]; })(),
+      };
+    });
+    expect(Math.max(...layout.breakdownRows) - Math.min(...layout.breakdownRows)).toBeLessThanOrEqual(1);
+    expect(Math.max(...layout.breakdownValues) - Math.min(...layout.breakdownValues)).toBeLessThanOrEqual(1);
+    if (width === 1280) expect(Math.max(...layout.biomechanicsItems) - Math.min(...layout.biomechanicsItems)).toBeLessThanOrEqual(3);
+    expect(layout.breakdownTop).toBeGreaterThanOrEqual(layout.totalBottom);
+    expect(layout.documentWidth).toBe(width);
+    expect(layout.resultBorder).toBe('none');
+    expect(layout.breakdownBorders).toEqual(['none', 'none']);
+    expect(layout.breakdownAligned).toBe(true);
+    expect(layout.detailGaps).toEqual([8, 8, 8]);
+    expect(layout.illustrationBottomGap).toBe(8);
+    expect(layout.momentLabelStyle).toEqual(layout.firstLabelStyle);
+  }
+  await expect(page.locator('.result-divider')).toHaveCount(0);
+  await expect(page.locator('#result-biomechanics-hand')).toContainText('Heavier hand');
+  await expect(page.locator('.biomechanics-result')).toContainText('Elbow');
+  await expect(page.locator('.biomechanics-result')).toContainText('Shoulder');
+  await expect(page.locator('.biomechanics-result')).toContainText('Shoulder swing ±25°');
 });
 
 test('announces the total without making the entire result card live', async ({ page }) => {
@@ -231,6 +274,45 @@ test('fill and visualization steins reuse shared SVG shapes without duplicate id
   await expect(page.locator('.mini-stein').first()).toHaveAttribute('viewBox', '0 0 80 110');
   await expect(page.locator('#visualizer .mini-stein use[href="#stein-handle-shape"]')).toHaveCount(12);
   await expect(page.locator('#visualizer .mini-stein use[href="#stein-body-shape"]')).toHaveCount(12);
+});
+
+test('biomechanics estimates update with uneven hand counts, units, and the existing count limit', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#biomechanics');
+  await expect(page.locator('.method-section .eyebrow')).toContainText('03');
+  await expect(section).toHaveRole('region');
+  await expect(section).toHaveAttribute('aria-labelledby', 'biomechanics-label');
+  await expect(section.locator('.eq-number')).toHaveText('04');
+  await expect(section.locator('.eq-title')).toHaveText('Joint moments');
+  await expect(section.locator('p')).toContainText('in the heavier hand');
+  await expect(section.locator('p')).toContainText('forearm held level');
+  await expect(section.locator('.biomechanics-values')).toContainText('Elbow');
+  await expect(section.locator('.biomechanics-values')).toContainText('Shoulder ±25°');
+  await expect(section.locator('.biomechanics-values')).not.toContainText('N·m N·m');
+  await expect(section).toHaveCSS('border-bottom-width', '0px');
+  await expect(section.locator('.eyebrow')).toHaveCount(0);
+  await expect(section.locator('.biomechanics-note')).toHaveCount(0);
+  await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('6 steins');
+  await expect(section.locator('#biomechanics-heavy-load')).toContainText('kg');
+  await expect(section.locator('#biomechanics-light-count, #biomechanics-grip')).toHaveCount(0);
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Heavier hand · 6 steins');
+  await page.locator('#stein-count').fill('13');
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('7 steins');
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Heavier hand · 7 steins');
+  const elbowMoment = await section.locator('#biomechanics-elbow').textContent();
+  const shoulderAtThirteen = await section.locator('#biomechanics-shoulder-swing').textContent();
+  await page.getByRole('button', { name: 'IMPERIAL' }).click();
+  await expect(section.locator('#biomechanics-heavy-load')).toContainText('lb');
+  await expect(section.locator('#biomechanics-elbow')).toHaveText(elbowMoment);
+  await expect(section.locator('#biomechanics-shoulder-swing')).toHaveText(shoulderAtThirteen);
+
+  await page.locator('#stein-count').fill('40');
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('20 steins');
+  await expect(section.locator('#biomechanics-elbow')).not.toHaveText(elbowMoment);
+
+  await page.goto('/?count=1');
+  await expect(page.locator('#biomechanics-heavy-count')).toHaveText('1 stein');
 });
 
 test('hero stein has beer and foam bubbles matching the fill control', async ({ page }) => {
@@ -911,9 +993,17 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(section).toHaveCount(1);
   await expect(section.locator('.eyebrow')).toContainText('04');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText(/How the estimate\s*comes together\./);
-  await expect(section.locator('.source-card')).toHaveCount(2);
-  await expect(section.getByText('Biomechanics: explanatory estimates')).toHaveCount(0);
-  await expect(section.getByRole('link', { name: /full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
+  await expect(section.locator('.source-card')).toHaveCount(3);
+  const biomechanicsExplainer = section.locator('.biomechanics-explainer');
+  await expect(biomechanicsExplainer.getByRole('heading', { name: /The biomechanics estimate/ })).toBeVisible();
+  await expect(biomechanicsExplainer).toContainText('elbow moment stays constant');
+  await expect(biomechanicsExplainer).toContainText('centered over the grip');
+  await expect(biomechanicsExplainer).not.toContainText('safety assessment');
+  await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
+  const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((section) => section.id || section.className));
+  expect(sectionOrder).not.toContain('biomechanics');
+  expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('sources'));
+  await expect(page.locator('.method-section #biomechanics')).toHaveCount(1);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
   const footerLink = page.locator('footer .footer-github');

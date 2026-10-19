@@ -87,6 +87,14 @@ These are comparisons of similar net moments, not identical experiments: the cit
 
 At the wrist, take the bundle's combined load line to pass near the central grip. In the symmetric arrangement, the load-only wrist moment is therefore near **0 N·m**. If the resultant line is offset horizontally by 2–5 cm, the wrist moment is about **2.6–6.6 N·m** (`131 N × offset`). The roughly 10.5 cm radius from bundle center to each mug center is not itself the net wrist moment arm: those six radial offsets largely cancel.
 
+## Live calculator estimate
+
+The page splits the stein count as evenly as possible between two hands and assigns an odd extra stein to the heavier hand. It shows that hand's stein count and load range. The joint-moment bounds combine the load range with the body-mass, segment-length, and segment-mass ranges above.
+
+The arm-load summary shows one elbow-moment range and the shoulder-moment range across the modeled ±25° swing. The forearm stays horizontal as the shoulder swings, so elbow moment remains constant while shoulder moment changes. The model includes the arm's segment weights and treats the combined stein load as centered over the grip; it does not display a separate wrist moment.
+
+The calculator allows up to 40 steins, so the displayed load and joint-moment equations continue to 20 steins on the heavier hand, without an additional cap. The model's shoulder angles and arm-segment dimensions remain the same throughout that range.
+
 ## Main tissues involved
 
 The hand/finger flexors and thumb muscles grip the inward-facing handles; wrist flexors/extensors stabilize the hand; elbow flexors/extensors and shoulder muscles support the arm posture. The hand, wrist, elbow, and shoulder joints transmit the forces. Wrist posture can alter extrinsic finger-muscle activity; one experiment found changes in EMG of up to 70% in some muscles across tested wrist positions [1].

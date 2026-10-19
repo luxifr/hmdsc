@@ -697,7 +697,7 @@ h1 em,h2 em {
   float: right;
   width: calc(50% - 12px);
   position: relative;
-  padding: 28px 30px 21px;
+  padding: 28px 30px 7px;
   background: linear-gradient(145deg,#29251e,#211e19);
   border: 1px solid #4a402e;
   box-shadow: 0 14px 35px #0002;
@@ -801,48 +801,41 @@ h1 em,h2 em {
   color: #a59c8a;
   font-size: 10px;
 }
+.result-details {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
 .pounds-note {
   font-family: var(--mono);
   font-size: 11px;
   color: #a59c8a;
-  margin: 8px 0 21px;
-}
-.result-divider {
-  height: 1px;
-  background: #ffffff17;
+  margin: 0;
 }
 .breakdown {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 18px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 .breakdown-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-.breakdown-item+ .breakdown-item {
-  border-left: 1px solid #ffffff17;
-  padding-left: 20px;
+  gap: 5px;
 }
 .break-icon {
-  font-size: 18px;
+  font-size: 15px;
   color: #d9ad57;
 }
 .glass-icon {
   color: #b8c7c4;
 }
-.breakdown-item div {
-  display: grid;
-  gap: 5px;
-}
 .break-label {
-  font-size: 8px;
+  font-size: 7px;
   color: #9c9484;
 }
 .breakdown-item strong {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 400;
   color: #e9dfcc;
 }
@@ -868,6 +861,41 @@ h1 em,h2 em {
   font-size: 11px;
   color: var(--gold);
   padding: 7px;
+}
+.biomechanics-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  color: #b2aa99;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.biomechanics-result .break-label {
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+.biomechanics-result strong {
+  color: inherit;
+  font: inherit;
+}
+.biomechanics-result a,.biomechanics-link {
+  color: var(--gold-pale);
+  font-size: 11px;
+  text-underline-offset: 3px;
+}
+.biomechanics-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.biomechanics-values > span {
+  white-space: nowrap;
+}
+.biomechanics-link {
+  display: inline-block;
+  margin-top: 3px;
 }
 .method-section {
   max-width: 1120px;
@@ -933,6 +961,9 @@ h1 em,h2 em {
 .total-equation strong {
   font-size: 13px;
   color: var(--gold-pale);
+}
+.method-biomechanics {
+  border-bottom: 0;
 }
 .source-card a {
   color: var(--gold-pale);
@@ -1116,7 +1147,12 @@ footer {
     column-gap: 12px;
   }
   .result-card {
-    padding: 24px 22px 18px;
+    padding: 24px 22px 7px;
+  }
+  .biomechanics-result {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
   .method-section {
     grid-template-columns: .8fr 1.2fr;
@@ -1223,7 +1259,10 @@ footer {
   .result-card {
     float: none;
     width: auto;
-    padding: 24px 20px 18px;
+    padding: 24px 20px 7px;
+  }
+  .biomechanics-result {
+    font-size: 8px;
   }
   .total-primary>strong {
     font-size: 72px;
@@ -1273,6 +1312,10 @@ footer {
   }
 }
 @media (max-width:380px) {
+  .biomechanics-result {
+    font-size: 7px;
+    gap: 2px;
+  }
   .total-line {
     display: grid;
     gap: 12px;
