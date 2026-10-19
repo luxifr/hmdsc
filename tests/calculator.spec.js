@@ -233,6 +233,38 @@ test('fill and visualization steins reuse shared SVG shapes without duplicate id
   await expect(page.locator('#visualizer .mini-stein use[href="#stein-body-shape"]')).toHaveCount(12);
 });
 
+test('biomechanics estimates update with uneven hand counts, units, and the existing count limit', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#biomechanics');
+  await expect(section.locator('.eyebrow')).toContainText('03');
+  await expect(section).toContainText('real carries may be more uneven');
+  await expect(section).toContainText('not muscle or tendon force');
+  await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toBeVisible();
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('6 steins');
+  await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('EACH HAND · 6 STEINS');
+
+  await page.locator('#stein-count').fill('13');
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('7 steins');
+  await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('HEAVIER HAND · 7 STEINS');
+  const elbowMoment = await section.locator('#biomechanics-elbow-neutral').textContent();
+  await page.getByRole('button', { name: 'IMPERIAL' }).click();
+  await expect(section.locator('#biomechanics-heavy-load')).toContainText('lb');
+  await expect(section.locator('#biomechanics-elbow-neutral')).toHaveText(elbowMoment);
+  await expect(section.locator('#biomechanics-extrapolation')).toContainText('extrapolate');
+
+  await page.locator('#stein-count').fill('40');
+  await expect(section.locator('#biomechanics-heavy-count')).toHaveText('20 steins');
+  await expect(section.locator('#biomechanics-light-count')).toHaveText('20 steins');
+  await expect(section.locator('#biomechanics-grip')).toContainText('no wrist-offset estimate');
+
+  await page.goto('/?count=1');
+  await expect(page.locator('#biomechanics-heavy-count')).toHaveText('1 stein');
+  await expect(page.locator('#biomechanics-light-count')).toHaveText('0 steins');
+  await expect(page.locator('#biomechanics-grip')).toContainText('wrist eccentricity');
+});
+
 test('hero stein has beer and foam bubbles matching the fill control', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.hero-beer-bubbles circle')).toHaveCount(12);
@@ -909,13 +941,13 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await page.goto('/');
   const section = page.locator('#sources');
   await expect(section).toHaveCount(1);
-  await expect(section.locator('.eyebrow')).toContainText('04');
+  await expect(section.locator('.eyebrow')).toContainText('05');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText(/How the estimate\s*comes together\./);
   await expect(section.locator('.source-card')).toHaveCount(2);
-  await expect(section.getByText('Biomechanics: explanatory estimates')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
+  await expect(page.locator('#biomechanics').getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   const footerLink = page.locator('footer .footer-github');
   if (process.env.PLAYWRIGHT_BUILD === '1') {
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();

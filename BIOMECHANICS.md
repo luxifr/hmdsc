@@ -87,6 +87,16 @@ These are comparisons of similar net moments, not identical experiments: the cit
 
 At the wrist, take the bundle's combined load line to pass near the central grip. In the symmetric arrangement, the load-only wrist moment is therefore near **0 N·m**. If the resultant line is offset horizontally by 2–5 cm, the wrist moment is about **2.6–6.6 N·m** (`131 N × offset`). The roughly 10.5 cm radius from bundle center to each mug center is not itself the net wrist moment arm: those six radial offsets largely cancel.
 
+## Live calculator estimate
+
+The page divides the calculator's stein count as evenly as possible between two hands; for an odd count, the extra stein is assigned to one hand. This is a display assumption, not a claim that servers always distribute loads this way. Each hand's low and high load uses the calculator's per-stein mass range. The joint-moment bounds combine that load range with the body-mass, segment-length, and segment-mass ranges above; they are corner-case model bounds, not statistical confidence intervals.
+
+The live elbow/shoulder table uses the three primary postures in the joint-moment table. It includes the arm's own segment weights and the stein load. The forearm is held horizontal as shoulder swing changes, with the elbow compensating. The result card also summarizes the heavier hand at neutral and the shoulder range across the modeled swing.
+
+The calculator allows up to 40 steins, so the live load and joint-moment formulas continue to 20 steins per hand without adding a new cap. This is a mathematical extrapolation of the static lever model beyond the six-steins-per-hand reference case; it is not biomechanically validated for larger loads or real carrying technique. Grip geometry is estimated only for a single stein (6–8 cm eccentricity) or for symmetrically regrouped rings of two through six steins. Above six per hand, the cluster shape and wrist offset are left unestimated.
+
+For a single stein on either hand, the displayed eccentric wrist moment is that hand's stein weight multiplied by the estimated 6–8 cm handle-to-center-of-mass offset. For two through six steins, the displayed near-zero wrist moment assumes a symmetric regrouped ring. An uneven/asymmetric arrangement can produce a nonzero wrist moment; exact individual arrangements are not inferred from the total count.
+
 ## Main tissues involved
 
 The hand/finger flexors and thumb muscles grip the inward-facing handles; wrist flexors/extensors stabilize the hand; elbow flexors/extensors and shoulder muscles support the arm posture. The hand, wrist, elbow, and shoulder joints transmit the forces. Wrist posture can alter extrinsic finger-muscle activity; one experiment found changes in EMG of up to 70% in some muscles across tested wrist positions [1].

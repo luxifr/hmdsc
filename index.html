@@ -90,6 +90,12 @@
               <div class="breakdown-item"><span class="break-icon beer-icon">◒</span><div><span class="break-label">THE BEER</span><strong id="beer-total">—</strong></div></div>
               <div class="breakdown-item"><span class="break-icon glass-icon">▤</span><div><span class="break-label">THE GLASSWARE</span><strong id="glass-total">—</strong></div></div>
             </div>
+            <div class="biomechanics-result" aria-label="Simplified joint moment estimates">
+              <span class="break-label" id="result-biomechanics-hand">HEAVIER HAND · — STEINS</span>
+              <p>Elbow <strong id="result-elbow-moment">—</strong> · shoulder at neutral <strong id="result-shoulder-moment">—</strong></p>
+              <p>Shoulder across ±25° swing <strong id="result-shoulder-swing">—</strong></p>
+              <a href="#biomechanics">How these estimates work</a>
+            </div>
             <div class="visualizer" id="visualizer" role="img" aria-label="Illustration of the steins being carried"></div>
           </section>
             <div class="secondary-controls">
@@ -111,8 +117,45 @@
         </div>
       </section>
 
+      <section class="biomechanics-section" id="biomechanics" aria-labelledby="biomechanics-title">
+        <div class="biomechanics-heading">
+          <p class="eyebrow"><span>03</span> &nbsp; THE HUMAN MECHANICS</p>
+          <h2 id="biomechanics-title">What the load asks<br /><em>of each arm.</em></h2>
+          <p>These are simplified external joint-moment estimates for holding the calculated load—not measurements of a server or a safety assessment.</p>
+        </div>
+        <div class="biomechanics-content">
+          <div class="biomechanics-hands">
+            <article class="biomechanics-hand">
+              <span>HEAVIER HAND</span>
+              <strong id="biomechanics-heavy-count">— steins</strong>
+              <p id="biomechanics-heavy-load">—</p>
+            </article>
+            <article class="biomechanics-hand">
+              <span>LIGHTER HAND</span>
+              <strong id="biomechanics-light-count">— steins</strong>
+              <p id="biomechanics-light-load">—</p>
+            </article>
+          </div>
+          <div class="biomechanics-table-wrap">
+            <h3 id="biomechanics-moment-heading">Joint moments · higher-load hand</h3>
+            <table class="biomechanics-table">
+              <thead><tr><th scope="col">Shoulder swing</th><th scope="col">Elbow moment</th><th scope="col">Shoulder moment</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">−25° · elbow ~115°</th><td id="biomechanics-elbow-minus">—</td><td id="biomechanics-shoulder-minus">—</td></tr>
+                <tr><th scope="row">0° · elbow ~90°</th><td id="biomechanics-elbow-neutral">—</td><td id="biomechanics-shoulder-neutral">—</td></tr>
+                <tr><th scope="row">+25° · elbow ~65°</th><td id="biomechanics-elbow-plus">—</td><td id="biomechanics-shoulder-plus">—</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="biomechanics-grip" id="biomechanics-grip">Grip geometry estimate: —</p>
+          <p class="biomechanics-caveat" id="biomechanics-extrapolation">—</p>
+          <p class="biomechanics-note">The model keeps the forearm near horizontal as the upper arm swings, with the elbow adjusting to keep the steins level. For this estimate, hand counts are split as evenly as possible; an odd extra stein goes to one hand, though real carries may be more uneven. Estimates combine the calculator's load range with broad adult arm-size assumptions (60–80 kg body mass); the bounds are not statistical confidence intervals. They report net external joint moments, not muscle or tendon force; those require additional anatomy and muscle-sharing assumptions.</p>
+          <a class="biomechanics-link" href="https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md">Full methods, assumptions, sources, and limitations →</a>
+        </div>
+      </section>
+
       <section class="method-section" aria-labelledby="method-title">
-        <div class="method-intro"><p class="eyebrow"><span>03</span> &nbsp; SHOW YOUR WORK</p><h2 id="method-title">Not just a<br /><em>back-of-napkin</em><br />calculation.</h2><p>We separate the beer from the glass, make our assumptions visible, and give you a plausible range—not a fake precision.</p></div>
+        <div class="method-intro"><p class="eyebrow"><span>04</span> &nbsp; SHOW YOUR WORK</p><h2 id="method-title">Not just a<br /><em>back-of-napkin</em><br />calculation.</h2><p>We separate the beer from the glass, make our assumptions visible, and give you a plausible range—not a fake precision.</p></div>
         <div class="method-content">
           <div class="equation"><span class="eq-number">01</span><div><span class="eq-title">Beer mass</span><p><i>number of steins</i> × <i>volume per stein</i> × <i>fill fraction</i> × <i>beer density</i></p><strong id="beer-equation">12 × 1.00 L × 90% × 1.010 kg/L = 10.91 kg</strong></div></div>
           <div class="equation"><span class="eq-number">02</span><div><span class="eq-title">Glass mass</span><p><i>number of steins</i> × <i>empty glass weight</i></p><strong id="glass-equation">12 × 1.32 kg = 15.84 kg</strong></div></div>
@@ -122,9 +165,9 @@
 
       <section class="sources-section" id="sources" aria-labelledby="sources-title">
         <div class="sources-heading">
-          <p class="eyebrow"><span>04</span> &nbsp; SOURCES &amp; MODEL RATIONALE</p>
+          <p class="eyebrow"><span>05</span> &nbsp; SOURCES &amp; MODEL RATIONALE</p>
           <h2 id="sources-title">How the estimate<br /><em>comes together.</em></h2>
-          <p>The calculator estimates the combined mass of the beer and glassware. These references explain the inputs and assumptions behind that estimate.</p>
+          <p>The calculator estimates beer and glassware mass. Separate biomechanical estimates describe simplified external joint moments; they are not part of the mass total or a safety assessment.</p>
         </div>
         <div class="sources-grid">
           <article class="source-card">

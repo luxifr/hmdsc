@@ -869,6 +869,127 @@ h1 em,h2 em {
   color: var(--gold);
   padding: 7px;
 }
+.biomechanics-result {
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+.biomechanics-result p {
+  margin: 7px 0;
+  color: #b2aa99;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.biomechanics-result strong {
+  color: var(--gold-pale);
+  font-family: var(--mono);
+  font-weight: 400;
+}
+.biomechanics-result a,.biomechanics-link {
+  color: var(--gold-pale);
+  font-size: 11px;
+  text-underline-offset: 3px;
+}
+.biomechanics-section {
+  max-width: 1120px;
+  margin: auto;
+  padding: 54px 0 70px;
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 70px;
+}
+.biomechanics-heading .eyebrow {
+  margin-bottom: 19px;
+}
+.biomechanics-heading h2 {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.08;
+}
+.biomechanics-heading > p:last-child,.biomechanics-note,.biomechanics-grip,.biomechanics-caveat {
+  color: #a9a190;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.biomechanics-heading > p:last-child {
+  margin: 19px 0 0;
+}
+.biomechanics-content {
+  min-width: 0;
+}
+.biomechanics-hands {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.biomechanics-hand {
+  padding: 15px;
+  border: 1px solid var(--line);
+  background: #ffffff06;
+}
+.biomechanics-hand span,.biomechanics-hand strong {
+  display: block;
+}
+.biomechanics-hand span {
+  color: #a9a190;
+  font-family: var(--mono);
+  font-size: 8px;
+}
+.biomechanics-hand strong {
+  margin-top: 7px;
+  color: var(--gold-pale);
+  font-size: 17px;
+}
+.biomechanics-hand p {
+  margin: 5px 0 0;
+  color: #b2aa99;
+  font-size: 12px;
+}
+.biomechanics-table-wrap {
+  overflow-x: auto;
+}
+.biomechanics-table-wrap h3 {
+  margin: 0 0 10px;
+  color: #e8dfcf;
+  font-size: 14px;
+}
+.biomechanics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  text-align: left;
+}
+.biomechanics-table th,.biomechanics-table td {
+  padding: 9px 7px;
+  border-bottom: 1px solid var(--line);
+}
+.biomechanics-table thead th {
+  color: #a9a190;
+  font-weight: 500;
+}
+.biomechanics-table tbody th {
+  color: #d3c5a5;
+  font-weight: 400;
+}
+.biomechanics-table td {
+  color: var(--gold-pale);
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.biomechanics-grip,.biomechanics-caveat {
+  margin: 14px 0 0;
+}
+.biomechanics-caveat {
+  color: #d3c5a5;
+}
+.biomechanics-note {
+  margin: 14px 0;
+}
+.biomechanics-link {
+  display: inline-block;
+  margin-top: 3px;
+}
 .method-section {
   max-width: 1120px;
   margin: auto;
@@ -1123,6 +1244,10 @@ footer {
     gap: 45px;
     padding: 75px 6vw;
   }
+  .biomechanics-section {
+    gap: 45px;
+    padding-inline: 6vw;
+  }
   .sources-section {
     padding-inline: 6vw;
   }
@@ -1231,10 +1356,13 @@ footer {
   .visualizer {
     min-height: 80px;
   }
-  .method-section {
+  .method-section,.biomechanics-section {
     grid-template-columns: 1fr;
     gap: 27px;
     padding: 64px 23px 68px;
+  }
+  .biomechanics-heading h2 {
+    font-size: 40px;
   }
   .method-intro h2,.sources-heading h2 {
     font-size: 40px;

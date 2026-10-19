@@ -20,7 +20,7 @@ The default scenario is 12 one-litre Maßkrüge filled to 90%. Beer density and 
 - **Empty glass mass: 1.32 kg.** This is the midpoint of comparable 1 L glass Maßkrüge listed at about 1.27–1.37 kg. The default uncertainty is **±0.05 kg** (±50 g or about ±0.110 lb).
 - **Fill: 90%.** A practical, adjustable scenario assumption, not a claim that every served stein has this fill level.
 
-Tray weight, motion, grip forces, and balance are not included in the calculator's total. Hand-carried biomechanics and energy estimates are explanatory only and are not part of the calculator output; see [BIOMECHANICS.md](BIOMECHANICS.md).
+Tray weight, motion, grip forces, and balance are not included in the calculator's total. The page separately displays simplified hand-carried joint-moment estimates; they do not change the mass total and are not a safety assessment. Energy estimates remain explanatory only. See [BIOMECHANICS.md](BIOMECHANICS.md).
 
 ## Calculator behavior
 

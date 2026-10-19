@@ -1,4 +1,5 @@
 import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } from './calculation.js';
+import { momentRanges } from './biomechanics.js';
 
 (() => {
   const $ = (selector) => document.querySelector(selector);
@@ -38,6 +39,7 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
   }
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
   function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
+  function displayMoment(range) { return `${pretty(range.low, 0)}–${pretty(range.high, 0)} N·m`; }
   function setInputValues(state) {
     const inputValue = (value) => String(Number(value.toFixed(3)));
     const massFactor = unit === 'imperial' ? LB_PER_KG : 1000;
@@ -110,6 +112,40 @@ import { clamp, computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearc
     const visible = Math.min(s.count, 18);
     $('#visualizer').innerHTML = `${steinSvg().repeat(visible)}${s.count > visible ? `<span class="extra-count">+${s.count - visible}</span>` : ''}`;
     $('#visualizer').setAttribute('aria-label', `${s.count} beer steins`);
+    const moments = momentRanges(s, load);
+    const { heavierHand, lighterHand } = moments;
+    const shoulderNeutral = heavierHand.shoulders.find(({ angle }) => angle === 0);
+    const shoulderSwing = {
+      low: Math.min(...heavierHand.shoulders.map(({ low }) => low)),
+      high: Math.max(...heavierHand.shoulders.map(({ high }) => high)),
+    };
+    const tiedHands = heavierHand.steinCount === lighterHand.steinCount;
+    $('#result-biomechanics-hand').textContent = `${tiedHands ? 'EACH HAND' : 'HEAVIER HAND'} · ${heavierHand.steinCount} ${heavierHand.steinCount === 1 ? 'STEIN' : 'STEINS'}`;
+    $('#biomechanics-moment-heading').textContent = `Joint moments · ${tiedHands ? 'each hand' : 'higher-load hand'}`;
+    $('#result-elbow-moment').textContent = displayMoment(heavierHand.elbow);
+    $('#result-shoulder-moment').textContent = displayMoment(shoulderNeutral);
+    $('#result-shoulder-swing').textContent = displayMoment(shoulderSwing);
+    $('#biomechanics-heavy-count').textContent = `${heavierHand.steinCount} ${heavierHand.steinCount === 1 ? 'stein' : 'steins'}`;
+    $('#biomechanics-heavy-load').textContent = `${displayMass(heavierHand.loadLowKg)}–${displayMass(heavierHand.loadHighKg)}`;
+    $('#biomechanics-light-count').textContent = `${lighterHand.steinCount} ${lighterHand.steinCount === 1 ? 'stein' : 'steins'}`;
+    $('#biomechanics-light-load').textContent = `${displayMass(lighterHand.loadLowKg)}–${displayMass(lighterHand.loadHighKg)}`;
+    const elbowCells = ['minus', 'neutral', 'plus'];
+    heavierHand.shoulders.forEach(({ angle, ...range }, index) => {
+      $(`#biomechanics-elbow-${elbowCells[index]}`).textContent = displayMoment(heavierHand.elbow);
+      $(`#biomechanics-shoulder-${elbowCells[index]}`).textContent = displayMoment(range);
+    });
+    const gripDescription = (hand, label) => {
+      if (hand.steinCount === 1) return `${label} carries one stein; estimated wrist eccentricity is ${pretty(hand.grip.low, 1)}–${pretty(hand.grip.high, 1)} N·m.`;
+      if (hand.steinCount <= 6) return `${label}'s symmetrically regrouped ${hand.steinCount}-stein ring assumes approximately 0 N·m wrist moment.`;
+      return `${label}'s cluster above six steins has no wrist-offset estimate.`;
+    };
+    const gripNotes = tiedHands
+      ? [gripDescription(heavierHand, 'Each hand')]
+      : [gripDescription(heavierHand, 'The heavier hand'), lighterHand.steinCount ? gripDescription(lighterHand, 'The lighter hand') : ''];
+    $('#biomechanics-grip').textContent = gripNotes.filter(Boolean).join(' ');
+    $('#biomechanics-extrapolation').textContent = heavierHand.steinCount > 6
+      ? 'Joint-moment estimates extrapolate the same static lever equations beyond six steins per hand; the documented cluster geometry covers up to six, so grip offset and real-world carrying technique are not validated at higher counts.'
+      : 'Posture is static; acceleration, tray weight, individual muscle force, and carrying technique are not modeled.';
     $('#volume-unit').textContent = unit === 'imperial' ? 'fl oz' : 'L';
     $('#mass-unit').textContent = unit === 'imperial' ? 'lb' : 'kg';
     $('#uncertainty-unit').textContent = unit === 'imperial' ? '± lb' : '± g';
