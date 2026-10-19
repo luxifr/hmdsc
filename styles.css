@@ -962,6 +962,9 @@ h1 em,h2 em {
   font-size: 13px;
   color: var(--gold-pale);
 }
+.method-biomechanics {
+  border-bottom: 0;
+}
 .source-card a {
   color: var(--gold-pale);
   text-decoration-color: #e3b85f66;
