@@ -283,6 +283,12 @@ test('biomechanics estimates update with uneven hand counts, units, and the exis
   await expect(section).toHaveRole('region');
   await expect(section).toHaveAttribute('aria-labelledby', 'biomechanics-label');
   await expect(section.locator('.eq-number')).toHaveText('04');
+  await expect(section.locator('.eq-title')).toHaveText('Joint moments');
+  await expect(section.locator('p')).toContainText('in the heavier hand');
+  await expect(section.locator('p')).toContainText('forearm held level');
+  await expect(section.locator('.biomechanics-values')).toContainText('Elbow');
+  await expect(section.locator('.biomechanics-values')).toContainText('Shoulder ±25°');
+  await expect(section.locator('.biomechanics-values')).not.toContainText('N·m N·m');
   await expect(section.locator('.eyebrow')).toHaveCount(0);
   await expect(section.locator('.biomechanics-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveCount(0);

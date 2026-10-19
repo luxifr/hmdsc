@@ -885,50 +885,12 @@ h1 em,h2 em {
   font-size: 11px;
   text-underline-offset: 3px;
 }
-.method-biomechanics {
-  display: grid;
-  grid-template-columns: 42px minmax(0,1fr);
-  gap: 10px;
-  padding: 19px 0;
-  border-bottom: 1px solid var(--line);
-}
-.method-biomechanics-body {
-  min-width: 0;
-}
-.method-biomechanics-load {
+.biomechanics-values {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 8px 24px;
 }
-.method-biomechanics-load .eq-title strong {
-  color: var(--gold-pale);
-  font-size: inherit;
-}
-.method-biomechanics-load > span:last-child {
-  color: #b2aa99;
-  font-size: 12px;
-  white-space: nowrap;
-}
-.biomechanics-moments {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-.biomechanics-moments div {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  color: #a9a190;
-  font-size: 12px;
-}
-.biomechanics-moments dd {
-  margin: 0;
-  color: var(--gold-pale);
-  font-family: var(--mono);
-  font-size: 12px;
+.biomechanics-values > span {
   white-space: nowrap;
 }
 .biomechanics-link {
