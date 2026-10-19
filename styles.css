@@ -701,26 +701,6 @@ h1 em,h2 em {
 .advanced-fields input {
   font-size: 11px;
 }
-.remember-control {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 10px;
-  color: #a69d8d;
-  font-family: var(--mono);
-  font-size: 9px;
-  cursor: pointer;
-}
-.remember-control input {
-  width: 12px;
-  height: 12px;
-  margin: 0;
-  accent-color: var(--gold);
-}
-.remember-control small {
-  color: #827b6f;
-  font-size: inherit;
-}
 .form-actions {
   display: grid;
   grid-template-columns: 1fr;

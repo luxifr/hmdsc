@@ -24,7 +24,7 @@ Tray weight, motion, grip forces, and balance are not included in the calculator
 
 ## Calculator behavior
 
-Metric/imperial display, adjustable assumptions, optional scenario saving, and shareable scenario URLs are provided without runtime dependencies. Scenario saving is off by default and stores inputs only in the current browser; disabling it clears the saved scenario. URL values take precedence over remembered inputs. The selected display unit is not saved. Unit switches and share links preserve the underlying scenario values for calculations while formatting displayed input values to at most three decimal places. Beer density is shown in g/L in metric and lb/US gal in imperial; switching units preserves the underlying density.
+Metric/imperial display, adjustable assumptions, and shareable scenario URLs are provided without runtime dependencies. Scenario inputs are shared through the URL; they are not saved on the device. Unit switches and share links preserve the underlying scenario values for calculations while formatting displayed input values to at most three decimal places. Beer density is shown in g/L in metric and lb/US gal in imperial; switching units preserves the underlying density.
 
 ## Sources
 

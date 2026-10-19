@@ -433,13 +433,6 @@ test('reset restores defaults and clears the scenario URL', async ({ page }) => 
   await expect(page.locator('#stein-count')).toHaveValue('12');
   await expect(page.locator('#total')).toHaveText('26.7');
   await expect(page).toHaveURL(/\/$/);
-  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
-
-  await page.locator('#remember-inputs').check();
-  await page.locator('#stein-count').fill('8');
-  await page.getByRole('button', { name: /reset defaults/i }).click();
-  await page.reload();
-  await expect(page.locator('#stein-count')).toHaveValue('12');
 });
 
 test('share puts the scenario in a fragment and the shared scenario loads', async ({ page }) => {
@@ -481,70 +474,17 @@ test('scenario URLs restore all inputs and clamp out-of-range values', async ({ 
   await expect(page.locator('#fill')).toHaveValue('80');
 });
 
-test('scenario saving is opt-in, restores when enabled, and clears when disabled', async ({ page }) => {
+test('scenario edits are not saved between page loads', async ({ page }) => {
   await page.goto('/');
-  const remember = page.locator('#remember-inputs');
-  await expect(remember).not.toBeChecked();
+  await expect(page.locator('#remember-inputs')).toHaveCount(0);
   await page.locator('#stein-count').fill('9');
   await page.locator('#fill').fill('82');
-  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
-  await page.reload();
-  await expect(page.locator('#stein-count')).toHaveValue('12');
-  await expect(page.locator('#fill')).toHaveValue('90');
-
-  await remember.check();
-  await page.locator('#stein-count').fill('9');
-  await page.locator('#fill').fill('82');
-  await page.reload();
-  await expect(remember).toBeChecked();
   await expect(page.locator('#stein-count')).toHaveValue('9');
   await expect(page.locator('#fill')).toHaveValue('82');
 
-  await page.goto('/?count=5');
-  await expect(page.locator('#stein-count')).toHaveValue('5');
-  await expect(page.locator('#fill')).toHaveValue('90');
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(5);
-
-  await remember.uncheck();
-  expect(await page.evaluate(() => localStorage.getItem('carry-calc'))).toBeNull();
-  expect(await page.evaluate(() => localStorage.getItem('carry-calc-remember'))).toBeNull();
-  await page.goto('/');
   await page.reload();
-  await expect(remember).not.toBeChecked();
   await expect(page.locator('#stein-count')).toHaveValue('12');
-});
-
-test('URL scenario takes precedence over remembered data and updates the remembered scenario', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('#remember-inputs').check();
-  await page.locator('#stein-count').fill('9');
-  await page.locator('#fill').fill('82');
-
-  await page.goto('/?count=5');
-  await expect(page.locator('#stein-count')).toHaveValue('5');
   await expect(page.locator('#fill')).toHaveValue('90');
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(5);
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).fill)).toBe(90);
-
-  await page.goto('/');
-  await expect(page.locator('#stein-count')).toHaveValue('5');
-  await expect(page.locator('#fill')).toHaveValue('90');
-});
-
-test('invalid remembered JSON falls back to defaults without breaking the calculator', async ({ page }) => {
-  await page.goto('/');
-  await page.evaluate(() => {
-    localStorage.setItem('carry-calc-remember', 'true');
-    localStorage.setItem('carry-calc', '{not valid json');
-  });
-
-  await page.reload();
-  await expect(page.locator('#remember-inputs')).toBeChecked();
-  await expect(page.locator('#stein-count')).toHaveValue('12');
-  await expect(page.locator('#total')).toHaveText('26.7');
-
-  await page.locator('#stein-count').fill('8');
-  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).count)).toBe(8);
 });
 
 test('volume and mass inputs convert when switching units', async ({ page }) => {
@@ -591,7 +531,6 @@ test('volume and mass inputs convert when switching units', async ({ page }) => 
 
 test('unit toggles keep the original scenario without cumulative rounding drift', async ({ page }) => {
   await page.goto('/?volume=1.23456789&mugMass=1.23456789&density=1.01234567&uncertainty=0.12345678&densityUncertainty=0.00234567');
-  await page.locator('#remember-inputs').check();
   const initialTotal = await page.locator('#total').textContent();
   const initialEquation = await page.locator('#total-equation').textContent();
 
@@ -611,10 +550,6 @@ test('unit toggles keep the original scenario without cumulative rounding drift'
 
   await expect(page.locator('#total')).toHaveText(initialTotal);
   await expect(page.locator('#total-equation')).toHaveText(initialEquation);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).volume)).toBe(1.23456789);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).mugMass)).toBe(1.23456789);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.01234567);
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).densityUncertainty)).toBe(0.00234567);
 });
 
 test('share links preserve full calculation precision', async ({ page }) => {
@@ -625,20 +560,16 @@ test('share links preserve full calculation precision', async ({ page }) => {
   await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('density')).toBe('1.01234567');
 });
 
-test('input displays cap decimals while retaining scenario precision', async ({ page }) => {
+test('input displays cap decimals while share links retain scenario precision', async ({ page }) => {
   await page.goto('/?density=1.01234567');
-  await page.locator('#remember-inputs').check();
   await page.getByText('Fine-tune the assumptions').click();
   const density = page.locator('#density');
 
   await density.fill('1000.123456');
   await density.press('Tab');
   await expect(density).toHaveValue('1000.123');
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
-
-  await page.locator('#mug-mass').fill('1.111119');
-  await page.locator('#mug-mass').press('Tab');
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('carry-calc')).density)).toBe(1.000123456);
+  await page.getByRole('button', { name: /share your scenario/i }).click();
+  await expect.poll(() => new URLSearchParams(new URL(page.url()).hash.slice('#scenario='.length)).get('density')).toBe('1.000123456');
 });
 
 test('decorative animations run when reduced motion is requested', async ({ page }) => {

@@ -6,8 +6,8 @@ A static calculator (`index.html`, `styles.css`, and `app.js`) that estimates
 the load of beer steins carried by an Oktoberfest waitress. It supports stein
 count, fill level, beer volume, glass weight, beer density and glass-weight
 uncertainty; metric and imperial displays; a stein visualizer; and shareable
-scenario URLs. Saving scenarios locally is opt-in. Playwright browser smoke
-tests and a minified single-file deployment build are development-only.
+scenario URLs. Playwright browser smoke tests and a minified single-file
+deployment build are development-only.
 
 ## Afterburner Tasks
 
