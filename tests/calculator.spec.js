@@ -132,7 +132,7 @@ test('scenario sharing sits in the top-right of the result card, above the stein
   await expect(page.locator('.result-card #reset')).toHaveCount(0);
   expect(await share.evaluate((button) => button.parentElement.classList.contains('result-top'))).toBe(true);
   expect(await share.evaluate((button) => Math.abs(button.getBoundingClientRect().right - button.parentElement.getBoundingClientRect().right))).toBeLessThanOrEqual(1);
-  expect(await page.locator('.result-card').evaluate((card) => card.lastElementChild.id)).toBe('visualizer');
+  expect(await page.locator('.result-card .result-details').evaluate((details) => details.lastElementChild.id)).toBe('visualizer');
   for (const width of [430, 390, 375, 320]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
@@ -155,6 +155,8 @@ test('result breakdown is left-aligned without dividers and biomechanics labels 
         biomechanicsItems: tops('.biomechanics-result > *'),
         totalBottom: document.querySelector('.total-line').getBoundingClientRect().bottom,
         breakdownTop: document.querySelector('.breakdown').getBoundingClientRect().top,
+        detailGaps: (() => { const items = [...document.querySelector('.result-details').children]; return items.slice(1).map((item, index) => Math.round(item.getBoundingClientRect().top - items[index].getBoundingClientRect().bottom)); })(),
+        illustrationBottomGap: Math.round(document.querySelector('.result-card').getBoundingClientRect().bottom - document.querySelector('.visualizer').getBoundingClientRect().bottom),
         documentWidth: document.documentElement.scrollWidth,
         resultBorder: getComputedStyle(result).borderTopStyle,
         breakdownBorders: [...document.querySelectorAll('.breakdown-item')].map((element) => getComputedStyle(element).borderLeftStyle),
@@ -171,6 +173,8 @@ test('result breakdown is left-aligned without dividers and biomechanics labels 
     expect(layout.resultBorder).toBe('none');
     expect(layout.breakdownBorders).toEqual(['none', 'none']);
     expect(layout.breakdownAligned).toBe(true);
+    expect(layout.detailGaps).toEqual([8, 8, 8]);
+    expect(layout.illustrationBottomGap).toBe(8);
     expect(layout.momentLabelStyle).toEqual(layout.firstLabelStyle);
   }
   await expect(page.locator('.result-divider')).toHaveCount(0);
