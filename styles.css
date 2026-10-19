@@ -340,7 +340,6 @@ h1 em,h2 em {
   grid-template-columns: 76px auto auto;
   gap: 12px;
   padding: 19px 0 20px;
-  border-bottom: 1px solid var(--line);
   align-items: center;
 }
 .count-control,.fill-setting {
@@ -649,7 +648,7 @@ h1 em,h2 em {
   font-size: 10px;
 }
 .advanced {
-  border-bottom: 1px solid var(--line);
+  border: 0;
 }
 .advanced summary {
   cursor: pointer;
