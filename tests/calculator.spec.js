@@ -167,10 +167,10 @@ test('shows sourced median assumptions as the initial defaults', async ({ page }
   await expect(page.locator('#total-uncertainty')).toHaveAttribute('aria-label', 'Total-load uncertainty: ±0.6 kg');
   await expect(page.locator('#per-stein')).toHaveText('2.23 kg');
   await expect(page.locator('#per-stein-icon svg')).toHaveCount(1);
-  await expect(page.locator('#per-stein-icon svg path').nth(1)).toHaveAttribute('fill', '#B77932');
-  await expect(page.locator('#per-stein-icon svg path').nth(1)).toHaveAttribute('stroke', '#E4C781');
-  await expect(page.locator('#per-stein-icon svg path').nth(2)).toHaveAttribute('fill', '#E0A743');
-  await expect(page.locator('#per-stein-icon svg path').nth(3)).toHaveAttribute('fill', '#F0E9D9');
+  await expect(page.locator('#per-stein-icon svg use[href="#stein-body-shape"]')).toHaveAttribute('fill', '#B77932');
+  await expect(page.locator('#per-stein-icon svg use[href="#stein-body-shape"]')).toHaveAttribute('stroke', '#E4C781');
+  await expect(page.locator('#per-stein-icon svg rect[fill="#E0A743"]')).toHaveCount(1);
+  await expect(page.locator('#per-stein-icon svg use[href="#stein-foam-cap-shape"]')).toHaveCount(1);
   const heights = await page.evaluate(() => ({
     stein: document.querySelector('#per-stein-icon svg').getBoundingClientRect().height,
     text: document.querySelector('.per-stein-display>div').getBoundingClientRect().height,
@@ -215,6 +215,22 @@ test('keeps the per-stein result below the total on narrow screens', async ({ pa
   });
   expect(bounds.total.bottom).toBeLessThan(bounds.perStein.top);
   expect(bounds.perStein.right).toBeLessThanOrEqual(bounds.card.right);
+});
+
+test('fill and visualization steins reuse shared SVG shapes without duplicate ids', async ({ page }) => {
+  await page.goto('/');
+
+  const referencesResolve = await page.evaluate(() => {
+    const ids = [...document.querySelectorAll('[id]')].map((element) => element.id);
+    const hrefs = [...document.querySelectorAll('use[href]')].map((element) => element.getAttribute('href'));
+    return new Set(ids).size === ids.length && hrefs.every((href) => document.getElementById(href.slice(1)));
+  });
+  expect(referencesResolve).toBe(true);
+  await expect(page.locator('.fill-stein use[href="#stein-handle-shape"]')).toHaveCount(1);
+  await expect(page.locator('.fill-stein use[href="#stein-body-shape"]')).toHaveCount(2);
+  await expect(page.locator('.mini-stein').first()).toHaveAttribute('viewBox', '0 0 80 110');
+  await expect(page.locator('#visualizer .mini-stein use[href="#stein-handle-shape"]')).toHaveCount(12);
+  await expect(page.locator('#visualizer .mini-stein use[href="#stein-body-shape"]')).toHaveCount(12);
 });
 
 test('hero stein has beer and foam bubbles matching the fill control', async ({ page }) => {
@@ -276,23 +292,23 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
   const fill = page.locator('#fill');
   const beer = page.locator('#fill-beer');
   const foam = page.locator('#fill-foam');
-  const foamOverflow = page.locator('.fill-stein > path').nth(2);
   const foamCap = page.locator('#fill-foam-cap');
   const capBubbles = page.locator('#fill-foam-cap-bubbles circle');
   const beerBubbles = page.locator('#fill-beer-bubbles circle');
-  const glass = page.locator('.fill-stein > path').nth(1);
+  const glass = page.locator('.fill-stein > use[href="#stein-body-shape"]').first();
 
   await expect(fill).toHaveAttribute('aria-describedby', 'fill-output');
-  await expect(page.locator('.fill-stein > path').nth(0)).toHaveAttribute('stroke', '#D8C69F');
-  await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('fill', '#B77932');
-  await expect(page.locator('.fill-stein > path').nth(1)).toHaveAttribute('stroke', '#E4C781');
-  await expect(page.locator('#fill-glass-clip path')).toHaveAttribute('d', 'M15 22h45l-6 77H21Z');
+  await expect(page.locator('.fill-stein > use[href="#stein-handle-shape"]')).toHaveAttribute('stroke', '#D8C69F');
+  await expect(page.locator('.fill-stein > use[href="#stein-body-shape"]').first()).toHaveAttribute('fill', '#B77932');
+  await expect(page.locator('.fill-stein > use[href="#stein-body-shape"]').first()).toHaveAttribute('stroke', '#E4C781');
+  await expect(page.locator('#stein-glass-clip use')).toHaveAttribute('href', '#stein-glass-interior');
+  await expect(page.locator('#stein-glass-interior')).toHaveAttribute('d', 'M15 22h45l-6 77H21Z');
   await expect(beer).toHaveAttribute('x', '15');
   await expect(beer).toHaveAttribute('width', '45');
   await expect(foam).toHaveAttribute('x', '15');
   await expect(foam).toHaveAttribute('y', '22');
   await expect(foam).toHaveAttribute('width', '45');
-  await expect(page.locator('.fill-stein path[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveCount(0);
+  await expect(page.locator('.fill-stein use[stroke="#FFF9ED"][stroke-width="2.4"]')).toHaveCount(0);
   await expect(foamCap).toHaveAttribute('transform', 'translate(1 0)');
   await expect(page.locator('#fill-foam-cap-bubbles')).toHaveAttribute('transform', 'translate(1 0)');
   await expect(beerBubbles.first()).toHaveCSS('animation-name', 'fill-bubble-rise');
@@ -318,10 +334,10 @@ test('stein fill slider updates beer, foam, and its accessible value', async ({ 
       const { y, height } = document.querySelector(selector).getBBox();
       return { top: y, bottom: y + height };
     };
-    return { cap: box('#fill-foam-cap'), rim: box('.fill-stein > path:last-child') };
+    return { cap: box('#fill-foam-cap'), rim: box('.fill-stein > use[href="#stein-body-shape"]:last-child') };
   });
   expect(capAndRim.cap.bottom).toBe(capAndRim.rim.top);
-  const overflowBounds = await foamOverflow.boundingBox();
+  const overflowBounds = await foamCap.boundingBox();
   const glassBounds = await glass.boundingBox();
   expect(overflowBounds.y).toBeLessThan(glassBounds.y);
 
