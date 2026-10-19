@@ -425,6 +425,15 @@ test('beer density switches units and preserves its value', async ({ page }) => 
   await expect(page.locator('#beer-equation')).toContainText('0.950 kg/L');
 });
 
+test('fine-tune assumptions have no surrounding horizontal dividers', async ({ page }) => {
+  await page.goto('/');
+  const borderWidths = await page.evaluate(() => [
+    getComputedStyle(document.querySelector('.primary-controls')).borderBottomWidth,
+    getComputedStyle(document.querySelector('.advanced')).borderBottomWidth,
+  ]);
+  expect(borderWidths).toEqual(['0px', '0px']);
+});
+
 test('reset restores defaults and clears the scenario URL inside fine-tune assumptions', async ({ page }) => {
   await page.goto('/?count=8');
   await expect(page.locator('#stein-count')).toHaveValue('8');
