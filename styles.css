@@ -869,12 +869,13 @@ h1 em,h2 em {
   white-space: nowrap;
 }
 .biomechanics-result .break-label {
-  font-size: 8px;
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
 }
 .biomechanics-result strong {
-  color: var(--gold-pale);
-  font-family: var(--mono);
-  font-weight: 400;
+  color: inherit;
+  font: inherit;
 }
 .biomechanics-result a,.biomechanics-link {
   color: var(--gold-pale);
@@ -1403,9 +1404,6 @@ footer {
   .biomechanics-result {
     font-size: 7px;
     gap: 2px;
-  }
-  .biomechanics-result .break-label {
-    font-size: 6px;
   }
   .total-line {
     display: grid;
