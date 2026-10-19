@@ -805,25 +805,18 @@ h1 em,h2 em {
   font-family: var(--mono);
   font-size: 11px;
   color: #a59c8a;
-  margin: 8px 0 21px;
-}
-.result-divider {
-  height: 1px;
-  background: #ffffff17;
+  margin: 8px 0 12px;
 }
 .breakdown {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   padding: 12px 0;
 }
 .breakdown-item {
   display: flex;
   align-items: center;
   gap: 5px;
-}
-.breakdown-item+ .breakdown-item {
-  border-left: 1px solid #ffffff17;
-  padding-left: 8px;
 }
 .break-icon {
   font-size: 15px;
@@ -871,8 +864,6 @@ h1 em,h2 em {
   justify-content: space-between;
   gap: 4px;
   margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
   color: #b2aa99;
   font-size: 9px;
   white-space: nowrap;
@@ -1238,6 +1229,11 @@ footer {
   }
   .result-card {
     padding: 24px 22px 18px;
+  }
+  .biomechanics-result {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
   .method-section {
     grid-template-columns: .8fr 1.2fr;

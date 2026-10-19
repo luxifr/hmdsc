@@ -120,7 +120,7 @@ import { momentRanges } from './biomechanics.js';
       high: Math.max(...heavierHand.shoulders.map(({ high }) => high)),
     };
     const tiedHands = heavierHand.steinCount === lighterHand.steinCount;
-    $('#result-biomechanics-hand').textContent = `${heavierHand.steinCount}/${lighterHand.steinCount} STEINS`;
+    $('#result-biomechanics-hand').textContent = `${tiedHands ? 'EACH HAND' : 'HEAVIER HAND'} · ${heavierHand.steinCount}/${lighterHand.steinCount} STEINS`;
     $('#result-biomechanics-hand').setAttribute('aria-label', `${tiedHands ? 'Each hand' : 'Heavier hand'}: ${heavierHand.steinCount} steins; lighter hand: ${lighterHand.steinCount} steins`);
     $('#biomechanics-moment-heading').textContent = `Joint moments · ${tiedHands ? 'each hand' : 'higher-load hand'}`;
     $('#result-elbow-moment').textContent = displayMoment(heavierHand.elbow);
