@@ -16,7 +16,7 @@ deployment build are development-only.
 2. Research tray-carrying as an optional load component. Source a credible range
    and representative tray weight with the same rigor as the beer and glass
    assumptions, then incorporate the option into the estimate.
-3. [x] Add a live summary of hand-carried stein biomechanics after the maths
+3. [x] Add a live summary of hand-carried stein biomechanics within the maths
    section. It splits the count across two hands, assigning an odd extra stein
    to the heavier hand, and shows that hand's load, one elbow-moment range, and
    the shoulder-moment range across the modeled swing. The methods explanation

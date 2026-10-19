@@ -885,51 +885,36 @@ h1 em,h2 em {
   font-size: 11px;
   text-underline-offset: 3px;
 }
-.biomechanics-section {
-  max-width: 1120px;
-  margin: auto;
-  padding: 54px 0 70px;
+.method-biomechanics {
   display: grid;
-  grid-template-columns: .8fr 1.2fr;
-  gap: 70px;
+  grid-template-columns: 42px minmax(0,1fr);
+  gap: 10px;
+  padding: 19px 0;
+  border-bottom: 1px solid var(--line);
 }
-.biomechanics-heading .eyebrow {
-  margin-bottom: 19px;
-}
-.biomechanics-heading h2 {
-  margin: 0;
-  font-size: 44px;
-  line-height: 1.08;
-}
-.biomechanics-heading > p:last-child {
-  margin: 19px 0 0;
-  color: #a9a190;
-  font-size: 12px;
-  line-height: 1.75;
-}
-.biomechanics-content {
+.method-biomechanics-body {
   min-width: 0;
 }
-.biomechanics-hand-load {
+.method-biomechanics-load {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 12px;
-  margin: 0 0 18px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
 }
-.biomechanics-hand-load strong {
+.method-biomechanics-load .eq-title strong {
   color: var(--gold-pale);
-  font-size: 17px;
+  font-size: inherit;
 }
-.biomechanics-hand-load span {
+.method-biomechanics-load > span:last-child {
   color: #b2aa99;
   font-size: 12px;
+  white-space: nowrap;
 }
 .biomechanics-moments {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   margin: 0;
 }
 .biomechanics-moments div {
@@ -1209,10 +1194,6 @@ footer {
     gap: 45px;
     padding: 75px 6vw;
   }
-  .biomechanics-section {
-    gap: 45px;
-    padding-inline: 6vw;
-  }
   .sources-section {
     padding-inline: 6vw;
   }
@@ -1324,13 +1305,10 @@ footer {
   .visualizer {
     min-height: 80px;
   }
-  .method-section,.biomechanics-section {
+  .method-section {
     grid-template-columns: 1fr;
     gap: 27px;
     padding: 64px 23px 68px;
-  }
-  .biomechanics-heading h2 {
-    font-size: 40px;
   }
   .method-intro h2,.sources-heading h2 {
     font-size: 40px;

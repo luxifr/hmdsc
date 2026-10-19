@@ -280,7 +280,9 @@ test('biomechanics estimates update with uneven hand counts, units, and the exis
   await page.goto('/');
   const section = page.locator('#biomechanics');
   await expect(page.locator('.method-section .eyebrow')).toContainText('03');
-  await expect(section.locator('.eyebrow')).toContainText('04');
+  await expect(section).toHaveRole('region');
+  await expect(section).toHaveAttribute('aria-labelledby', 'biomechanics-label');
+  await expect(section.locator('.eyebrow')).toHaveCount(0);
   await expect(section.locator('.biomechanics-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('6 steins');
@@ -981,7 +983,7 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await page.goto('/');
   const section = page.locator('#sources');
   await expect(section).toHaveCount(1);
-  await expect(section.locator('.eyebrow')).toContainText('05');
+  await expect(section.locator('.eyebrow')).toContainText('04');
   await expect(section.getByRole('heading', { level: 2 })).toHaveText(/How the estimate\s*comes together\./);
   await expect(section.locator('.source-card')).toHaveCount(3);
   const biomechanicsExplainer = section.locator('.biomechanics-explainer');
@@ -991,7 +993,9 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(biomechanicsExplainer).not.toContainText('safety assessment');
   await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((section) => section.id || section.className));
-  expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('biomechanics'));
+  expect(sectionOrder).not.toContain('biomechanics');
+  expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('sources'));
+  await expect(page.locator('.method-section #biomechanics')).toHaveCount(1);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
   const footerLink = page.locator('footer .footer-github');
