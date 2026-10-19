@@ -39,7 +39,7 @@ import { momentRanges } from './biomechanics.js';
   }
   function pretty(value, digits = 2) { return Number(value).toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }); }
   function displayMass(kg, digits = 2) { return `${pretty(unit === 'imperial' ? kg * LB_PER_KG : kg, digits)} ${unit === 'imperial' ? 'lb' : 'kg'}`; }
-  function displayMoment(range) { return `${pretty(range.low, 0)}–${pretty(range.high, 0)} N·m`; }
+  function displayMoment(range) { return `${pretty(range.low, 0)}–${pretty(range.high, 0)}`; }
   function setInputValues(state) {
     const inputValue = (value) => String(Number(value.toFixed(3)));
     const massFactor = unit === 'imperial' ? LB_PER_KG : 1000;
@@ -120,7 +120,8 @@ import { momentRanges } from './biomechanics.js';
       high: Math.max(...heavierHand.shoulders.map(({ high }) => high)),
     };
     const tiedHands = heavierHand.steinCount === lighterHand.steinCount;
-    $('#result-biomechanics-hand').textContent = `${tiedHands ? 'EACH HAND' : 'HEAVIER HAND'} · ${heavierHand.steinCount} ${heavierHand.steinCount === 1 ? 'STEIN' : 'STEINS'}`;
+    $('#result-biomechanics-hand').textContent = `${heavierHand.steinCount}/${lighterHand.steinCount} STEINS`;
+    $('#result-biomechanics-hand').setAttribute('aria-label', `${tiedHands ? 'Each hand' : 'Heavier hand'}: ${heavierHand.steinCount} steins; lighter hand: ${lighterHand.steinCount} steins`);
     $('#biomechanics-moment-heading').textContent = `Joint moments · ${tiedHands ? 'each hand' : 'higher-load hand'}`;
     $('#result-elbow-moment').textContent = displayMoment(heavierHand.elbow);
     $('#result-shoulder-moment').textContent = displayMoment(shoulderNeutral);

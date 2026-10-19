@@ -141,6 +141,30 @@ test('scenario sharing sits in the top-right of the result card, above the stein
   await expect(page).toHaveURL(/#scenario=count=12/);
 });
 
+test('result breakdown and biomechanics fit into compact single rows', async ({ page }) => {
+  await page.goto('/');
+
+  for (const width of [1280, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    const layout = await page.evaluate(() => {
+      const tops = (selector) => [...document.querySelectorAll(selector)].map((element) => element.getBoundingClientRect().top);
+      return {
+        breakdownRows: tops('.breakdown-item'),
+        breakdownValues: tops('.breakdown-item strong'),
+        biomechanicsItems: tops('.biomechanics-result > *'),
+        totalBottom: document.querySelector('.total-line').getBoundingClientRect().bottom,
+        breakdownTop: document.querySelector('.breakdown').getBoundingClientRect().top,
+        documentWidth: document.documentElement.scrollWidth,
+      };
+    });
+    expect(Math.max(...layout.breakdownRows) - Math.min(...layout.breakdownRows)).toBeLessThanOrEqual(1);
+    expect(Math.max(...layout.breakdownValues) - Math.min(...layout.breakdownValues)).toBeLessThanOrEqual(1);
+    expect(Math.max(...layout.biomechanicsItems) - Math.min(...layout.biomechanicsItems)).toBeLessThanOrEqual(3);
+    expect(layout.breakdownTop).toBeGreaterThanOrEqual(layout.totalBottom);
+    expect(layout.documentWidth).toBe(width);
+  }
+});
+
 test('announces the total without making the entire result card live', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#total')).toHaveAttribute('aria-live', 'polite');
@@ -242,12 +266,12 @@ test('biomechanics estimates update with uneven hand counts, units, and the exis
   await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toBeVisible();
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('6 steins');
   await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
-  await expect(page.locator('#result-biomechanics-hand')).toHaveText('EACH HAND · 6 STEINS');
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('6/6 STEINS');
 
   await page.locator('#stein-count').fill('13');
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('7 steins');
   await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
-  await expect(page.locator('#result-biomechanics-hand')).toHaveText('HEAVIER HAND · 7 STEINS');
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('7/6 STEINS');
   const elbowMoment = await section.locator('#biomechanics-elbow-neutral').textContent();
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
   await expect(section.locator('#biomechanics-heavy-load')).toContainText('lb');
