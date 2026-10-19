@@ -7,9 +7,10 @@ import { minify } from 'html-minifier-terser';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = resolve(root, 'dist');
-const htmlPath = resolve(root, 'index.html');
-const cssPath = resolve(root, 'styles.css');
-const jsPath = resolve(root, 'app.js');
+const source = resolve(root, 'src');
+const htmlPath = resolve(source, 'index.html');
+const cssPath = resolve(source, 'styles.css');
+const jsPath = resolve(source, 'app.js');
 const outputPath = resolve(dist, 'index.html');
 
 function replaceExactlyOnce(source, pattern, replacement, resourceName) {

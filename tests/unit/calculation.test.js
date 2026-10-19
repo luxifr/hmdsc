@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } from './calculation.js';
+import { computeLoad, defaults, LB_PER_KG, normalizeState, stateFromSearch } from '../../src/calculation.js';
 
 test('default scenario computes the expected metric load', () => {
   const load = computeLoad(defaults);

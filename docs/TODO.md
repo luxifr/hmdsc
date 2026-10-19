@@ -2,7 +2,7 @@
 
 ## What it is
 
-A static calculator (`index.html`, `styles.css`, and `app.js`) that estimates
+A static calculator (`src/index.html`, `src/styles.css`, and `src/app.js`) that estimates
 the load of beer steins carried by an Oktoberfest waitress. It supports stein
 count, fill level, beer volume, glass weight, beer density and glass-weight
 uncertainty; metric and imperial displays; a stein visualizer; and shareable
@@ -32,6 +32,6 @@ deployment build are development-only.
 
 ## Deferred
 
-- Replacing the per-keystroke `innerHTML` rebuild of up to 18 SVGs in `app.js`
+- Replacing the per-keystroke `innerHTML` rebuild of up to 18 SVGs in `src/app.js`
   is not prioritized; it is currently inexpensive, so avoid premature
   optimization.
