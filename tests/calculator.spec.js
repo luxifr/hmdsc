@@ -999,13 +999,13 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(biomechanicsExplainer).toContainText('elbow moment stays constant');
   await expect(biomechanicsExplainer).toContainText('centered over the grip');
   await expect(biomechanicsExplainer).not.toContainText('safety assessment');
-  await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
+  await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/docs/BIOMECHANICS.md');
   const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((section) => section.id || section.className));
   expect(sectionOrder).not.toContain('biomechanics');
   expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('sources'));
   await expect(page.locator('.method-section #biomechanics')).toHaveCount(1);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
-  await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/MODEL.md');
+  await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/docs/MODEL.md');
   const footerLink = page.locator('footer .footer-github');
   if (process.env.PLAYWRIGHT_BUILD === '1') {
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();

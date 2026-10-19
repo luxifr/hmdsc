@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { handSplit, momentRanges } from './biomechanics.js';
-import { computeLoad, defaults, normalizeState } from './calculation.js';
+import { handSplit, momentRanges } from '../../src/biomechanics.js';
+import { computeLoad, defaults, normalizeState } from '../../src/calculation.js';
 
 function estimate(count) {
   const state = normalizeState({ ...defaults, count });

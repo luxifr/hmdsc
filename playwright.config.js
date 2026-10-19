@@ -2,10 +2,11 @@ import { defineConfig } from '@playwright/test';
 
 const testBuild = process.env.PLAYWRIGHT_BUILD === '1';
 const port = testBuild ? 4174 : 4173;
-const directory = testBuild ? ' --directory dist' : '';
+const directory = testBuild ? ' --directory dist' : ' --directory src';
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.js',
   reporter: 'list',
   use: {
     baseURL: `http://127.0.0.1:${port}`,
