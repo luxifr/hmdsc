@@ -901,7 +901,7 @@ h1 em,h2 em {
   font-size: 44px;
   line-height: 1.08;
 }
-.biomechanics-heading > p:last-child,.biomechanics-note,.biomechanics-grip,.biomechanics-caveat {
+.biomechanics-heading > p:last-child,.biomechanics-grip,.biomechanics-caveat {
   color: #a9a190;
   font-size: 12px;
   line-height: 1.75;
@@ -977,9 +977,6 @@ h1 em,h2 em {
 }
 .biomechanics-caveat {
   color: #d3c5a5;
-}
-.biomechanics-note {
-  margin: 14px 0;
 }
 .biomechanics-link {
   display: inline-block;

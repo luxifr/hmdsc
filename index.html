@@ -118,9 +118,18 @@
         </div>
       </section>
 
+      <section class="method-section" aria-labelledby="method-title">
+        <div class="method-intro"><p class="eyebrow"><span>03</span> &nbsp; SHOW YOUR WORK</p><h2 id="method-title">Not just a<br /><em>back-of-napkin</em><br />calculation.</h2><p>We separate the beer from the glass, make our assumptions visible, and give you a plausible range—not a fake precision.</p></div>
+        <div class="method-content">
+          <div class="equation"><span class="eq-number">01</span><div><span class="eq-title">Beer mass</span><p><i>number of steins</i> × <i>volume per stein</i> × <i>fill fraction</i> × <i>beer density</i></p><strong id="beer-equation">12 × 1.00 L × 90% × 1.010 kg/L = 10.91 kg</strong></div></div>
+          <div class="equation"><span class="eq-number">02</span><div><span class="eq-title">Glass mass</span><p><i>number of steins</i> × <i>empty glass weight</i></p><strong id="glass-equation">12 × 1.32 kg = 15.84 kg</strong></div></div>
+          <div class="equation total-equation"><span class="eq-number">03</span><div><span class="eq-title">Total carried</span><p>beer mass + glass mass</p><strong id="total-equation">10.91 kg + 15.84 kg = 26.75 kg</strong></div></div>
+        </div>
+      </section>
+
       <section class="biomechanics-section" id="biomechanics" aria-labelledby="biomechanics-title">
         <div class="biomechanics-heading">
-          <p class="eyebrow"><span>03</span> &nbsp; THE HUMAN MECHANICS</p>
+          <p class="eyebrow"><span>04</span> &nbsp; THE HUMAN MECHANICS</p>
           <h2 id="biomechanics-title">What the load asks<br /><em>of each arm.</em></h2>
           <p>These are simplified external joint-moment estimates for holding the calculated load—not measurements of a server or a safety assessment.</p>
         </div>
@@ -150,17 +159,6 @@
           </div>
           <p class="biomechanics-grip" id="biomechanics-grip">Grip geometry estimate: —</p>
           <p class="biomechanics-caveat" id="biomechanics-extrapolation">—</p>
-          <p class="biomechanics-note">The model keeps the forearm near horizontal as the upper arm swings, with the elbow adjusting to keep the steins level. For this estimate, hand counts are split as evenly as possible; an odd extra stein goes to one hand, though real carries may be more uneven. Estimates combine the calculator's load range with broad adult arm-size assumptions (60–80 kg body mass); the bounds are not statistical confidence intervals. They report net external joint moments, not muscle or tendon force; those require additional anatomy and muscle-sharing assumptions.</p>
-          <a class="biomechanics-link" href="https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md">Full methods, assumptions, sources, and limitations →</a>
-        </div>
-      </section>
-
-      <section class="method-section" aria-labelledby="method-title">
-        <div class="method-intro"><p class="eyebrow"><span>04</span> &nbsp; SHOW YOUR WORK</p><h2 id="method-title">Not just a<br /><em>back-of-napkin</em><br />calculation.</h2><p>We separate the beer from the glass, make our assumptions visible, and give you a plausible range—not a fake precision.</p></div>
-        <div class="method-content">
-          <div class="equation"><span class="eq-number">01</span><div><span class="eq-title">Beer mass</span><p><i>number of steins</i> × <i>volume per stein</i> × <i>fill fraction</i> × <i>beer density</i></p><strong id="beer-equation">12 × 1.00 L × 90% × 1.010 kg/L = 10.91 kg</strong></div></div>
-          <div class="equation"><span class="eq-number">02</span><div><span class="eq-title">Glass mass</span><p><i>number of steins</i> × <i>empty glass weight</i></p><strong id="glass-equation">12 × 1.32 kg = 15.84 kg</strong></div></div>
-          <div class="equation total-equation"><span class="eq-number">03</span><div><span class="eq-title">Total carried</span><p>beer mass + glass mass</p><strong id="total-equation">10.91 kg + 15.84 kg = 26.75 kg</strong></div></div>
         </div>
       </section>
 
@@ -187,7 +185,11 @@
             </ul>
             <p>These product listings and beer-style ranges inform practical defaults; they are not a survey of every mug or beer served at Oktoberfest.</p>
           </article>
-
+          <article class="source-card biomechanics-explainer">
+            <h3>03 &nbsp; The biomechanics estimate</h3>
+            <p>The model keeps the forearm near horizontal as the upper arm swings, with the elbow adjusting to keep the steins level. For this estimate, hand counts are split as evenly as possible; an odd extra stein goes to one hand, though real carries may be more uneven. Estimates combine the calculator's load range with broad adult arm-size assumptions (60–80 kg body mass); the bounds are not statistical confidence intervals. They report net external joint moments, not muscle or tendon force; those require additional anatomy and muscle-sharing assumptions.</p>
+            <a class="biomechanics-link" href="https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md">Full methods, assumptions, sources, and limitations →</a>
+          </article>
         </div>
       </section>
       <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span><a class="footer-github" href="https://github.com/luxifr/hmdsc">GitHub repository</a><details class="analytics-privacy"><summary>ANALYTICS &amp; PRIVACY</summary><div><p>We use GoatCounter to count visits and two fixed events: <code>calculator_used</code> and <code>share_clicked</code>. The enabled reports include sessions, browser and operating-system categories derived from your browser’s User-Agent, screen width, and country-level location inferred from your IP address. We send the referring page URL reported by your browser; depending on the referring site and browser policy, it may include URL details such as a path or query string. For this site's URL, GoatCounter receives only the page path: calculator values, query strings, and URL fragments are not sent.</p><p>GoatCounter says it temporarily holds the site, IP address, and User-Agent combination in memory for up to eight hours to recognize repeat visits. It says raw IP addresses and full User-Agent strings are not stored in its analytics database. Its tracker does not use cookies or browser storage. <a href="https://www.goatcounter.com/help/privacy">GoatCounter privacy details</a>.</p></div></details></footer>
