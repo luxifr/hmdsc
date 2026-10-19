@@ -425,11 +425,14 @@ test('beer density switches units and preserves its value', async ({ page }) => 
   await expect(page.locator('#beer-equation')).toContainText('0.950 kg/L');
 });
 
-test('reset restores defaults and clears the scenario URL', async ({ page }) => {
+test('reset restores defaults and clears the scenario URL inside fine-tune assumptions', async ({ page }) => {
   await page.goto('/?count=8');
   await expect(page.locator('#stein-count')).toHaveValue('8');
-
-  await page.getByRole('button', { name: /reset defaults/i }).click();
+  const reset = page.getByRole('button', { name: /reset defaults/i });
+  await expect(reset).toBeHidden();
+  await page.getByText('Fine-tune the assumptions').click();
+  await expect(reset).toBeVisible();
+  await reset.click();
   await expect(page.locator('#stein-count')).toHaveValue('12');
   await expect(page.locator('#total')).toHaveText('26.7');
   await expect(page).toHaveURL(/\/$/);
