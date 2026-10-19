@@ -64,7 +64,7 @@ button {
   font-family: var(--serif);
   font-size: 17px;
 }
-.top-note,.eyebrow,.scroll-link,.unit-switch,.result-label,.confidence-tag,.break-label,.range-labels,.form-actions,.art-footnote,footer {
+.top-note,.eyebrow,.scroll-link,.unit-switch,.result-label,.break-label,.form-actions,.art-footnote,footer {
   font-family: var(--mono);
   font-size: 9px;
   letter-spacing: .11em;
@@ -75,7 +75,7 @@ button {
   gap: 9px;
   color: #b0a999;
 }
-.live-dot,.confidence-tag span {
+.live-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -615,14 +615,6 @@ h1 em,h2 em {
 .fill-slider:focus-within .fill-stein {
   filter: drop-shadow(0 0 3px #e1bd6b80);
 }
-.range-labels {
-  grid-column: 1/-1;
-  display: flex;
-  justify-content: space-between;
-  color: #827b6f;
-  font-size: 8px;
-  letter-spacing: 0;
-}
 .input-with-unit {
   display: flex;
   align-items: center;
@@ -767,17 +759,6 @@ h1 em,h2 em {
 }
 .result-label {
   color: #a9a190;
-}
-.confidence-tag {
-  color: #a9a190;
-  font-size: 8px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.confidence-tag span {
-  width: 5px;
-  height: 5px;
 }
 .total-line {
   display: flex;
@@ -989,41 +970,16 @@ h1 em,h2 em {
   font-size: 13px;
   color: var(--gold-pale);
 }
-.caveat {
-  display: flex;
-  gap: 11px;
-  margin: 19px 0 0;
-  color: #968e7e;
-  font-size: 11px;
-  line-height: 1.7;
-}
-.caveat span {
-  color: var(--gold);
-}
-.assumption-note {
-  margin: 14px 0 0;
-  color: #7c7569;
-  font-size: 9px;
-  line-height: 1.7;
-}
-.assumption-note a {
-  color: #b9a77d;
-}
-.sources-link {
-  margin: 15px 0 0;
-  font-size: 11px;
-  line-height: 1.6;
-}
-.sources-link a,.source-card a {
+.source-card a {
   color: var(--gold-pale);
   text-decoration-color: #e3b85f66;
   text-underline-offset: 3px;
 }
-.sources-link a:hover,.source-card a:hover {
+.source-card a:hover {
   color: #fff;
   text-decoration-color: currentColor;
 }
-.sources-link a:focus-visible,.source-card a:focus-visible {
+.source-card a:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 4px;
 }
@@ -1061,9 +1017,6 @@ h1 em,h2 em {
   padding: 23px 25px;
   border: 1px solid var(--line);
   background: linear-gradient(145deg,#211e19,#1c1915);
-}
-.source-card-wide {
-  grid-column: 1/-1;
 }
 .source-card h3 {
   margin: 0 0 14px;
@@ -1353,9 +1306,6 @@ footer {
     grid-template-columns: minmax(0,1fr);
     gap: 12px;
   }
-  .source-card-wide {
-    grid-column: auto;
-  }
   .source-card {
     padding: 20px;
   }
@@ -1409,9 +1359,6 @@ footer {
   }
   .section-heading h2 {
     font-size: 31px;
-  }
-  .confidence-tag {
-    font-size: 7px;
   }
   .top-note {
     letter-spacing: .04em;
