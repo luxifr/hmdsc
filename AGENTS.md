@@ -63,25 +63,14 @@ conventional commit message unless you've already done the commit yourself.
 
 ### Autonomy
 
-When I'm asking you to implement something, I want you to:
+When I'm asking you to implement one or more things, for each thing individually
+I want you to:
 
 - branch off the current commit with a meaningful branch name
 - automatically commit your changes to this branch
 - iterate on this branch only for the same task
 - update all applicable documentation, too
-- switch back to the original branch afterwards
-
-Whem I'm asking you to implement multiple, independent things, then implement
-them in separate branches.
-
-Afterwards check if all your current feature branches can be merged safely back
-into their base branch. If yes, do so, else make me aware of it and propose a
-solution.
-
-If the worktree is clean and all tests pass, you're allowed to merge back into
-`main` without my explicit consent. Exception: if I asked you to make changes
-that affect the visual presentation of the resulting artifact, in which case ask
-me to confirm that the result matches my intent.
-
-Make sure to also switch to the branch base if you worked on more than one
-branch in one go.
+- if a change has no direct effect on the UX, the worktree is clean, and all
+  tests pass, you're allowed to merge back into main autonomously
+- if a change does have an effect on the UX, ask me to approve those changes
+  before merging
