@@ -17,12 +17,10 @@ deployment build are development-only.
    and representative tray weight with the same rigor as the beer and glass
    assumptions, then incorporate the option into the estimate.
 3. [x] Add a live summary of hand-carried stein biomechanics after the maths
-   section. It applies the specified two-hand count split, assigning an odd
-   extra stein to one hand, and updates per-hand load and simplified
-   elbow/shoulder moments from calculator inputs. The methods explanation and
-   full research link live in their own box in the sources section. The existing
-   weight total remains authoritative; biomechanical values are estimates, not
-   a safety assessment.
+   section. It splits the count across two hands, assigning an odd extra stein
+   to the heavier hand, and shows that hand's load, one elbow-moment range, and
+   the shoulder-moment range across the modeled swing. The methods explanation
+   and full research link live in their own box in the sources section.
 4. [x] Add a dedicated sources and model-rationale section to the page. Explain
    why the calculator and biomechanics model use their chosen assumptions, how
    the simplified mechanics and energy estimates are derived, which sources

@@ -93,7 +93,6 @@
               <div class="biomechanics-result" aria-label="Simplified joint moment estimates">
                 <span class="break-label" id="result-biomechanics-hand">Heavier hand · —/— steins</span>
                 <span aria-label="Elbow joint moment">Elbow <strong id="result-elbow-moment">—</strong> N·m</span>
-                <span aria-label="Neutral shoulder joint moment">Shoulder <strong id="result-shoulder-moment">—</strong> N·m</span>
                 <span aria-label="Shoulder joint moment across the modeled swing">Shoulder swing ±25° <strong id="result-shoulder-swing">—</strong> N·m</span>
               </div>
               <div class="visualizer" id="visualizer" role="img" aria-label="Illustration of the steins being carried"></div>
@@ -130,35 +129,15 @@
       <section class="biomechanics-section" id="biomechanics" aria-labelledby="biomechanics-title">
         <div class="biomechanics-heading">
           <p class="eyebrow"><span>04</span> &nbsp; THE HUMAN MECHANICS</p>
-          <h2 id="biomechanics-title">What the load asks<br /><em>of each arm.</em></h2>
-          <p>These are simplified external joint-moment estimates for holding the calculated load—not measurements of a server or a safety assessment.</p>
+          <h2 id="biomechanics-title">What one arm<br /><em>holds.</em></h2>
+          <p>Load and joint-moment estimates for the heavier hand.</p>
         </div>
         <div class="biomechanics-content">
-          <div class="biomechanics-hands">
-            <article class="biomechanics-hand">
-              <span>HEAVIER HAND</span>
-              <strong id="biomechanics-heavy-count">— steins</strong>
-              <p id="biomechanics-heavy-load">—</p>
-            </article>
-            <article class="biomechanics-hand">
-              <span>LIGHTER HAND</span>
-              <strong id="biomechanics-light-count">— steins</strong>
-              <p id="biomechanics-light-load">—</p>
-            </article>
-          </div>
-          <div class="biomechanics-table-wrap">
-            <h3 id="biomechanics-moment-heading">Joint moments · higher-load hand</h3>
-            <table class="biomechanics-table">
-              <thead><tr><th scope="col">Shoulder swing</th><th scope="col">Elbow moment</th><th scope="col">Shoulder moment</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">−25° · elbow ~115°</th><td id="biomechanics-elbow-minus">—</td><td id="biomechanics-shoulder-minus">—</td></tr>
-                <tr><th scope="row">0° · elbow ~90°</th><td id="biomechanics-elbow-neutral">—</td><td id="biomechanics-shoulder-neutral">—</td></tr>
-                <tr><th scope="row">+25° · elbow ~65°</th><td id="biomechanics-elbow-plus">—</td><td id="biomechanics-shoulder-plus">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="biomechanics-grip" id="biomechanics-grip">Grip geometry estimate: —</p>
-          <p class="biomechanics-caveat" id="biomechanics-extrapolation">—</p>
+          <p class="biomechanics-hand-load"><strong id="biomechanics-heavy-count">— steins</strong><span id="biomechanics-heavy-load">—</span></p>
+          <dl class="biomechanics-moments">
+            <div><dt>Elbow moment</dt><dd id="biomechanics-elbow">—</dd></div>
+            <div><dt>Shoulder across ±25° swing</dt><dd id="biomechanics-shoulder-swing">—</dd></div>
+          </dl>
         </div>
       </section>
 
@@ -166,7 +145,7 @@
         <div class="sources-heading">
           <p class="eyebrow"><span>05</span> &nbsp; SOURCES &amp; MODEL RATIONALE</p>
           <h2 id="sources-title">How the estimate<br /><em>comes together.</em></h2>
-          <p>The calculator estimates beer and glassware mass. Separate biomechanical estimates describe simplified external joint moments; they are not part of the mass total or a safety assessment.</p>
+          <p>The calculator estimates beer and glassware mass. The arm-load estimates below are shown separately and do not affect the mass total.</p>
         </div>
         <div class="sources-grid">
           <article class="source-card">
@@ -187,7 +166,7 @@
           </article>
           <article class="source-card biomechanics-explainer">
             <h3>03 &nbsp; The biomechanics estimate</h3>
-            <p>The model keeps the forearm near horizontal as the upper arm swings, with the elbow adjusting to keep the steins level. For this estimate, hand counts are split as evenly as possible; an odd extra stein goes to one hand, though real carries may be more uneven. Estimates combine the calculator's load range with broad adult arm-size assumptions (60–80 kg body mass); the bounds are not statistical confidence intervals. They report net external joint moments, not muscle or tendon force; those require additional anatomy and muscle-sharing assumptions.</p>
+            <p>The count is split as evenly as possible, with an odd extra stein on the heavier hand. The forearm stays level as the upper arm swings ±25°, so elbow moment stays constant while shoulder moment changes. The combined load is treated as centered over the grip.</p>
             <a class="biomechanics-link" href="https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md">Full methods, assumptions, sources, and limitations →</a>
           </article>
         </div>

@@ -12,38 +12,35 @@ export function handSplit(count) {
 }
 
 export function momentRanges(state, load) {
-  const [heavierHand, lighterHand] = handSplit(state.count);
+  const [steinCount] = handSplit(state.count);
   const perSteinLowKg = load.lowKg / state.count;
   const perSteinHighKg = load.highKg / state.count;
-  const hands = [heavierHand, lighterHand].map((steinCount) => {
-    if (!steinCount) return { steinCount, loadLowKg: 0, loadHighKg: 0, elbow: null, shoulders: [], grip: null };
-    const loads = [steinCount * perSteinLowKg, steinCount * perSteinHighKg];
-    const elbow = [];
-    const shoulders = SHOULDER_ANGLES.map((angle) => ({ angle, values: [] }));
-    for (const bodyMass of BODY_MASSES) {
-      for (const upperArmLength of UPPER_ARM_LENGTHS) {
-        for (const forearmLength of FOREARM_LENGTHS) {
-          for (const upperArmFraction of UPPER_ARM_FRACTIONS) {
-            for (const forearmFraction of FOREARM_FRACTIONS) {
-              for (const handFraction of HAND_FRACTIONS) {
-                const upperArmMass = bodyMass * upperArmFraction;
-                const forearmMass = bodyMass * forearmFraction;
-                const handMass = bodyMass * handFraction;
-                for (const loadKg of loads) {
-                  const loadN = loadKg * GRAVITY;
-                  elbow.push(loadN * forearmLength + forearmMass * GRAVITY * forearmLength / 2 + handMass * GRAVITY * forearmLength);
-                  for (const shoulder of shoulders) {
-                    const shoulderAngle = shoulder.angle * Math.PI / 180;
-                    const forearmAngle = Math.PI / 2;
-                    const upperArmLever = upperArmLength * Math.sin(shoulderAngle);
-                    const forearmLever = upperArmLever + forearmLength * Math.sin(forearmAngle);
-                    shoulder.values.push(Math.abs(
-                      loadN * forearmLever
-                      + upperArmMass * GRAVITY * upperArmLever / 2
-                      + forearmMass * GRAVITY * (upperArmLever + forearmLength / 2 * Math.sin(forearmAngle))
-                      + handMass * GRAVITY * forearmLever
-                    ));
-                  }
+  const loads = [steinCount * perSteinLowKg, steinCount * perSteinHighKg];
+  const elbow = [];
+  const shoulders = SHOULDER_ANGLES.map((angle) => ({ angle, values: [] }));
+
+  for (const bodyMass of BODY_MASSES) {
+    for (const upperArmLength of UPPER_ARM_LENGTHS) {
+      for (const forearmLength of FOREARM_LENGTHS) {
+        for (const upperArmFraction of UPPER_ARM_FRACTIONS) {
+          for (const forearmFraction of FOREARM_FRACTIONS) {
+            for (const handFraction of HAND_FRACTIONS) {
+              const upperArmMass = bodyMass * upperArmFraction;
+              const forearmMass = bodyMass * forearmFraction;
+              const handMass = bodyMass * handFraction;
+              for (const loadKg of loads) {
+                const loadN = loadKg * GRAVITY;
+                elbow.push(loadN * forearmLength + forearmMass * GRAVITY * forearmLength / 2 + handMass * GRAVITY * forearmLength);
+                for (const shoulder of shoulders) {
+                  const shoulderAngle = shoulder.angle * Math.PI / 180;
+                  const upperArmLever = upperArmLength * Math.sin(shoulderAngle);
+                  const forearmLever = upperArmLever + forearmLength;
+                  shoulder.values.push(Math.abs(
+                    loadN * forearmLever
+                    + upperArmMass * GRAVITY * upperArmLever / 2
+                    + forearmMass * GRAVITY * (upperArmLever + forearmLength / 2)
+                    + handMass * GRAVITY * forearmLever
+                  ));
                 }
               }
             }
@@ -51,18 +48,16 @@ export function momentRanges(state, load) {
         }
       }
     }
-    const bounds = (values) => ({ low: Math.min(...values), high: Math.max(...values) });
-    const grip = steinCount === 1
-      ? { low: loads[0] * GRAVITY * 0.06, high: loads[1] * GRAVITY * 0.08 }
-      : steinCount <= 6 ? { low: 0, high: 0 } : null;
-    return {
+  }
+
+  const bounds = (values) => ({ low: Math.min(...values), high: Math.max(...values) });
+  return {
+    heavierHand: {
       steinCount,
       loadLowKg: loads[0],
       loadHighKg: loads[1],
       elbow: bounds(elbow),
       shoulders: shoulders.map(({ angle, values }) => ({ angle, ...bounds(values) })),
-      grip,
-    };
-  });
-  return { heavierHand: hands[0], lighterHand: hands[1] };
+    },
+  };
 }

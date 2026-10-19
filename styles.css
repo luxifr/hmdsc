@@ -901,82 +901,50 @@ h1 em,h2 em {
   font-size: 44px;
   line-height: 1.08;
 }
-.biomechanics-heading > p:last-child,.biomechanics-grip,.biomechanics-caveat {
+.biomechanics-heading > p:last-child {
+  margin: 19px 0 0;
   color: #a9a190;
   font-size: 12px;
   line-height: 1.75;
 }
-.biomechanics-heading > p:last-child {
-  margin: 19px 0 0;
-}
 .biomechanics-content {
   min-width: 0;
 }
-.biomechanics-hands {
-  display: grid;
-  grid-template-columns: repeat(2,minmax(0,1fr));
+.biomechanics-hand-load {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   gap: 12px;
-  margin-bottom: 22px;
+  margin: 0 0 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
 }
-.biomechanics-hand {
-  padding: 15px;
-  border: 1px solid var(--line);
-  background: #ffffff06;
-}
-.biomechanics-hand span,.biomechanics-hand strong {
-  display: block;
-}
-.biomechanics-hand span {
-  color: #a9a190;
-  font-family: var(--mono);
-  font-size: 8px;
-}
-.biomechanics-hand strong {
-  margin-top: 7px;
+.biomechanics-hand-load strong {
   color: var(--gold-pale);
   font-size: 17px;
 }
-.biomechanics-hand p {
-  margin: 5px 0 0;
+.biomechanics-hand-load span {
   color: #b2aa99;
   font-size: 12px;
 }
-.biomechanics-table-wrap {
-  overflow-x: auto;
+.biomechanics-moments {
+  display: grid;
+  gap: 12px;
+  margin: 0;
 }
-.biomechanics-table-wrap h3 {
-  margin: 0 0 10px;
-  color: #e8dfcf;
-  font-size: 14px;
-}
-.biomechanics-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
-  text-align: left;
-}
-.biomechanics-table th,.biomechanics-table td {
-  padding: 9px 7px;
-  border-bottom: 1px solid var(--line);
-}
-.biomechanics-table thead th {
+.biomechanics-moments div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
   color: #a9a190;
-  font-weight: 500;
+  font-size: 12px;
 }
-.biomechanics-table tbody th {
-  color: #d3c5a5;
-  font-weight: 400;
-}
-.biomechanics-table td {
+.biomechanics-moments dd {
+  margin: 0;
   color: var(--gold-pale);
   font-family: var(--mono);
+  font-size: 12px;
   white-space: nowrap;
-}
-.biomechanics-grip,.biomechanics-caveat {
-  margin: 14px 0 0;
-}
-.biomechanics-caveat {
-  color: #d3c5a5;
 }
 .biomechanics-link {
   display: inline-block;

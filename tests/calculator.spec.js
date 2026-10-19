@@ -178,7 +178,7 @@ test('result breakdown is left-aligned without dividers and biomechanics labels 
     expect(layout.momentLabelStyle).toEqual(layout.firstLabelStyle);
   }
   await expect(page.locator('.result-divider')).toHaveCount(0);
-  await expect(page.locator('#result-biomechanics-hand')).toContainText('Each hand');
+  await expect(page.locator('#result-biomechanics-hand')).toContainText('Heavier hand');
   await expect(page.locator('.biomechanics-result')).toContainText('Elbow');
   await expect(page.locator('.biomechanics-result')).toContainText('Shoulder');
   await expect(page.locator('.biomechanics-result')).toContainText('Shoulder swing ±25°');
@@ -284,28 +284,25 @@ test('biomechanics estimates update with uneven hand counts, units, and the exis
   await expect(section.locator('.biomechanics-note')).toHaveCount(0);
   await expect(section.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveCount(0);
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('6 steins');
-  await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
-  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Each hand · 6/6 steins');
-
+  await expect(section.locator('#biomechanics-heavy-load')).toContainText('kg');
+  await expect(section.locator('#biomechanics-light-count, #biomechanics-grip')).toHaveCount(0);
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Heavier hand · 6 steins');
   await page.locator('#stein-count').fill('13');
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('7 steins');
-  await expect(section.locator('#biomechanics-light-count')).toHaveText('6 steins');
-  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Heavier hand · 7/6 steins');
-  const elbowMoment = await section.locator('#biomechanics-elbow-neutral').textContent();
+  await expect(page.locator('#result-biomechanics-hand')).toHaveText('Heavier hand · 7 steins');
+  const elbowMoment = await section.locator('#biomechanics-elbow').textContent();
+  const shoulderAtThirteen = await section.locator('#biomechanics-shoulder-swing').textContent();
   await page.getByRole('button', { name: 'IMPERIAL' }).click();
   await expect(section.locator('#biomechanics-heavy-load')).toContainText('lb');
-  await expect(section.locator('#biomechanics-elbow-neutral')).toHaveText(elbowMoment);
-  await expect(section.locator('#biomechanics-extrapolation')).toContainText('extrapolate');
+  await expect(section.locator('#biomechanics-elbow')).toHaveText(elbowMoment);
+  await expect(section.locator('#biomechanics-shoulder-swing')).toHaveText(shoulderAtThirteen);
 
   await page.locator('#stein-count').fill('40');
   await expect(section.locator('#biomechanics-heavy-count')).toHaveText('20 steins');
-  await expect(section.locator('#biomechanics-light-count')).toHaveText('20 steins');
-  await expect(section.locator('#biomechanics-grip')).toContainText('no wrist-offset estimate');
+  await expect(section.locator('#biomechanics-elbow')).not.toHaveText(elbowMoment);
 
   await page.goto('/?count=1');
   await expect(page.locator('#biomechanics-heavy-count')).toHaveText('1 stein');
-  await expect(page.locator('#biomechanics-light-count')).toHaveText('0 steins');
-  await expect(page.locator('#biomechanics-grip')).toContainText('wrist eccentricity');
 });
 
 test('hero stein has beer and foam bubbles matching the fill control', async ({ page }) => {
@@ -989,8 +986,9 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(section.locator('.source-card')).toHaveCount(3);
   const biomechanicsExplainer = section.locator('.biomechanics-explainer');
   await expect(biomechanicsExplainer.getByRole('heading', { name: /The biomechanics estimate/ })).toBeVisible();
-  await expect(biomechanicsExplainer).toContainText('real carries may be more uneven');
-  await expect(biomechanicsExplainer).toContainText('not muscle or tendon force');
+  await expect(biomechanicsExplainer).toContainText('elbow moment stays constant');
+  await expect(biomechanicsExplainer).toContainText('centered over the grip');
+  await expect(biomechanicsExplainer).not.toContainText('safety assessment');
   await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/BIOMECHANICS.md');
   const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((section) => section.id || section.className));
   expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('biomechanics'));

@@ -89,13 +89,11 @@ At the wrist, take the bundle's combined load line to pass near the central grip
 
 ## Live calculator estimate
 
-The page divides the calculator's stein count as evenly as possible between two hands; for an odd count, the extra stein is assigned to one hand. This is a display assumption, not a claim that servers always distribute loads this way. Each hand's low and high load uses the calculator's per-stein mass range. The joint-moment bounds combine that load range with the body-mass, segment-length, and segment-mass ranges above; they are corner-case model bounds, not statistical confidence intervals.
+The page splits the stein count as evenly as possible between two hands and assigns an odd extra stein to the heavier hand. It shows that hand's stein count and load range. The joint-moment bounds combine the load range with the body-mass, segment-length, and segment-mass ranges above.
 
-The live elbow/shoulder table uses the three primary postures in the joint-moment table. It includes the arm's own segment weights and the stein load. The forearm is held horizontal as shoulder swing changes, with the elbow compensating. The result card also summarizes the heavier hand at neutral and the shoulder range across the modeled swing.
+The arm-load summary shows one elbow-moment range and the shoulder-moment range across the modeled ±25° swing. The forearm stays horizontal as the shoulder swings, so elbow moment remains constant while shoulder moment changes. The model includes the arm's segment weights and treats the combined stein load as centered over the grip; it does not display a separate wrist moment.
 
-The calculator allows up to 40 steins, so the live load and joint-moment formulas continue to 20 steins per hand without adding a new cap. This is a mathematical extrapolation of the static lever model beyond the six-steins-per-hand reference case; it is not biomechanically validated for larger loads or real carrying technique. Grip geometry is estimated only for a single stein (6–8 cm eccentricity) or for symmetrically regrouped rings of two through six steins. Above six per hand, the cluster shape and wrist offset are left unestimated.
-
-For a single stein on either hand, the displayed eccentric wrist moment is that hand's stein weight multiplied by the estimated 6–8 cm handle-to-center-of-mass offset. For two through six steins, the displayed near-zero wrist moment assumes a symmetric regrouped ring. An uneven/asymmetric arrangement can produce a nonzero wrist moment; exact individual arrangements are not inferred from the total count.
+The calculator allows up to 40 steins, so the displayed load and joint-moment equations continue to 20 steins on the heavier hand, without an additional cap. The model's shoulder angles and arm-segment dimensions remain the same throughout that range.
 
 ## Main tissues involved
 
