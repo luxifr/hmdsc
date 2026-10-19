@@ -74,3 +74,5 @@ I want you to:
   tests pass, you're allowed to merge back into main autonomously
 - if a change does have an effect on the UX, ask me to approve those changes
   before merging
+- do not switch back to the merge base until you know the work on your branch is
+  complete - that includes getting my confirmation about the result
