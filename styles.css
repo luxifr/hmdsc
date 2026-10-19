@@ -314,26 +314,24 @@ h1 em,h2 em {
 .workspace {
   max-width: 1120px;
   margin: auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  grid-template-areas: "primary result" "secondary result";
-  gap: 24px;
-  align-items: stretch;
 }
 .controls {
-  display: contents;
+  display: flow-root;
 }
 .primary-controls {
-  grid-area: primary;
-  margin-right: 28px;
+  float: left;
+  width: calc(50% - 12px);
+  margin-right: 0;
 }
 .secondary-controls {
-  grid-area: secondary;
-  margin-right: 28px;
+  float: left;
+  clear: left;
+  width: calc(50% - 12px);
+  margin-right: 0;
 }
 .result-card {
-  grid-area: result;
+  float: right;
+  width: calc(50% - 12px);
 }
 .primary-controls {
   display: grid;
@@ -1193,9 +1191,6 @@ footer {
   .calculator-section {
     padding-inline: 5vw;
   }
-  .workspace {
-    gap: 18px;
-  }
   .primary-controls,.secondary-controls {
     margin-right: 12px;
   }
@@ -1291,14 +1286,25 @@ footer {
     font-size: 11px;
   }
   .workspace {
+    display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
     grid-template-areas: "primary" "result" "secondary";
     gap: 20px;
   }
+  .controls {
+    display: contents;
+  }
   .primary-controls,.secondary-controls {
+    float: none;
+    clear: none;
+    width: auto;
     margin: 0;
     padding-right: 0;
+  }
+  .result-card {
+    float: none;
+    width: auto;
   }
   .primary-controls {
     grid-template-columns: 76px auto auto;
