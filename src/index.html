@@ -146,7 +146,7 @@
             <p>Beer mass is stein count × beer volume × fill fraction × beer density. Glass mass is stein count × empty-glass mass. The total is their sum; tray weight and movement are not included.</p>
             <p class="source-equation">Total load = beer mass + glass mass</p>
             <p>Defaults use ±0.05 kg per glass and ±0.002 kg/L beer density. For each stein, the calculator adds the glass uncertainty to the density uncertainty converted by beer volume × fill level, then sums that margin across the steins. This is a conservative scenario range, not a statistical confidence interval.</p>
-            <a class="source-detail-link" href="https://github.com/luxifr/hmdsc/blob/main/docs/MODEL.md">Read the full calculator model and assumptions →</a>
+            <button class="source-detail-link document-link-button" type="button" data-open-document="model" aria-haspopup="dialog" aria-controls="source-document-dialog">Read the full calculator model and assumptions →</button>
           </article>
           <article class="source-card">
             <h3>02 &nbsp; Why these defaults?</h3>
@@ -160,12 +160,153 @@
           <article class="source-card biomechanics-explainer">
             <h3>03 &nbsp; The biomechanics estimate</h3>
             <p>The count is split as evenly as possible, with an odd extra stein on the heavier hand. The forearm stays level as the upper arm swings ±25°, so elbow moment stays constant while shoulder moment changes. The combined load is treated as centered over the grip.</p>
-            <a class="biomechanics-link" href="https://github.com/luxifr/hmdsc/blob/main/docs/BIOMECHANICS.md">Full methods, assumptions, sources, and limitations →</a>
+            <button class="biomechanics-link document-link-button" type="button" data-open-document="biomechanics" aria-haspopup="dialog" aria-controls="source-document-dialog">Full methods, assumptions, sources, and limitations →</button>
           </article>
         </div>
       </section>
       <footer><span>MADE FOR THE LOVE OF THE MATH.</span><span>ONE MAẞ = ONE LITRE (MORE OR LESS).</span><details class="analytics-privacy"><summary>ANALYTICS &amp; PRIVACY</summary><div><p>We use GoatCounter to count visits and two fixed events: <code>calculator_used</code> and <code>share_clicked</code>. The enabled reports include sessions, browser and operating-system categories derived from your browser’s User-Agent, screen width, and country-level location inferred from your IP address. We send the referring page URL reported by your browser; depending on the referring site and browser policy, it may include URL details such as a path or query string. For this site's URL, GoatCounter receives only the page path: calculator values, query strings, and URL fragments are not sent.</p><p>GoatCounter says it temporarily holds the site, IP address, and User-Agent combination in memory for up to eight hours to recognize repeat visits. It says raw IP addresses and full User-Agent strings are not stored in its analytics database. Its tracker does not use cookies or browser storage. <a href="https://www.goatcounter.com/help/privacy">GoatCounter privacy details</a>.</p></div></details></footer>
     </main>
+    <dialog class="source-document-dialog" id="source-document-dialog" aria-labelledby="source-document-title">
+      <div class="source-document-header">
+        <div>
+          <p class="source-document-kicker">SOURCE DOCUMENT</p>
+          <h2 class="source-document-title" id="source-document-title" tabindex="-1"></h2>
+        </div>
+        <button class="source-document-close" id="source-document-close" type="button" aria-label="Close source document"><span aria-hidden="true">×</span></button>
+      </div>
+      <div class="source-document-content" id="source-document-content"></div>
+    </dialog>
+    <template data-source-document="model" data-title="Model, assumptions, and sources">
+      <p>This document describes the calculator's mass estimate, its defaults, and the references behind them. The separate <button class="document-link-button" type="button" data-open-document="biomechanics" aria-haspopup="dialog">biomechanics research note</button> describes the simplified hand-carry moment and energy estimates.</p>
+      <h3>Calculator model</h3>
+      <p>The calculator estimates the contents and glassware load:</p>
+      <pre><code>beer mass  = stein count × beer volume × fill fraction × beer density
+glass mass = stein count × empty-glass mass
+total load = beer mass + glass mass</code></pre>
+      <p>The default scenario is 12 one-litre Maßkrüge filled to 90%. Beer density and empty-glass mass can be adjusted. The displayed uncertainty is a conservative scenario range: glass-weight uncertainty is added to the beer-density uncertainty converted to mass across the steins. It is not a statistical confidence interval.</p>
+      <h4>Defaults and rationale</h4>
+      <ul>
+        <li><strong>Beer density: 1.010 kg/L.</strong> This is the midpoint of an estimated 1.008–1.012 kg/L range. BJCP final-gravity ranges for Festbier and Märzen inform the beer gravity; specific gravity is density relative to water, and water density at 20 °C is about 0.998 kg/L. The default density uncertainty is <strong>±0.002 kg/L</strong> (±2 g/L or about ±0.017 lb/US gal).</li>
+        <li><strong>Empty glass mass: 1.32 kg.</strong> This is the midpoint of comparable 1 L glass Maßkrüge listed at about 1.27–1.37 kg. The default uncertainty is <strong>±0.05 kg</strong> (±50 g or about ±0.110 lb).</li>
+        <li><strong>Fill: 90%.</strong> A practical, adjustable scenario assumption, not a claim that every served stein has this fill level.</li>
+      </ul>
+      <p>Tray weight, motion, and grip forces are not included in the calculator's total. The page separately displays simplified elbow and shoulder joint-moment estimates for the heavier hand; these do not change the mass total. Energy estimates remain explanatory only. See <button class="document-link-button" type="button" data-open-document="biomechanics" aria-haspopup="dialog">BIOMECHANICS.md</button>.</p>
+      <h3>Calculator behavior</h3>
+      <p>Metric/imperial display, adjustable assumptions, and shareable scenario URLs are provided without runtime dependencies. Scenario inputs are shared through the URL; they are not saved on the device. Unit switches and share links preserve the underlying scenario values for calculations while formatting displayed input values to at most three decimal places. Beer density is shown in g/L in metric and lb/US gal in imperial; switching units preserves the underlying density.</p>
+      <h3>Sources</h3>
+      <ul>
+        <li>BJCP, <a href="https://styles.bjcp.org/bjcp-2021-beer/4/4b-festbier">4B. Festbier</a> and <a href="https://styles.bjcp.org/bjcp-2021-beer/6/6a-marzen">6A. Märzen</a>: final-gravity ranges and style context for current Oktoberfest beer and Märzen.</li>
+        <li>BYO, <a href="https://byo.com/articles/calculating-alcohol/">Calculating Alcohol Content, Attenuation, Extract, and Calories</a>: specific gravity as density relative to water and explanation of beer gravity readings.</li>
+        <li>Engineering ToolBox, <a href="https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html">Water Density, Specific Weight and Thermal Expansion</a>: water density at 20 °C.</li>
+        <li>Atrium Hotel, <a href="https://www.atrium-hotel.de/en/a-mass-faq-and-interesting-facts-about-the-popular-gift-mass/">A Maß - FAQ and interesting facts</a>: Oktoberfest beer mugs are glass and approximate empty Maß weight.</li>
+        <li>Trinklusiv, <a href="https://trinklusiv.at/products/paulaner-masskrug-glas-1l">Paulaner Maßkrug Glas 1L</a>: 1.27 kg product weight.</li>
+        <li>Privatbrauerei Schweiger, <a href="https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/">Isar Maßkrug 1 L</a>: 1.35 kg product weight.</li>
+        <li>Geschirr24, <a href="https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html">Stölzle Oberglas Isar 1 L Maßkrug</a>: 1.367 kg product weight, used as upper end rounded to 1.37 kg.</li>
+      </ul>
+    </template>
+    <template data-source-document="biomechanics" data-title="Hand-carried steins: simplified biomechanics and energy estimate">
+      <h3>Evidence limits and modeling choices</h3>
+      <p>There are no published measurements here of servers carrying six steins in one hand, their joint angles, or hand forces. This is therefore a <strong>simplified lever model</strong>, based on the carrying arrangement you described—six steins in a circle, handles inward, optionally a seventh supported on the handles. Product dimensions inform the bundle geometry; joint angles and segment lengths are explicit modeling assumptions.</p>
+      <p>The neutral posture is the upper arm hanging vertically down, with the shoulder at 0° and the elbow bent about 90°. During transport, the model allows the upper arm to swing at most 25° forward or backward. The elbow does most of the adjustment so the forearm and grip stay near their carrying orientation and the steins remain level. The primary comparison holds the forearm about horizontal; a ±10° deviation is used as a small sensitivity case. Results are external gravitational moments, not clinical estimates of individual muscle or tendon force.</p>
+      <h3>Reference load</h3>
+      <p>Using the calculator defaults (one 1 L stein, 90% fill, beer density 1.010 kg/L, empty-glass mass 1.32 kg):</p>
+      <ul>
+        <li>Beer per stein: <code>1 L × 0.90 × 1.010 kg/L = 0.909 kg</code>.</li>
+        <li>Filled stein: <code>0.909 + 1.32 = 2.229 kg</code>, or about <strong>21.9 N</strong> under gravity (<code>mass × 9.81 m/s²</code>).</li>
+        <li>Six steins per hand: <code>6 × 2.229 = 13.374 kg</code>, or about <strong>131 N per arm</strong>.</li>
+        <li>Twelve steins total: <strong>26.748 kg (59.0 lb)</strong>, or about <strong>262 N</strong> total gravitational load.</li>
+      </ul>
+      <p>A seventh stein on top adds about <strong>21.9 N</strong> to that hand's load (about 153 N for seven full-default steins). These numbers scale directly with fill, beer density, glass mass, and stein count.</p>
+      <h3>Cluster geometry and keeping the steins level</h3>
+      <p>A 1 L Paulaner Maßkrug listing gives approximately <strong>20 cm height and 10.5 cm body diameter</strong>; another Isar Maßkrug listing gives <strong>20.2 cm height and 10.9 cm diameter</strong>. A Schweiger listing gives overall dimensions of <strong>15.5 × 20 cm</strong>. Treating 15.5 cm as body diameter plus handle projection suggests a grasp point roughly <strong>6–8 cm from the mug's center</strong>. This is estimated from product dimensions, not a measured grip location.</p>
+      <p>For six mugs packed in a ring with their bodies approximately tangent, mug centers sit about one body diameter (<strong>10.5–10.9 cm</strong>) from the bundle center. With handles facing inward, the grasp regions meet around the central opening. The six individual weight offsets cancel in a symmetric, evenly filled ring, leaving the combined center of mass at the bundle center.</p>
+      <p>Fewer steins do <strong>not automatically mean worse cancellation</strong>. If the steins are regrouped symmetrically with their handles meeting at the grip, their centers still balance: two opposite steins balance; three can form a triangle, four a square, and so on. For tangent 10.7 cm-diameter mugs, the mug-center radius is <code>r = d / (2 sin(π/n))</code>, giving 5.4 cm (2), 6.2 cm (3), 7.6 cm (4), 9.1 cm (5), and 10.7 cm (6); the radial offsets still sum to zero. The one-stein case is different: holding it by its handle places its center of mass about 6–8 cm from the grip, giving roughly <strong>1.3–1.8 N·m</strong> of eccentric moment for one filled default stein.</p>
+      <p>If the server simply removes some steins from a six-steins-in-a-ring cluster and keeps the same grip point, rather than rearranging the remainder, the remaining centers will not balance. For example, five remaining steins in their original positions shift the combined center about 2.1 cm and add about <strong>2.3 N·m</strong>; three consecutive steins left in place shift it about 7.1 cm and add about <strong>4.7 N·m</strong>. Those added moments apply at the wrist and also affect elbow/shoulder moments to the extent that the offset points in the arm's plane. This is a geometry sensitivity case, not a claim that servers carry those exact incomplete clusters.</p>
+      <p>Use these planar angles:</p>
+      <ul>
+        <li><code>θs</code>: upper-arm swing from vertical down; forward is positive, backward is negative.</li>
+        <li><code>β</code>: elbow flexion from a straight arm; bending the elbow brings the forearm forward.</li>
+        <li><code>θf = θs + β</code>: forearm direction from vertical down.</li>
+      </ul>
+      <p>At the neutral posture, <code>θs = 0°</code> and <code>β ≈ 90°</code>, so the forearm is horizontal (<code>θf ≈ 90°</code>). To keep that forearm orientation as the shoulder swings, the elbow compensates: <code>β ≈ 90° − θs</code>. Thus at <code>θs = −25°</code>, elbow flexion is about 115°; at <code>θs = +25°</code>, it is about 65°. The hand/grip can remain near its baseline orientation, with the wrist making small corrections for any residual forearm tilt. In general, keeping the steins upright requires hand/grip orientation to counter the forearm's tilt, but that correction is not simply equal to elbow flexion.</p>
+      <h3>Joint moment model</h3>
+      <p>Assume the bundle's combined vertical load line passes through the central grip and the wrist-to-grip offset is vertical. For segment lengths use upper arm <code>L1 = 0.28–0.34 m</code> and forearm <code>L2 = 0.25–0.30 m</code>, broad adult inputs consistent with standard segment data [6]. With six default steins per hand, <code>W ≈ 131 N</code>:</p>
+      <ul>
+        <li><strong>Elbow moment from steins:</strong> <code>M_e,load = W × L2 × |sin(θf)|</code>.</li>
+        <li><strong>Shoulder moment from steins:</strong> <code>M_s,load = W × |L1 sin(θs) + L2 sin(θf)|</code>.</li>
+      </ul>
+      <p>These are weight times the horizontal distance to the vertical load line. The shoulder formula includes both upper-arm and forearm projections; this is why shoulder moment changes with shoulder swing even when elbow compensation holds the forearm nearly fixed.</p>
+      <p>The arm's own weight also contributes. Using de Leva's adult segment mass fractions—upper arm 2.55–2.71%, forearm 1.38–1.62%, hand 0.56–0.61% of body mass—and an illustrative 60–80 kg body mass, with each segment center of mass at its midpoint, gives the following total external gravitational moments. The hand is treated as acting at the wrist/grip point; acceleration is excluded.</p>
+      <div class="source-document-table-wrap" role="region" aria-label="Joint moments by shoulder, elbow, and forearm position" tabindex="0">
+        <table class="source-document-table">
+          <thead><tr><th scope="col">Shoulder / elbow / forearm</th><th scope="col">Wrist/grip correction from baseline</th><th scope="col">Elbow total moment</th><th scope="col">Shoulder total moment</th></tr></thead>
+          <tbody>
+            <tr><td>−25° / 115° / 90°</td><td>about 0°</td><td>35–43 N·m</td><td>13–24 N·m</td></tr>
+            <tr><td>0° / 90° / 90°</td><td>about 0°</td><td>35–43 N·m</td><td>35–43 N·m</td></tr>
+            <tr><td>+25° / 65° / 90°</td><td>about 0°</td><td>35–43 N·m</td><td>52–66 N·m</td></tr>
+            <tr><td>0° / 80° / 80°</td><td>about +10°</td><td>34–42 N·m</td><td>34–42 N·m</td></tr>
+            <tr><td>0° / 100° / 100°</td><td>about −10°</td><td>34–42 N·m</td><td>34–42 N·m</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The wrist correction column is a relative adjustment to keep the hand/stein bundle level when the forearm departs from its baseline orientation; signs depend on the side and angle convention. It is not a clinical wrist-flexion measurement. With the elbow compensating for ±25° of shoulder swing, elbow moment stays broadly similar while shoulder moment changes substantially—roughly <strong>13–66 N·m</strong> across the three primary positions. A seventh stein increases the stein-load part of the moments on that side by about <strong>17%</strong> if it acts through the same line.</p>
+      <h4>Effect of carrying fewer steins</h4>
+      <p>At the neutral shoulder position (<code>θs = 0°</code>, forearm horizontal), moments scale almost linearly with the number carried. The following ranges use the same arm-segment assumptions above and assume the <strong>combined load is centered over the grip</strong> (a plausible symmetric arrangement for 2–6 steins):</p>
+      <div class="source-document-table-wrap" role="region" aria-label="Joint moments by number of steins in one hand" tabindex="0">
+        <table class="source-document-table">
+          <thead><tr><th scope="col">Steins in one hand</th><th scope="col">Load per arm</th><th scope="col">Elbow moment</th><th scope="col">Shoulder moment at neutral</th></tr></thead>
+          <tbody>
+            <tr><td>1†</td><td>2.23 kg</td><td>7–10 N·m</td><td>7–10 N·m</td></tr>
+            <tr><td>2</td><td>4.46 kg</td><td>13–17 N·m</td><td>13–17 N·m</td></tr>
+            <tr><td>3</td><td>6.69 kg</td><td>18–23 N·m</td><td>18–23 N·m</td></tr>
+            <tr><td>4</td><td>8.92 kg</td><td>24–30 N·m</td><td>24–30 N·m</td></tr>
+            <tr><td>5</td><td>11.14 kg</td><td>29–37 N·m</td><td>29–37 N·m</td></tr>
+            <tr><td>6</td><td>13.37 kg</td><td>35–43 N·m</td><td>35–43 N·m</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>† For one stein, the center of mass is not centered over the handle grip; add the <strong>1.3–1.8 N·m wrist eccentricity</strong> estimated above. The table's elbow/shoulder projection leaves that sideways handle offset out of the sagittal-plane lever arm because its direction relative to the arm is unknown.</p>
+      <p>The shoulder moment also depends strongly on the shoulder swing at every count. At <code>−25° / 0° / +25°</code>, respectively, the shoulder ranges are: 1 stein <strong>1–4 / 7–10 / 12–17 N·m</strong>; 3 steins <strong>6–12 / 18–23 / 28–37 N·m</strong>; and 6 steins <strong>13–24 / 35–43 / 52–66 N·m</strong>. The elbow ranges in the table stay much more stable in the primary model because the elbow angle compensates to keep the forearm horizontal.</p>
+      <h4>How these moments compare with measured tasks</h4>
+      <p>A scoping review of 28 elbow-loading studies (256 participants) reported a mean flexion–extension joint moment of <strong>17 N·m across ADL tasks</strong>; the highest reported task moments were <strong>39 N·m for work</strong> and <strong>76 N·m while pushing a 37 kg trolley</strong> [7]. Against that reference, the model gives:</p>
+      <ul>
+        <li><strong>2 steins per hand:</strong> 13–17 N·m, around the review's mean ADL value.</li>
+        <li><strong>3 steins per hand:</strong> 18–23 N·m, already above that mean.</li>
+        <li><strong>6 steins per hand:</strong> 35–43 N·m, around or above the review's cited work-task value.</li>
+      </ul>
+      <p>A separate experimental elbow-assistance study estimated that holding 5, 10, and 15 kg at a 0.34 m forearm lever requires <strong>16.7, 33.4, and 50 N·m</strong>, respectively; six steins per hand weigh 13.4 kg, corresponding to about <strong>45 N·m</strong> at that same lever [8]. In that study, participants' mean maximum elbow-flexion moment was <strong>80 ± 24 N·m</strong>, so the six-stein estimate is roughly half that sample mean. The surprising takeaway is that three steins per hand is already in the range of ordinary measured elbow task moments, while six steins approaches a large fraction of the maximum voluntary moment in a small experimental sample.</p>
+      <p>These are comparisons of similar net moments, not identical experiments: the cited tasks use different postures, movement, populations, and methods, while our values are static gravity-model estimates. In a study of six daily shoulder tasks, peak task torque averaged about <strong>22% of maximal shoulder torque in young adults versus 52% in older adults</strong>; overhead tasks exceeded 40%, and some reaching/abduction tasks exceeded 60% [9]. This is a relative-effort comparison, not a directly comparable absolute torque, but it shows how the same external moment can demand very different effort depending on strength and posture.</p>
+      <p>At the wrist, take the bundle's combined load line to pass near the central grip. In the symmetric arrangement, the load-only wrist moment is therefore near <strong>0 N·m</strong>. If the resultant line is offset horizontally by 2–5 cm, the wrist moment is about <strong>2.6–6.6 N·m</strong> (<code>131 N × offset</code>). The roughly 10.5 cm radius from bundle center to each mug center is not itself the net wrist moment arm: those six radial offsets largely cancel.</p>
+      <h3>Live calculator estimate</h3>
+      <p>The page splits the stein count as evenly as possible between two hands and assigns an odd extra stein to the heavier hand. It shows that hand's stein count and load range. The joint-moment bounds combine the load range with the body-mass, segment-length, and segment-mass ranges above.</p>
+      <p>The arm-load summary shows one elbow-moment range and the shoulder-moment range across the modeled ±25° swing. The forearm stays horizontal as the shoulder swings, so elbow moment remains constant while shoulder moment changes. The model includes the arm's segment weights and treats the combined stein load as centered over the grip; it does not display a separate wrist moment.</p>
+      <p>The calculator allows up to 40 steins, so the displayed load and joint-moment equations continue to 20 steins on the heavier hand, without an additional cap. The model's shoulder angles and arm-segment dimensions remain the same throughout that range.</p>
+      <h3>Main tissues involved</h3>
+      <p>The hand/finger flexors and thumb muscles grip the inward-facing handles; wrist flexors/extensors stabilize the hand; elbow flexors/extensors and shoulder muscles support the arm posture. The hand, wrist, elbow, and shoulder joints transmit the forces. Wrist posture can alter extrinsic finger-muscle activity; one experiment found changes in EMG of up to 70% in some muscles across tested wrist positions [1].</p>
+      <p>Joint moments are not individual tendon forces. Estimating a specific muscle or tendon force requires its posture-dependent moment arm and its share of the net joint moment. This note therefore reports the net external moments and identifies involved tissues without assigning unsupported individual tendon loads.</p>
+      <h3>Energy per active minute</h3>
+      <p>The 2024 Adult Compendium lists <strong>5.5 MET</strong> for “walking or walk downstairs or standing, carrying objects about 50 to 74 lbs” (activity code 11830) [4]. The two-arm default load is about 59 lb, so this is a reasonable category-level proxy for an active carrying minute, though not specific to static holding or the repeated pickup/set-down sequence.</p>
+      <p>Using the Compendium's approximate conversion of <code>1 MET ≈ 1 kcal/kg/hour</code> [5], for an illustrative 60–80 kg adult:</p>
+      <ul>
+        <li><strong>Gross:</strong> <code>5.5 × body mass ÷ 60</code> = about <strong>5.5–7.3 kcal/min</strong> while actively carrying.</li>
+        <li><strong>Net above a 1-MET resting baseline:</strong> about <strong>4.5–6.0 kcal/min</strong> during that active period.</li>
+      </ul>
+      <p>This is a per-person activity estimate, not calories per lift. If carrying occupies fraction <code>f</code> of each work minute, average expenditure can be approximated as <code>f × active rate + (1 − f) × resting rate</code>; pickup frequency, walking time, holding time, and recovery determine <code>f</code>.</p>
+      <h3>Summary</h3>
+      <p>For six default steins per hand, each arm supports about <strong>131 N</strong>. With the upper arm near vertical and allowed to swing ±25°, the elbow shifts around its neutral 90° bend to keep the forearm/grip near its carrying orientation. At neutral, the elbow moment rises from about <strong>13–17 N·m for two steins</strong> to <strong>35–43 N·m for six</strong>; three steins already exceed the review's 17 N·m mean ADL elbow moment. Symmetric regrouping preserves center-of-mass cancellation for two through six steins, but a single stein or an incomplete/asymmetric cluster adds wrist eccentricity. For six steins, the model gives <strong>13–66 N·m at the shoulder</strong> across the shoulder-swing range. For active carrying of the full 59 lb load, the broad energy proxy is <strong>5.5–7.3 gross kcal/min</strong> for an assumed 60–80 kg adult.</p>
+      <h3>Sources</h3>
+      <ol>
+        <li>Beringer C.R., Mansouri M., Fisher L.E., et al. (2020). <a href="https://doi.org/10.1038/s41598-020-65167-x">The effect of wrist posture on extrinsic finger muscle activity during single joint movements</a>. <em>Scientific Reports</em> 10, 8377.</li>
+        <li><a href="https://trinklusiv.at/products/paulaner-masskrug-glas-1l">Paulaner Maßkrug Glas 1 L</a>: approximately 20 cm high, 10.5 cm diameter, 1.27 kg.</li>
+        <li><a href="https://www.geschirr24.at/Glasware/Trinkglaeser/Stoelzle-Oberglas-Bier-Masskrug-Isar-1L::10752.html">Isar Maßkrug 1 L</a>: 202 mm high, 109 mm diameter, 1.367 kg. Schweiger Bräu, <a href="https://fanshop.schweiger-bier.de/product/bier-krug-isar-1l/">Isar Maßkrug</a>: overall dimensions 15.5 × 20 cm, 1.35 kg. These retail dimensions inform the approximate radial cluster geometry.</li>
+        <li>Herrmann S.D., et al. (2024). <a href="https://doi.org/10.1016/j.jshs.2023.10.010">2024 Adult Compendium of Physical Activities: A third update of the energy costs of human activities</a>, with the <a href="https://pacompendium.com/wp-content/uploads/2025/02/1_2024-adult-compendium_1_2024.pdf">official activity table (PDF)</a>, activity code 11830, p. 15.</li>
+        <li><a href="https://pacompendium.com/">Compendium of Physical Activities</a>, “Using the Compendium”: MET definition and approximate kcal/kg/hour conversion.</li>
+        <li>de Leva P. (1996). <a href="https://doi.org/10.1016/0021-9290(95)00178-6">Adjustments to Zatsiorsky-Seluyanov's segment inertia parameters</a>. <em>Journal of Biomechanics</em> 29(9), 1223–1230. Reference for adult body-segment proportions; the lengths used here are broad modeling inputs.</li>
+        <li>Meijering D., Duijn R.G.A., Murgia A., et al. (2023). <a href="https://doi.org/10.1186/s12891-023-06149-8">Elbow joint biomechanics during ADL focusing on total elbow arthroplasty: a scoping review</a>. <em>BMC Musculoskeletal Disorders</em> 24, 42. Review reports mean ADL flexion–extension moment 17 N·m, work-task peak 39 N·m, and 76 N·m while pushing a 37 kg trolley.</li>
+        <li>Nassour J., Zhao G., Grimmer M. (2021). <a href="https://doi.org/10.1038/s41598-021-91702-5">Soft pneumatic elbow exoskeleton reduces the muscle activity, metabolic cost and fatigue during holding and carrying of loads</a>. <em>Scientific Reports</em> 11, 12556. Reports elbow holding moments at a 0.34 m forearm lever and mean maximal elbow-flexion moment of 80 ± 24 N·m in the study sample.</li>
+        <li>Murgia A., Hortobágyi T., Wijnen A., et al. (2018). <a href="https://doi.org/10.1016/j.jbiomech.2018.10.001">Effects of age and sex on shoulder biomechanics and relative effort during functional tasks</a>. <em>Journal of Biomechanics</em> 81, 132–139. Six ADLs used about 22% of maximum shoulder torque in young adults and 52% in older adults.</li>
+      </ol>
+    </template>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js" type="module"></script>
   </body>
