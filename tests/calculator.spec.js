@@ -1042,6 +1042,17 @@ test('sources and model rationale section opens complete source documents', asyn
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
     await expect(footerBuildHash).toHaveText(sourceCommit.slice(0, 8));
     expect(await footerBuildHash.evaluate((element) => element.closest('a'))).toBeNull();
+    const footerTypography = await page.locator('footer').evaluate((footer) => {
+      const getTypography = (element) => {
+        const { color, fontFamily, fontSize, letterSpacing } = getComputedStyle(element);
+        return { color, fontFamily, fontSize, letterSpacing };
+      };
+      return {
+        footer: getTypography(footer),
+        hash: getTypography(footer.querySelector('.footer-build-hash')),
+      };
+    });
+    expect(footerTypography.hash).toEqual(footerTypography.footer);
   } else {
     await expect(footerBuildHash).toHaveCount(0);
   }
