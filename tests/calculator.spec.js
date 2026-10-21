@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
@@ -1036,6 +1037,14 @@ test('sources and model rationale section opens complete source documents', asyn
   await expect(modelTrigger).toHaveAttribute('data-open-document', 'model');
   await expect(modelTrigger).toHaveAttribute('aria-haspopup', 'dialog');
   await expect(page.locator('a[href*="github.com/luxifr/hmdsc"]')).toHaveCount(0);
+  const footerBuildHash = page.locator('footer .footer-build-hash');
+  if (process.env.PLAYWRIGHT_BUILD === '1') {
+    const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    await expect(footerBuildHash).toHaveText(`BUILD ${sourceCommit.slice(0, 7)}`);
+    expect(await footerBuildHash.evaluate((element) => element.closest('a'))).toBeNull();
+  } else {
+    await expect(footerBuildHash).toHaveCount(0);
+  }
 
   await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
   await expect(section.locator('.sources-heading')).not.toContainText('biomechanics');
