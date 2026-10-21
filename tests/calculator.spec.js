@@ -1040,7 +1040,7 @@ test('sources and model rationale section opens complete source documents', asyn
   const footerBuildHash = page.locator('footer .footer-build-hash');
   if (process.env.PLAYWRIGHT_BUILD === '1') {
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-    await expect(footerBuildHash).toHaveText(`BUILD ${sourceCommit.slice(0, 7)}`);
+    await expect(footerBuildHash).toHaveText(sourceCommit.slice(0, 8));
     expect(await footerBuildHash.evaluate((element) => element.closest('a'))).toBeNull();
   } else {
     await expect(footerBuildHash).toHaveCount(0);

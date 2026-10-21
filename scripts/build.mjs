@@ -63,7 +63,7 @@ html = replaceExactlyOnce(
 html = replaceExactlyOnce(
   html,
   /<!--\s*BUILD_HASH\s*-->/gi,
-  `<span class="footer-build-hash">BUILD ${sourceCommit.slice(0, 7)}</span>`,
+  `<span class="footer-build-hash">${sourceCommit.slice(0, 8)}</span>`,
   'footer build hash placeholder',
 );
 
