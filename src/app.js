@@ -240,5 +240,29 @@ import { momentRanges } from './biomechanics.js';
       toast('Scenario link ready in your address bar.');
     }
   });
-})();
 
+  const sourceDocumentDialog = $('#source-document-dialog');
+  const sourceDocumentTitle = $('#source-document-title');
+  const sourceDocumentContent = $('#source-document-content');
+  const sourceDocumentTemplates = new Map(
+    [...document.querySelectorAll('template[data-source-document]')]
+      .map((template) => [template.dataset.sourceDocument, template]),
+  );
+  function openSourceDocument(name) {
+    const template = sourceDocumentTemplates.get(name);
+    if (!template?.dataset.title) throw new Error(`Missing source document template or title: ${name}`);
+    sourceDocumentTitle.textContent = template.dataset.title;
+    sourceDocumentContent.replaceChildren(template.content.cloneNode(true));
+    sourceDocumentContent.scrollTop = 0;
+    if (!sourceDocumentDialog.open) sourceDocumentDialog.showModal();
+    sourceDocumentTitle.focus();
+  }
+  document.addEventListener('click', (event) => {
+    const trigger = event.target instanceof Element ? event.target.closest('[data-open-document]') : null;
+    if (trigger) openSourceDocument(trigger.dataset.openDocument);
+  });
+  $('#source-document-close').addEventListener('click', () => sourceDocumentDialog.close());
+  sourceDocumentDialog.addEventListener('click', (event) => {
+    if (event.target === sourceDocumentDialog) sourceDocumentDialog.close();
+  });
+})();

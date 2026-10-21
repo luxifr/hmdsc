@@ -1,5 +1,31 @@
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
+
+function normalizeText(text) {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+function parseSourceDocument(fileName) {
+  const markdown = readFileSync(new URL(`../docs/${fileName}`, import.meta.url), 'utf8');
+  const title = markdown.match(/^# (.+)$/m)?.[1];
+  if (!title) throw new Error(`Expected a title in docs/${fileName}`);
+
+  const body = markdown
+    .replace(/^# [^\r\n]*\r?\n/, '')
+    .replace(/^```[^\r\n]*\r?\n|^```\s*$/gm, '')
+    .replace(/^\|(?:\s*:?-{3,}:?\s*\|)+\s*$/gm, '')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*+]\s+/gm, '')
+    .replace(/^\s*\d+\.\s+/gm, '')
+    .replace(/\[([^\]]+)\]\((?:[^()]|\([^()]*\))*\)/g, '$1')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^\|(.+)\|\s*$/gm, (_, row) => row.replace(/\|/g, ' '));
+
+  return { title, body: normalizeText(body) };
+}
 
 test.beforeEach(async ({ page }) => {
   await page.route('https://gc.zgo.at/count.js', (route) => route.fulfill({
@@ -987,7 +1013,7 @@ test('stein stepper recalculates and respects count limits', async ({ page }) =>
   await expect(page.locator('#stein-count')).toHaveValue('1');
 });
 
-test('sources and model rationale section is linked, readable, and responsive', async ({ page }) => {
+test('sources and model rationale section opens complete source documents', async ({ page }) => {
   await page.goto('/');
   const section = page.locator('#sources');
   await expect(section).toHaveCount(1);
@@ -999,29 +1025,78 @@ test('sources and model rationale section is linked, readable, and responsive', 
   await expect(biomechanicsExplainer).toContainText('elbow moment stays constant');
   await expect(biomechanicsExplainer).toContainText('centered over the grip');
   await expect(biomechanicsExplainer).not.toContainText('safety assessment');
-  await expect(biomechanicsExplainer.getByRole('link', { name: /Full methods, assumptions, sources, and limitations/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/docs/BIOMECHANICS.md');
+  const biomechanicsTrigger = biomechanicsExplainer.getByRole('button', { name: /Full methods, assumptions, sources, and limitations/ });
+  await expect(biomechanicsTrigger).toHaveAttribute('data-open-document', 'biomechanics');
+  await expect(biomechanicsTrigger).toHaveAttribute('aria-haspopup', 'dialog');
   const sectionOrder = await page.locator('main > section').evaluateAll((sections) => sections.map((section) => section.id || section.className));
   expect(sectionOrder).not.toContain('biomechanics');
   expect(sectionOrder.indexOf('method-section')).toBeLessThan(sectionOrder.indexOf('sources'));
   await expect(page.locator('.method-section #biomechanics')).toHaveCount(1);
   await expect(page.locator('.method-section .caveat, .method-section .assumption-note')).toHaveCount(0);
-  await expect(section.getByRole('link', { name: /Read the full calculator model/ })).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc/blob/main/docs/MODEL.md');
-  const footerLink = page.locator('footer .footer-github');
+  const modelTrigger = section.getByRole('button', { name: /Read the full calculator model/ });
+  await expect(modelTrigger).toHaveAttribute('data-open-document', 'model');
+  await expect(modelTrigger).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(page.locator('a[href*="github.com/luxifr/hmdsc"]')).toHaveCount(0);
+  const footerBuildHash = page.locator('footer .footer-build-hash');
   if (process.env.PLAYWRIGHT_BUILD === '1') {
     const sourceCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-    await expect(footerLink).toHaveText(sourceCommit.slice(0, 7));
-    await expect(footerLink).toHaveCSS('text-decoration-line', 'none');
-    await expect(footerLink).toHaveAttribute('href', `https://github.com/luxifr/hmdsc/tree/${sourceCommit}`);
-    await expect(footerLink).toHaveAttribute('title', `Built from source commit ${sourceCommit}`);
+    await expect(footerBuildHash).toHaveText(sourceCommit.slice(0, 8));
+    expect(await footerBuildHash.evaluate((element) => element.closest('a'))).toBeNull();
+    const footerTypography = await page.locator('footer').evaluate((footer) => {
+      const getTypography = (element) => {
+        const { color, fontFamily, fontSize, letterSpacing } = getComputedStyle(element);
+        return { color, fontFamily, fontSize, letterSpacing };
+      };
+      return {
+        footer: getTypography(footer),
+        hash: getTypography(footer.querySelector('.footer-build-hash')),
+      };
+    });
+    expect(footerTypography.hash).toEqual(footerTypography.footer);
   } else {
-    await expect(footerLink).toHaveAttribute('href', 'https://github.com/luxifr/hmdsc');
+    await expect(footerBuildHash).toHaveCount(0);
   }
 
   await expect(page.locator('.method-section .sources-link')).toHaveCount(0);
   await expect(section.locator('.sources-heading')).not.toContainText('biomechanics');
 
+  const dialog = page.getByRole('dialog');
+  const dialogTitle = page.locator('#source-document-title');
+  const dialogContent = page.locator('#source-document-content');
+  const modelDocument = parseSourceDocument('MODEL.md');
+  await modelTrigger.click();
+  await expect(dialog).toBeVisible();
+  await expect(dialogTitle).toHaveText(modelDocument.title);
+  expect(normalizeText(await dialogContent.innerText())).toBe(modelDocument.body);
+
+  const biomechanicsDocument = parseSourceDocument('BIOMECHANICS.md');
+  await dialogContent.getByRole('button', { name: 'biomechanics research note' }).click();
+  await expect(dialogTitle).toHaveText(biomechanicsDocument.title);
+  expect(normalizeText(await dialogContent.innerText())).toBe(biomechanicsDocument.body);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(modelTrigger).toBeFocused();
+
+  await biomechanicsTrigger.click();
+  await expect(dialogTitle).toHaveText(biomechanicsDocument.title);
+  expect(normalizeText(await dialogContent.innerText())).toBe(biomechanicsDocument.body);
+  await page.getByRole('button', { name: 'Close source document' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(biomechanicsTrigger).toBeFocused();
+
   for (const width of [320, 390, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   }
+
+  await page.setViewportSize({ width: 320, height: 640 });
+  await modelTrigger.click();
+  const dialogBounds = await dialog.boundingBox();
+  expect(dialogBounds.width).toBeLessThanOrEqual(320);
+  expect(dialogBounds.x).toBeGreaterThanOrEqual(0);
+  expect(dialogBounds.x + dialogBounds.width).toBeLessThanOrEqual(320);
+  expect(await dialogContent.evaluate((content) => content.scrollHeight > content.clientHeight)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
 });

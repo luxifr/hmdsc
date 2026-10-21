@@ -62,9 +62,9 @@ html = replaceExactlyOnce(
 );
 html = replaceExactlyOnce(
   html,
-  /<a\b(?=[^>]*\bclass=["']footer-github["'])(?=[^>]*\bhref=["']https:\/\/github\.com\/luxifr\/hmdsc["'])[^>]*>GitHub repository<\/a>/gi,
-  `<a class="footer-github" href="https://github.com/luxifr/hmdsc/tree/${sourceCommit}" title="Built from source commit ${sourceCommit}">${sourceCommit.slice(0, 7)}</a>`,
-  'footer repository link',
+  /<!--\s*BUILD_HASH\s*-->/gi,
+  `<span class="footer-build-hash">${sourceCommit.slice(0, 8)}</span>`,
+  'footer build hash placeholder',
 );
 
 const output = await minify(html, {
